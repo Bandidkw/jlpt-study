@@ -1045,15 +1045,17 @@ function flipCard(){
 }
 function renderQuiz(d){
   const isVocab=!!d.w;
-  const dispWord=isVocab?(d.k||d.w):d.k;
   if(autoSpeak){setTimeout(()=>speakCard(false),250);}
   // สร้างตัวเลือก: 1 ถูก + 3 หลอก
   const isKanaQ=!!d.c&&!d.p;
   const isGrammarQ=!!d.p;
-  const pool=getBase().filter(x=>x!==d);
-  shuffle(pool);
-  const wrongs=pool.slice(0,3).map(x=>isKanaQ?x.r:x.th);
-  const correct=isKanaQ?d.r:d.th;
+  const dispWord=isGrammarQ?d.p:isKanaQ?d.c:isVocab?(d.k||d.w):d.k;
+  const getAns=x=>isKanaQ?x.r:x.th;
+  const correct=getAns(d);
+  // ตัวเลือกหลอก: ต้องมีค่า และไม่ซ้ำกับคำตอบถูก/ไม่ซ้ำกันเอง
+  const pool=shuffle(getBase().filter(x=>x!==d&&getAns(x)&&getAns(x)!==correct));
+  const wrongs=[];
+  for(const x of pool){const a=getAns(x);if(!wrongs.includes(a))wrongs.push(a);if(wrongs.length>=3)break;}
   const choices=shuffle([correct,...wrongs]);
 
   document.getElementById('main').innerHTML=`
