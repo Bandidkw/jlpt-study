@@ -369,6 +369,39 @@ html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
 .backup-msg.err{color:#f87171;}
 .backup-tip{font-size:12px;color:#666;line-height:1.6;margin-top:10px;border-top:1px solid #252525;padding-top:10px;}
 
+
+/* ══ SCENES (สถานการณ์จริง) ══ */
+.level-tab{flex-shrink:0;white-space:nowrap;}   /* แท็บเยอะขึ้น: ไม่บีบจนตัวหนังสือขึ้นบรรทัดใหม่ ให้เลื่อนด้านข้างแทน */
+.filter-chip.active-scene{border-color:#14532d;background:#0c1f14;color:#4ade80;}
+.level-tab.active-scene{background:#0c1f14;color:#4ade80;border-color:#14532d;}
+.pf-scene{background:#22c55e;}
+.vocab-big.phrase{font-size:26px;line-height:1.55;word-break:normal;overflow-wrap:anywhere;}
+.quiz-question.phrase-q{font-size:26px;font-weight:500;line-height:1.55;padding:14px 8px 6px;overflow-wrap:anywhere;}
+.who-badge{display:inline-block;font-size:11px;padding:2px 10px;border-radius:10px;margin:0 0 8px 6px;}
+.who-me{background:#0c1f14;color:#4ade80;}
+.who-they{background:#2a1a00;color:#fbbf24;}
+#scene-bar{margin-bottom:10px;text-align:center;}
+.scene-open-btn{
+  padding:9px 16px;border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;
+  border:1.5px solid #14532d;background:#0c1f14;color:#4ade80;touch-action:manipulation;
+}
+.scene-hint{font-size:12px;color:#555;line-height:1.6;}
+.scene-box{max-width:520px;}
+.scene-tip{font-size:12.5px;color:#a08040;background:#1a1408;border:1px solid #3a2a10;border-radius:10px;padding:9px 12px;margin-bottom:12px;line-height:1.7;}
+.scene-play{
+  width:100%;padding:11px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:12px;
+  border:1.5px solid #14532d;background:#0c1f14;color:#4ade80;touch-action:manipulation;
+}
+.scene-line{border-radius:12px;padding:10px 12px;margin-bottom:8px;border:1px solid #252525;transition:border-color .2s,background .2s;}
+.scene-line.sl-me{background:#101a14;border-left:3px solid #22c55e;}
+.scene-line.sl-they{background:#1a1610;border-left:3px solid #d97706;}
+.scene-line.playing{border-color:#a78bfa;background:#17142a;}
+.scene-who{font-size:11px;color:#777;margin-bottom:4px;}
+.scene-jp{font-size:20px;font-weight:500;line-height:1.5;color:#eee;overflow-wrap:anywhere;}
+.scene-kana{font-size:13px;color:#aaa;margin-top:2px;}
+.scene-ro{font-size:12.5px;color:#7a7a9a;margin-top:2px;}
+.scene-th{font-size:13.5px;color:#cbb26a;margin-top:4px;line-height:1.55;}
+
 </style>
 </head>
 <body>
@@ -377,6 +410,7 @@ html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
   <div class="level-tabs">
     <button class="level-tab active-n5" id="tab-n5" onclick="event.preventDefault();switchLevel('n5')">N5 คันจิ</button>
     <button class="level-tab" id="tab-vocab5" onclick="event.preventDefault();switchLevel('vocab5')">N5 คำศัพท์</button>
+    <button class="level-tab" id="tab-scene" onclick="event.preventDefault();switchLevel('scene')">🗣️ สถานการณ์</button>
     <button class="level-tab" id="tab-n4" onclick="event.preventDefault();switchLevel('n4')">N4</button>
     <button class="level-tab" id="tab-n3" onclick="event.preventDefault();switchLevel('n3')">N3</button>
     <button class="level-tab" id="tab-grammar5" onclick="event.preventDefault();switchLevel('grammar5')">N5 ไวยากรณ์</button>
@@ -390,6 +424,7 @@ html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
   <div id="backup-banner"></div>
   <div class="filter-wrap"><input class="filter-search" id="filter-search" placeholder="🔍 ค้นหาหมวดหมู่..." oninput="filterChips(this.value)"><div class="filter-bar" id="filters"></div></div>
   <div class="section-info" id="section-info"></div>
+  <div id="scene-bar"></div>
   <div class="mode-tabs">
     <div class="mode-tab active" id="mt-flash" onclick="event.preventDefault();setMode('flash')">📇 Flashcard</div>
     <div class="mode-tab" id="mt-quiz" onclick="event.preventDefault();setMode('quiz')">🎯 Quiz</div>
@@ -405,6 +440,14 @@ html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
   <div class="progress-bar"><div class="progress-fill pf-n5" id="prog" style="width:0%"></div></div>
   <div class="mode-badge" id="mode-label"></div>
   <div id="main"></div>
+</div>
+<div class="modal-overlay" id="scene-modal" onclick="if(event.target===this)closeScene()">
+  <div class="modal-box scene-box" role="dialog" aria-modal="true" aria-label="บทสนทนา">
+    <div class="modal-head"><span id="scene-title"></span><button class="modal-x" onclick="closeScene()" aria-label="ปิด">✕</button></div>
+    <div class="scene-tip" id="scene-tip"></div>
+    <button class="scene-play" id="scene-play-btn" data-playing="0" onclick="playScene()">▶ เล่นทั้งบท</button>
+    <div id="scene-list"></div>
+  </div>
 </div>
 <div class="modal-overlay" id="backup-modal" onclick="if(event.target===this)closeBackup()">
   <div class="modal-box" role="dialog" aria-modal="true" aria-label="สำรองและกู้คืนข้อมูล">
@@ -631,6 +674,7 @@ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random
 function getBase(){
   if(currentLevel==='n5') return n5;
   if(currentLevel==='vocab5') return vocab5;
+  if(currentLevel==='scene') return [...scenes];   // สำเนา: shuffle() สลับ array ในที่เดิม ต้องไม่ทำลายลำดับบทสนทนา
   if(currentLevel==='n4') return n4;
   if(currentLevel==='n3') return n3;
   if(currentLevel==='grammar5') return grammar5;
@@ -666,13 +710,13 @@ function switchLevel(lv){
   if(currentLevel===lv) return;  // กดซ้ำ level เดิม → ไม่ทำอะไร
   lockScroll();
   currentLevel=lv; activeCat='ทั้งหมด';
-  ['n5','vocab5','n4','n3','grammar5','hiragana','katakana','all'].forEach(l=>{
+  ['n5','vocab5','scene','n4','n3','grammar5','hiragana','katakana','all'].forEach(l=>{
     const t=document.getElementById('tab-'+l);
     if(t) t.className='level-tab';
   });
   document.getElementById('tab-'+lv).className='level-tab active-'+lv;
   const pf=document.getElementById('prog');
-  const pfMap={n5:'pf-n5',vocab5:'pf-vocab5',n4:'pf-n4',n3:'pf-n3',
+  const pfMap={n5:'pf-n5',vocab5:'pf-vocab5',scene:'pf-scene',n4:'pf-n4',n3:'pf-n3',
                grammar5:'pf-grammar5',hiragana:'pf-hiragana',katakana:'pf-katakana',all:'pf-n3'};
   pf.className='progress-fill '+(pfMap[lv]||'pf-n3');
   renderFilters(); startAll();
@@ -746,11 +790,12 @@ function startAll(){
   document.getElementById('mode-label').innerHTML=
     currentMode==='srs'?'<span class="mode-badge">🔁 SRS Mode</span>':
     currentMode==='quiz'?'<span class="mode-badge">🎯 Quiz Mode</span>':'';
-  const lblMap={n5:'N5 คันจิ',vocab5:'N5 คำศัพท์',n4:'N4',n3:'N3',all:'ทุกระดับ',grammar5:'N5 ไวยากรณ์',hiragana:'ฮิรางานะ',katakana:'คาตาคานะ'};
+  const lblMap={n5:'N5 คันจิ',vocab5:'N5 คำศัพท์',scene:'สถานการณ์จริง',n4:'N4',n3:'N3',all:'ทุกระดับ',grammar5:'N5 ไวยากรณ์',hiragana:'ฮิรางานะ',katakana:'คาตาคานะ'};
   const lbl=lblMap[currentLevel]||currentLevel.toUpperCase();
   document.getElementById('section-info').textContent=
     lbl+(activeCat!=='ทั้งหมด'?' · '+activeCat:'')+' · '+deck.length+' ตัว';
   renderStreakRow();
+  renderSceneBar();
 }
 
 function startWrong(){
@@ -815,8 +860,8 @@ function renderCard(){
   }
   document.getElementById('main').innerHTML=`
     <div class="card" id="card" onclick="flipCard()">
-      ${srsLabel(d)}
-      <div class="${isVocab?'vocab-big':'kanji-big'}">${dispWord}</div>
+      ${srsLabel(d)}${whoBadge(d)}
+      <div class="${isVocab?'vocab-big':'kanji-big'}${d.who?' phrase':''}">${dispWord}</div>
       ${isVocab&&d.k?`<div style="color:#666;font-size:13px;text-align:center;margin-top:-4px">${d.w}</div>`:''}
       ${speakRow}
       <div class="card-hint">แตะเพื่อดูความหมาย (${idx+1}/${deck.length})</div>
@@ -1026,12 +1071,12 @@ function flipCard(){
   const isVocab=!!d.w&&!d.c&&!d.p;
   const dispWord2=isVocab?(d.k||d.w):d.k;
   document.getElementById('card').innerHTML=`
-    <div class="${isVocab?'vocab-big':'kanji-big'}">${dispWord2}</div>
+    <div class="${isVocab?'vocab-big':'kanji-big'}${d.who?' phrase':''}">${dispWord2}</div>
     <div style="text-align:center">
       ${isVocab&&d.k?`<div style="color:#aaa;font-size:14px;margin-bottom:4px">${d.w}　(${d.r})</div>`:''}
       <div class="meaning">${d.th}</div>
       <div class="readings">${isVocab?(d.k?'':'อ่านว่า: '+d.r):'音: '+d.on+' | 訓: '+d.kun}</div>
-      <span class="cat-badge" style="${cc}">${d.cat}</span>
+      <span class="cat-badge" style="${cc}">${d.cat}</span>${whoBadge(d)}
     </div>`;
   document.getElementById('reveal').innerHTML=`
     <div class="speak-row" style="margin-bottom:6px">
@@ -1045,23 +1090,21 @@ function flipCard(){
 }
 function renderQuiz(d){
   const isVocab=!!d.w;
+  const dispWord=isVocab?(d.k||d.w):d.k;
   if(autoSpeak){setTimeout(()=>speakCard(false),250);}
   // สร้างตัวเลือก: 1 ถูก + 3 หลอก
   const isKanaQ=!!d.c&&!d.p;
   const isGrammarQ=!!d.p;
-  const dispWord=isGrammarQ?d.p:isKanaQ?d.c:isVocab?(d.k||d.w):d.k;
-  const getAns=x=>isKanaQ?x.r:x.th;
-  const correct=getAns(d);
-  // ตัวเลือกหลอก: ต้องมีค่า และไม่ซ้ำกับคำตอบถูก/ไม่ซ้ำกันเอง
-  const pool=shuffle(getBase().filter(x=>x!==d&&getAns(x)&&getAns(x)!==correct));
-  const wrongs=[];
-  for(const x of pool){const a=getAns(x);if(!wrongs.includes(a))wrongs.push(a);if(wrongs.length>=3)break;}
+  const pool=getBase().filter(x=>x!==d);
+  shuffle(pool);
+  const wrongs=pool.slice(0,3).map(x=>isKanaQ?x.r:x.th);
+  const correct=isKanaQ?d.r:d.th;
   const choices=shuffle([correct,...wrongs]);
 
   document.getElementById('main').innerHTML=`
     <div class="card" style="cursor:default;min-height:${isKanaQ?'140':'120'}px">
-      ${isKanaQ?'':srsLabel(d)}
-      <div class="${isKanaQ?'kana-big':'quiz-question'}">${dispWord}</div>
+      ${isKanaQ?'':srsLabel(d)+whoBadge(d)}
+      <div class="${isKanaQ?'kana-big':'quiz-question'}${d.who?' phrase-q':''}">${dispWord}</div>
       ${!isKanaQ&&isVocab&&d.k?`<div class="quiz-question-sub">${d.w}</div>`:''}
       ${isKanaQ?`<div class="kana-hint">เลือกคำอ่านที่ถูกต้อง</div>`:''}
     </div>
@@ -1171,7 +1214,7 @@ function initVoice(){const vs=speechSynthesis.getVoices();jaVoice=vs.find(v=>v.l
 speechSynthesis.addEventListener('voiceschanged',initVoice);
 initVoice();
 function speak(text,slow){if(!text)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.rate=slow?0.6:0.85;u.pitch=1;if(jaVoice)u.voice=jaVoice;speechSynthesis.speak(u);}
-function speakCard(slow){if(idx>=deck.length)return;const d=deck[idx];speak(d.p||d.c||d.k||d.w||d.on||'',slow);}
+function speakCard(slow){if(idx>=deck.length)return;const d=deck[idx];speak(d.p||d.c||(d.who&&d.w)||d.k||d.w||d.on||'',slow);}
 function toggleAutoSpeak(){autoSpeak=!autoSpeak;saveLS('jlpt_autospeak',autoSpeak);const b=document.getElementById('auto-speak-btn');if(b)b.className='speak-auto-btn'+(autoSpeak?' active':'');}
 
 
@@ -1189,6 +1232,127 @@ function lockScroll(){
       window.scrollTo(0, y);
     }, 80);
   });
+}
+
+// ══════════════════════════════════════════════════════════
+//  SCENES — วลีสถานการณ์จริง (who: 'me' = เราพูด, 'they' = อีกฝ่ายพูด)
+//  หมายเหตุ: ห้ามใส่เครื่องหมาย ' หรือ " ในช่อง th เพราะโหมด Quiz ฝังข้อความลง onclick
+//  ลำดับในอาร์เรย์ = ลำดับบทสนทนา (ใช้ในตัวดูบทสนทนา)
+// ══════════════════════════════════════════════════════════
+const SCENE_INFO={
+  'ร้านอาหาร':{emoji:'🍜',tip:'ญี่ปุ่นไม่มีธรรมเนียมให้ทิป ร้านราเมนและร้านข้าวหลายร้านให้กดตั๋วจากตู้หน้าร้านก่อนนั่ง และร้านส่วนใหญ่มีเมนูรูปภาพ ชี้แล้วพูด これをください ได้เลย ส่วน いらっしゃいませ เป็นคำต้อนรับ ไม่ต้องตอบก็ได้'},
+  'สถานีรถไฟ':{emoji:'🚉',tip:'สถานีใหญ่มักมีป้ายภาษาอังกฤษและตู้ขายตั๋วเปลี่ยนเป็นภาษาอังกฤษได้ ถ้าหลงให้มองหาป้าย 出口 (ทางออก) และเปลี่ยนชื่อเมืองในประโยคเป็นปลายทางของคุณได้เลย'}
+};
+const scenes=[
+  // ── ร้านอาหาร ──
+  {who:'they',w:'いらっしゃいませ',r:'irasshaimase',th:'ยินดีต้อนรับ (พนักงานพูดตอนคุณเข้าร้าน)',cat:'ร้านอาหาร'},
+  {who:'they',w:'なんめいさまですか',k:'何名様ですか',r:'nanmeisama desu ka',th:'มากี่ท่านคะ/ครับ',cat:'ร้านอาหาร'},
+  {who:'me',w:'ひとりです',k:'一人です',r:'hitori desu',th:'คนเดียวครับ/ค่ะ (ถ้าสองคนใช้ ふたりです)',cat:'ร้านอาหาร'},
+  {who:'me',w:'メニューをください',r:'menyuu o kudasai',th:'ขอเมนูหน่อยครับ/ค่ะ',cat:'ร้านอาหาร'},
+  {who:'me',w:'おすすめはなんですか',k:'おすすめは何ですか',r:'osusume wa nan desu ka',th:'เมนูแนะนำคืออะไรครับ/คะ',cat:'ร้านอาหาร'},
+  {who:'me',w:'これはなんですか',k:'これは何ですか',r:'kore wa nan desu ka',th:'อันนี้คืออะไรครับ/คะ (ชี้เมนู)',cat:'ร้านอาหาร'},
+  {who:'me',w:'おみずをください',k:'お水をください',r:'omizu o kudasai',th:'ขอน้ำหน่อยครับ/ค่ะ',cat:'ร้านอาหาร'},
+  {who:'me',w:'すみません、おねがいします',k:'すみません、お願いします',r:'sumimasen, onegaishimasu',th:'ขอโทษครับ/ค่ะ (เรียกพนักงานมารับออเดอร์)',cat:'ร้านอาหาร'},
+  {who:'they',w:'ごちゅうもんはおきまりですか',k:'ご注文はお決まりですか',r:'gochuumon wa okimari desu ka',th:'พร้อมสั่งหรือยังคะ/ครับ',cat:'ร้านอาหาร'},
+  {who:'me',w:'これをください',r:'kore o kudasai',th:'ขออันนี้ครับ/ค่ะ (ชี้เมนู)',cat:'ร้านอาหาร'},
+  {who:'me',w:'おいしいです',k:'美味しいです',r:'oishii desu',th:'อร่อยครับ/ค่ะ',cat:'ร้านอาหาร'},
+  {who:'me',w:'おかいけいをおねがいします',k:'お会計をお願いします',r:'okaikei o onegaishimasu',th:'ขอเช็คบิลหน่อยครับ/ค่ะ',cat:'ร้านอาหาร'},
+  {who:'me',w:'カードはつかえますか',k:'カードは使えますか',r:'kaado wa tsukaemasu ka',th:'ใช้บัตรได้ไหมครับ/คะ',cat:'ร้านอาหาร'},
+  {who:'me',w:'ごちそうさまでした',r:'gochisousama deshita',th:'ขอบคุณสำหรับอาหาร (พูดตอนกินเสร็จหรือเดินออกจากร้าน)',cat:'ร้านอาหาร'},
+  // ── สถานีรถไฟ ──
+  {who:'me',w:'えきはどこですか',k:'駅はどこですか',r:'eki wa doko desu ka',th:'สถานีอยู่ที่ไหนครับ/คะ',cat:'สถานีรถไฟ'},
+  {who:'me',w:'きっぷうりばはどこですか',k:'切符売り場はどこですか',r:'kippu uriba wa doko desu ka',th:'ที่ขายตั๋วอยู่ที่ไหนครับ/คะ',cat:'สถานีรถไฟ'},
+  {who:'me',w:'とうきょうまでいくらですか',k:'東京までいくらですか',r:'toukyou made ikura desu ka',th:'ไปโตเกียวราคาเท่าไรครับ/คะ (เปลี่ยนชื่อเมืองได้)',cat:'สถานีรถไฟ'},
+  {who:'me',w:'このでんしゃはとうきょうにいきますか',k:'この電車は東京に行きますか',r:'kono densha wa toukyou ni ikimasu ka',th:'รถไฟขบวนนี้ไปโตเกียวไหมครับ/คะ',cat:'สถานีรถไฟ'},
+  {who:'me',w:'なんばんせんですか',k:'何番線ですか',r:'nanbansen desu ka',th:'ชานชาลาที่เท่าไรครับ/คะ',cat:'สถานีรถไฟ'},
+  {who:'they',w:'さんばんせんです',k:'三番線です',r:'sanbansen desu',th:'ชานชาลา 3 ครับ/ค่ะ (ตัวเลขเปลี่ยนไปตามจริง)',cat:'สถานีรถไฟ'},
+  {who:'me',w:'つぎのでんしゃはなんじですか',k:'次の電車は何時ですか',r:'tsugi no densha wa nanji desu ka',th:'รถไฟขบวนถัดไปกี่โมงครับ/คะ',cat:'สถานีรถไฟ'},
+  {who:'me',w:'どこでのりかえますか',k:'どこで乗り換えますか',r:'doko de norikaemasu ka',th:'เปลี่ยนสายที่ไหนครับ/คะ',cat:'สถานีรถไฟ'},
+  {who:'me',w:'でぐちはどこですか',k:'出口はどこですか',r:'deguchi wa doko desu ka',th:'ทางออกอยู่ที่ไหนครับ/คะ',cat:'สถานีรถไฟ'},
+  {who:'me',w:'トイレはどこですか',r:'toire wa doko desu ka',th:'ห้องน้ำอยู่ที่ไหนครับ/คะ',cat:'สถานีรถไฟ'},
+  {who:'me',w:'きっぷをなくしました',k:'切符をなくしました',r:'kippu o nakushimashita',th:'ตั๋วหายครับ/ค่ะ',cat:'สถานีรถไฟ'}
+];
+Object.keys(SCENE_INFO).forEach(k=>{CAT_EMOJI[k]=SCENE_INFO[k].emoji;});
+
+function whoBadge(d){
+  if(!d||!d.who) return '';
+  return d.who==='me'
+    ? '<span class="who-badge who-me">🗣️ เราพูด</span>'
+    : '<span class="who-badge who-they">👂 อีกฝ่ายพูด</span>';
+}
+
+// ── แถบปุ่มเปิดตัวดูบทสนทนา ──
+function renderSceneBar(){
+  const el=document.getElementById('scene-bar');
+  if(!el) return;
+  if(currentLevel!=='scene'){el.innerHTML='';return;}
+  if(activeCat==='ทั้งหมด'){
+    el.innerHTML='<div class="scene-hint">เลือกสถานการณ์ด้านบน แล้วกด 📖 เพื่อดูบทสนทนาทั้งบทและฟังเสียงต่อเนื่อง</div>';
+    return;
+  }
+  el.innerHTML='<button class="scene-open-btn" onclick="openScene()">📖 ดูบทสนทนา "'+activeCat+'"</button>';
+}
+
+// ── ตัวดูบทสนทนา ──
+let sceneToken=0;
+function openScene(){
+  const items=scenes.filter(d=>d.cat===activeCat);
+  if(!items.length) return;
+  const info=SCENE_INFO[activeCat]||{emoji:'',tip:''};
+  document.getElementById('scene-title').textContent=(info.emoji?info.emoji+' ':'')+activeCat;
+  document.getElementById('scene-tip').textContent=info.tip||'';
+  document.getElementById('scene-tip').style.display=info.tip?'':'none';
+  document.getElementById('scene-list').innerHTML=items.map((d,i)=>`
+    <div class="scene-line ${d.who==='me'?'sl-me':'sl-they'}" id="sl-${i}">
+      <div class="scene-who">${d.who==='me'?'🗣️ เราพูด':'👂 อีกฝ่ายพูด'}</div>
+      <div class="scene-jp">${d.k||d.w}</div>
+      ${d.k?`<div class="scene-kana">${d.w}</div>`:''}
+      <div class="scene-ro">${d.r}</div>
+      <div class="scene-th">${d.th}</div>
+      <div class="speak-row" style="margin-top:6px">
+        <button class="speak-btn" onclick="speak(scenes.filter(x=>x.cat===activeCat)[${i}].w,false)" aria-label="ฟัง">&#9654;</button>
+        <button class="speak-slow-btn" onclick="speak(scenes.filter(x=>x.cat===activeCat)[${i}].w,true)">0.6x</button>
+      </div>
+    </div>`).join('');
+  document.getElementById('scene-modal').classList.add('open');
+}
+function closeScene(){
+  sceneToken++;
+  try{speechSynthesis.cancel();}catch{}
+  document.querySelectorAll('.scene-line.playing').forEach(e=>e.classList.remove('playing'));
+  const b=document.getElementById('scene-play-btn');
+  if(b) b.textContent='▶ เล่นทั้งบท';
+  const m=document.getElementById('scene-modal');
+  if(m) m.classList.remove('open');
+}
+function playScene(){
+  const b=document.getElementById('scene-play-btn');
+  if(b&&b.dataset.playing==='1'){stopScene();return;}
+  const items=scenes.filter(d=>d.cat===activeCat);
+  const my=++sceneToken;
+  if(b){b.dataset.playing='1';b.textContent='⏹ หยุด';}
+  let i=0;
+  const next=()=>{
+    if(my!==sceneToken) return;
+    document.querySelectorAll('.scene-line.playing').forEach(e=>e.classList.remove('playing'));
+    if(i>=items.length){stopScene(true);return;}
+    const row=document.getElementById('sl-'+i);
+    if(row){row.classList.add('playing');row.scrollIntoView({block:'center',behavior:'smooth'});}
+    const u=new SpeechSynthesisUtterance(items[i].w);
+    u.lang='ja-JP'; u.rate=0.85;
+    if(typeof jaVoice!=='undefined'&&jaVoice) u.voice=jaVoice;
+    const go=()=>{i++;setTimeout(next,450);};
+    u.onend=go; u.onerror=go;
+    try{speechSynthesis.cancel();speechSynthesis.speak(u);}catch{stopScene();}
+  };
+  next();
+}
+function stopScene(done){
+  sceneToken++;
+  try{speechSynthesis.cancel();}catch{}
+  document.querySelectorAll('.scene-line.playing').forEach(e=>e.classList.remove('playing'));
+  const b=document.getElementById('scene-play-btn');
+  if(b){b.dataset.playing='0';b.textContent='▶ เล่นทั้งบท';}
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1387,7 +1551,7 @@ async function initPersist(){
   renderBackupInfo();
 }
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeBackup();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeBackup();closeScene();}});
 
 // PWA: Service Worker (ใช้ได้เมื่อเปิดผ่าน http/https เท่านั้น ไม่ใช่ไฟล์ในเครื่อง)
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
