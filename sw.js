@@ -1,6 +1,6 @@
 // Service Worker — JLPT Study App
 // เปลี่ยนเลขเวอร์ชันนี้ทุกครั้งที่แก้ไฟล์ เพื่อให้เครื่องผู้ใช้ดึงของใหม่
-const CACHE_VERSION = 'jlpt-v3';
+const CACHE_VERSION = 'jlpt-v5';
 const PRECACHE = [
   './',
   './index.html',
@@ -8,7 +8,12 @@ const PRECACHE = [
   './icon-192.png',
   './icon-512.png',
   './icon-maskable-512.png',
-  './apple-touch-icon.png'
+  './apple-touch-icon.png',
+  './data/kanji.js',
+  './data/vocab5.js',
+  './data/kana.js',
+  './data/grammar5.js',
+  './data/scenes.js'
 ];
 
 self.addEventListener('install', (event) => {
