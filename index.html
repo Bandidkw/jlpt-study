@@ -410,10 +410,10 @@ html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
   <div class="level-tabs">
     <button class="level-tab active-n5" id="tab-n5" onclick="event.preventDefault();switchLevel('n5')">N5 คันจิ</button>
     <button class="level-tab" id="tab-vocab5" onclick="event.preventDefault();switchLevel('vocab5')">N5 คำศัพท์</button>
+    <button class="level-tab" id="tab-grammar5" onclick="event.preventDefault();switchLevel('grammar5')">N5 ไวยากรณ์</button>
     <button class="level-tab" id="tab-scene" onclick="event.preventDefault();switchLevel('scene')">🗣️ สถานการณ์</button>
     <button class="level-tab" id="tab-n4" onclick="event.preventDefault();switchLevel('n4')">N4</button>
     <button class="level-tab" id="tab-n3" onclick="event.preventDefault();switchLevel('n3')">N3</button>
-    <button class="level-tab" id="tab-grammar5" onclick="event.preventDefault();switchLevel('grammar5')">N5 ไวยากรณ์</button>
     <button class="level-tab" id="tab-hiragana" onclick="event.preventDefault();switchLevel('hiragana')">ฮิรางานะ</button>
     <button class="level-tab" id="tab-katakana" onclick="event.preventDefault();switchLevel('katakana')">คาตาคานะ</button>
     <button class="level-tab" id="tab-all" onclick="event.preventDefault();switchLevel('all')">ทั้งหมด</button>
@@ -1090,7 +1090,8 @@ function flipCard(){
 }
 function renderQuiz(d){
   const isVocab=!!d.w;
-  const dispWord=isVocab?(d.k||d.w):d.k;
+  const isGrammarQ0=!!d.p;
+  const dispWord=isGrammarQ0?d.p:(d.c&&!d.p)?d.c:(isVocab?(d.k||d.w):d.k);   // ไวยากรณ์ใช้ p, คานะใช้ c
   if(autoSpeak){setTimeout(()=>speakCard(false),250);}
   // สร้างตัวเลือก: 1 ถูก + 3 หลอก
   const isKanaQ=!!d.c&&!d.p;
@@ -1104,7 +1105,8 @@ function renderQuiz(d){
   document.getElementById('main').innerHTML=`
     <div class="card" style="cursor:default;min-height:${isKanaQ?'140':'120'}px">
       ${isKanaQ?'':srsLabel(d)+whoBadge(d)}
-      <div class="${isKanaQ?'kana-big':'quiz-question'}${d.who?' phrase-q':''}">${dispWord}</div>
+      <div class="${isKanaQ?'kana-big':'quiz-question'}${(d.who||isGrammarQ0)?' phrase-q':''}">${dispWord}</div>
+      ${isGrammarQ0?`<div class="quiz-question-sub">${d.r}</div>`:''}
       ${!isKanaQ&&isVocab&&d.k?`<div class="quiz-question-sub">${d.w}</div>`:''}
       ${isKanaQ?`<div class="kana-hint">เลือกคำอ่านที่ถูกต้อง</div>`:''}
     </div>
