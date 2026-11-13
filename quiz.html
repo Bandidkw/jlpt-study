@@ -1,0 +1,1980 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>ควิซคำศัพท์ญี่ปุ่น</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0c101b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ควิซคำศัพท์">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+/* ── RESET & BASE ── */
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{
+  background:#0c101b;
+  color:#f1f5f9;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Thai",sans-serif;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior:none;
+}
+button,input,select,textarea{font-family:inherit;}
+a{color:inherit;text-decoration:none;}
+
+/* ── APP SHELL ── */
+.app-container{
+  max-width:680px;
+  margin:0 auto;
+  padding:20px 18px 60px;
+}
+
+/* ── TOP HEADER BAR ── */
+.top-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:20px;
+}
+.header-left-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.btn-back-home{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:#162035;
+  color:#94a3b8;
+  border:1px solid #243250;
+  border-radius:10px;
+  padding:7px 12px;
+  font-size:12.5px;
+  font-weight:500;
+  text-decoration:none;
+  transition:all .15s;
+}
+.btn-back-home:hover{background:#1e2a44;color:#fff;border-color:#3b82f6;}
+
+/* ── CUSTOM DROPDOWN ── */
+.custom-dropdown{
+  position:relative;
+  display:inline-block;
+}
+.custom-dropdown-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#162035;
+  color:#e2e8f0;
+  border:1px solid #243250;
+  border-radius:10px;
+  padding:7px 14px;
+  font-size:13px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .15s;
+  user-select:none;
+}
+.custom-dropdown-btn:hover{
+  background:#1e2a44;
+  border-color:#3b82f6;
+  color:#fff;
+}
+.custom-dropdown-btn.open{
+  border-color:#3b82f6;
+  box-shadow:0 0 0 2px rgba(59,130,246,0.25);
+  background:#1e2a44;
+}
+.custom-dropdown-arrow{
+  width:14px;
+  height:14px;
+  transition:transform .2s ease;
+  color:#94a3b8;
+  flex-shrink:0;
+}
+.custom-dropdown-btn.open .custom-dropdown-arrow{
+  transform:rotate(180deg);
+  color:#60a5fa;
+}
+.custom-dropdown-menu{
+  position:absolute;
+  top:calc(100% + 6px);
+  left:0;
+  min-width:240px;
+  background:#131b2e;
+  border:1px solid #283754;
+  border-radius:12px;
+  padding:6px;
+  box-shadow:0 14px 36px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.06);
+  z-index:900;
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(-6px);
+  transition:opacity .15s ease, transform .15s ease, visibility .15s;
+}
+.custom-dropdown-menu.show{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+}
+.custom-dropdown-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:9px 12px;
+  border-radius:8px;
+  font-size:13px;
+  color:#cbd5e1;
+  cursor:pointer;
+  transition:all .12s;
+  user-select:none;
+}
+.custom-dropdown-item:hover{
+  background:#1e293b;
+  color:#ffffff;
+}
+.custom-dropdown-item.selected{
+  background:rgba(37,99,235,0.18);
+  color:#60a5fa;
+  font-weight:600;
+}
+.custom-dropdown-item .check-icon{
+  width:14px;
+  height:14px;
+  opacity:0;
+  color:#60a5fa;
+  flex-shrink:0;
+}
+.custom-dropdown-item.selected .check-icon{
+  opacity:1;
+}
+.btn-export{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:#162035;
+  color:#cbd5e1;
+  border:1px solid #243250;
+  border-radius:10px;
+  padding:7px 14px;
+  font-size:13px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .15s;
+}
+.btn-export:hover{background:#1e2a44;border-color:#33446b;color:#fff;}
+
+/* ── TITLE SECTION ── */
+.header-intro{
+  margin-bottom:22px;
+}
+.main-title{
+  font-size:26px;
+  font-weight:700;
+  color:#ffffff;
+  margin-bottom:8px;
+  letter-spacing:-.3px;
+}
+.main-sub{
+  font-size:13.5px;
+  color:#94a3b8;
+  line-height:1.55;
+}
+
+/* ── SEGMENTED TOP TABS ── */
+.nav-tabs{
+  display:flex;
+  background:#111827;
+  border:1px solid #1e293b;
+  border-radius:12px;
+  padding:4px;
+  margin-bottom:20px;
+  gap:4px;
+}
+.nav-tab{
+  flex:1;
+  padding:10px 14px;
+  border-radius:9px;
+  border:none;
+  background:transparent;
+  color:#94a3b8;
+  font-size:14px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .15s;
+  text-align:center;
+}
+.nav-tab:hover{color:#cbd5e1;}
+.nav-tab.active{
+  background:#1e293b;
+  color:#ffffff;
+  font-weight:600;
+  box-shadow:0 2px 6px rgba(0,0,0,0.25);
+}
+
+/* ── CARDS ── */
+.quiz-card{
+  background:#131b2e;
+  border:1px solid #1f2a44;
+  border-radius:16px;
+  padding:22px 20px;
+  margin-bottom:18px;
+  box-shadow:0 6px 24px rgba(0,0,0,0.25);
+}
+
+/* ── SECTION LABELS & CHIPS ── */
+.section-group{
+  margin-bottom:18px;
+}
+.section-label{
+  font-size:12.5px;
+  color:#94a3b8;
+  font-weight:500;
+  margin-bottom:10px;
+}
+.chips-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:7px 15px;
+  border-radius:20px;
+  border:1px solid #23314f;
+  background:#162035;
+  color:#94a3b8;
+  font-size:13px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .15s;
+  user-select:none;
+  white-space:nowrap;
+}
+.chip:hover{
+  border-color:#33446b;
+  color:#e2e8f0;
+  background:#1a2740;
+}
+.chip.active{
+  background:#2563eb;
+  border-color:#3b82f6;
+  color:#ffffff;
+  font-weight:600;
+  box-shadow:0 2px 10px rgba(37,99,235,0.35);
+}
+
+/* ── MAIN CTA BUTTON ── */
+.btn-primary-cta{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  padding:14px 20px;
+  margin-top:10px;
+  border:none;
+  border-radius:12px;
+  background:#5865f2;
+  color:#ffffff;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .15s;
+  box-shadow:0 4px 16px rgba(88,101,242,0.3);
+}
+.btn-primary-cta:hover{
+  background:#4752c4;
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(88,101,242,0.4);
+}
+.btn-primary-cta:active{
+  transform:scale(.98);
+}
+.btn-caption{
+  margin-top:14px;
+  font-size:12px;
+  color:#64748b;
+  line-height:1.55;
+  text-align:center;
+}
+
+/* ── PROGRESS CARD ── */
+.progress-card-title{
+  font-size:15px;
+  font-weight:600;
+  color:#f1f5f9;
+  margin-bottom:12px;
+}
+.progress-summary-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:13px;
+  margin-bottom:10px;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.progress-ch-name{
+  color:#e2e8f0;
+  font-weight:500;
+}
+.progress-stats-txt{
+  color:#94a3b8;
+  font-size:12.5px;
+}
+.multi-seg-bar{
+  display:flex;
+  height:8px;
+  background:#1e293b;
+  border-radius:4px;
+  overflow:hidden;
+  margin-bottom:14px;
+}
+.seg{height:100%;transition:width .3s ease;}
+.seg-mastered{background:#10b981;}
+.seg-learning{background:#f59e0b;}
+.seg-repair{background:#ef4444;}
+.seg-untested{background:#334155;}
+
+/* ── PROGRESS LEGEND ── */
+.legend-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:8px 12px;
+  font-size:11.5px;
+  color:#94a3b8;
+}
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.legend-dot{
+  width:9px;
+  height:9px;
+  border-radius:2px;
+  flex-shrink:0;
+}
+.dot-mastered{background:#10b981;}
+.dot-learning{background:#f59e0b;}
+.dot-repair{background:#ef4444;}
+.dot-untested{background:#475569;}
+
+/* ── QUIZ RUNNER SCREEN ── */
+.quiz-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+  padding-bottom:12px;
+  border-bottom:1px solid #1f2a44;
+}
+.q-progress-lbl{
+  font-size:13px;
+  color:#94a3b8;
+  font-weight:500;
+}
+.q-mode-badge{
+  font-size:11.5px;
+  padding:3px 10px;
+  border-radius:12px;
+  background:#1e293b;
+  color:#60a5fa;
+  border:1px solid #2563eb40;
+}
+.timer-badge{
+  font-size:13px;
+  color:#cbd5e1;
+  font-weight:600;
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+.timer-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:#10b981;
+  box-shadow:0 0 8px #10b981;
+}
+.timer-dot.slow{
+  background:#f59e0b;
+  box-shadow:0 0 8px #f59e0b;
+}
+
+.question-box{
+  text-align:center;
+  padding:28px 10px 22px;
+}
+.q-text-large{
+  font-size:62px;
+  font-weight:400;
+  line-height:1.15;
+  margin-bottom:10px;
+  color:#ffffff;
+}
+.q-text-medium{
+  font-size:32px;
+  font-weight:600;
+  line-height:1.25;
+  margin-bottom:8px;
+  color:#ffffff;
+}
+.q-text-thai{
+  font-size:24px;
+  font-weight:500;
+  color:#e2e8f0;
+  margin-bottom:8px;
+}
+.q-sub-text{
+  font-size:14px;
+  color:#94a3b8;
+  margin-bottom:12px;
+}
+.q-audio-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 12px;
+  border-radius:8px;
+  border:1px solid #23314f;
+  background:#162035;
+  color:#94a3b8;
+  font-size:12px;
+  cursor:pointer;
+  transition:all .15s;
+}
+.q-audio-btn:hover{color:#fff;border-color:#3b82f6;}
+
+/* ── CHOICES GRID ── */
+.choices-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:16px;
+}
+@media(max-width:540px){
+  .choices-grid{grid-template-columns:1fr;}
+}
+.choice-btn{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:18px 16px;
+  border-radius:12px;
+  border:1.5px solid #243250;
+  background:#162035;
+  color:#e2e8f0;
+  font-size:15px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .15s;
+  min-height:56px;
+  user-select:none;
+}
+.choice-btn:hover{
+  background:#1c2842;
+  border-color:#3b82f6;
+  color:#ffffff;
+}
+.choice-key{
+  position:absolute;
+  top:6px;
+  left:8px;
+  font-size:10px;
+  color:#64748b;
+  font-weight:600;
+}
+.choice-btn.correct{
+  background:#064e3b!important;
+  border-color:#10b981!important;
+  color:#6ee7b7!important;
+  box-shadow:0 0 14px rgba(16,185,129,0.3);
+}
+.choice-btn.wrong{
+  background:#4c0519!important;
+  border-color:#ef4444!important;
+  color:#fca5a5!important;
+}
+.choice-btn.reveal{
+  background:#131b2e!important;
+  border-color:#334155!important;
+  color:#64748b!important;
+}
+
+/* ── FEEDBACK & NEXT BUTTON ── */
+.feedback-box{
+  margin-top:16px;
+  padding:14px;
+  border-radius:12px;
+  text-align:center;
+  font-size:14px;
+}
+.fb-fast{background:#064e3b33;color:#34d399;border:1px solid #05966955;}
+.fb-slow{background:#78350f33;color:#fbbf24;border:1px solid #d9770655;}
+.fb-wrong{background:#88133733;color:#f87171;border:1px solid #dc262655;}
+.btn-next-q{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:100%;
+  margin-top:14px;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:#2563eb;
+  color:#ffffff;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .15s;
+}
+.btn-next-q:hover{background:#1d4ed8;}
+
+/* ── SUMMARY SCREEN ── */
+.summary-container{
+  text-align:center;
+  padding:16px 8px;
+}
+.score-circle{
+  font-size:52px;
+  font-weight:700;
+  color:#ffffff;
+  margin-bottom:6px;
+}
+.summary-sub{
+  font-size:14px;
+  color:#94a3b8;
+  margin-bottom:20px;
+}
+.summary-stats-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-bottom:24px;
+}
+.sum-stat-card{
+  background:#162035;
+  border:1px solid #23314f;
+  border-radius:12px;
+  padding:12px 8px;
+}
+.sum-stat-n{font-size:22px;font-weight:700;}
+.sum-stat-l{font-size:11px;color:#94a3b8;margin-top:4px;}
+
+.mistake-list{
+  text-align:left;
+  background:#0f172a;
+  border:1px solid #1e293b;
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:20px;
+  max-height:240px;
+  overflow-y:auto;
+}
+.mistake-title{
+  font-size:13px;
+  font-weight:600;
+  color:#f87171;
+  margin-bottom:10px;
+}
+.mistake-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:7px 0;
+  border-bottom:1px solid #1e293b;
+  font-size:13px;
+}
+.mistake-item:last-child{border-bottom:none;}
+
+/* ── VOCAB LIST / WORD MANAGER TAB ── */
+.vocab-tools{
+  display:flex;
+  gap:8px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+.tool-btn{
+  background:#162035;
+  border:1px solid #23314f;
+  color:#cbd5e1;
+  padding:8px 14px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all .15s;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.tool-btn:hover{background:#1e2a44;border-color:#33446b;color:#fff;}
+.tool-btn.primary{background:#2563eb;border-color:#3b82f6;color:#fff;}
+.search-input{
+  width:100%;
+  padding:10px 14px;
+  border-radius:10px;
+  background:#131b2e;
+  border:1px solid #23314f;
+  color:#f1f5f9;
+  font-size:13.5px;
+  margin-bottom:14px;
+  outline:none;
+}
+.search-input:focus{border-color:#3b82f6;}
+.word-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 14px;
+  background:#162035;
+  border:1px solid #23314f;
+  border-radius:10px;
+  margin-bottom:8px;
+}
+.word-jp{font-size:16px;font-weight:600;color:#fff;}
+.word-rd{font-size:12px;color:#94a3b8;margin-left:6px;}
+.word-th{font-size:13px;color:#cbd5e1;margin-top:2px;}
+.word-status-badge{
+  font-size:10.5px;
+  padding:2px 8px;
+  border-radius:6px;
+  font-weight:600;
+  margin-right:8px;
+}
+.badge-mastered{background:#064e3b;color:#34d399;border:1px solid #059669;}
+.badge-learning{background:#78350f;color:#fbbf24;border:1px solid #d97706;}
+.badge-repair{background:#881337;color:#f87171;border:1px solid #dc2626;}
+.badge-untested{background:#1e293b;color:#94a3b8;border:1px solid #334155;}
+
+/* ── MODALS ── */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.75);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
+  padding:16px;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  background:#131b2e;
+  border:1px solid #243250;
+  border-radius:16px;
+  max-width:520px;
+  width:100%;
+  padding:22px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);
+  max-height:90vh;
+  overflow-y:auto;
+}
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:16px;
+  font-size:17px;
+  font-weight:600;
+  color:#fff;
+}
+.modal-x{
+  background:transparent;
+  border:none;
+  color:#94a3b8;
+  font-size:20px;
+  cursor:pointer;
+  padding:4px;
+}
+.form-group{margin-bottom:12px;}
+.form-label{display:block;font-size:12px;color:#94a3b8;margin-bottom:5px;}
+.form-input,.form-textarea{
+  width:100%;
+  background:#162035;
+  border:1px solid #243250;
+  border-radius:8px;
+  padding:8px 12px;
+  color:#fff;
+  font-size:13.5px;
+  outline:none;
+}
+.form-input:focus,.form-textarea:focus{border-color:#3b82f6;}
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <!-- TOP BAR -->
+  <div class="top-header">
+    <div class="header-left-actions">
+      <a href="index.html" class="btn-back-home" title="กลับไปหน้าหลัก JLPT Flashcard">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        กลับ JLPT เดิม
+      </a>
+      <!-- CUSTOM DROPDOWN -->
+      <div class="custom-dropdown" id="level-dropdown">
+        <button type="button" class="custom-dropdown-btn" id="dropdown-btn" onclick="toggleDropdown(event)">
+          <span id="dropdown-label">📝 คำศัพท์ของฉัน</span>
+          <svg class="custom-dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="custom-dropdown-menu" id="dropdown-menu">
+          <div class="custom-dropdown-item selected" data-value="custom" onclick="selectDropdownItem('custom')">
+            <span>📝 คำศัพท์ของฉัน</span>
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="custom-dropdown-item" data-value="vocab5" onclick="selectDropdownItem('vocab5')">
+            <span>📗 N5 คำศัพท์</span>
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="custom-dropdown-item" data-value="n5" onclick="selectDropdownItem('n5')">
+            <span>📘 N5 คันจิ</span>
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="custom-dropdown-item" data-value="grammar5" onclick="selectDropdownItem('grammar5')">
+            <span>📙 N5 ไวยากรณ์</span>
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="custom-dropdown-item" data-value="scene" onclick="selectDropdownItem('scene')">
+            <span>🗣️ บทสนทนาจริง</span>
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="custom-dropdown-item" data-value="hiragana" onclick="selectDropdownItem('hiragana')">
+            <span>🌸 ฮิรางานะ 46 ตัว</span>
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="custom-dropdown-item" data-value="katakana" onclick="selectDropdownItem('katakana')">
+            <span>⚡ คาตาคานะ</span>
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="custom-dropdown-item" data-value="n4" onclick="selectDropdownItem('n4')">
+            <span>📗 N4</span>
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="custom-dropdown-item" data-value="n3" onclick="selectDropdownItem('n3')">
+            <span>📙 N3</span>
+            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-export" onclick="openBackup()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export
+    </button>
+  </div>
+
+  <!-- TITLE & SUBTITLE -->
+  <div class="header-intro">
+    <h1 class="main-title" id="page-title">ควิซคำศัพท์ญี่ปุ่น</h1>
+    <p class="main-sub" id="page-sub">เพิ่มศัพท์ของแต่ละบทที่กำลังเรียน แล้วสุ่มทดสอบความหมาย คำ และเสียงอ่านของคันจิ ระบบจับเวลาและจำว่าคำไหนยังติดให้</p>
+  </div>
+
+  <!-- PRIMARY SEGMENTED TABS -->
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="tab-test" onclick="setAppTab('test')">ทดสอบ</button>
+    <button class="nav-tab" id="tab-words" onclick="setAppTab('words')">คำศัพท์ของฉัน (<span id="my-words-count">10</span>)</button>
+  </div>
+
+  <!-- MAIN DYNAMIC CONTENT -->
+  <div id="main-content">
+    <!-- Rendered via JS -->
+  </div>
+</div>
+
+<!-- BACKUP MODAL -->
+<div class="modal-overlay" id="backup-modal" onclick="if(event.target===this)closeBackup()">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="สำรองและกู้คืนข้อมูล">
+    <div class="modal-head">
+      <span>💾 ส่งออก / สำรองข้อมูล</span>
+      <button class="modal-x" onclick="closeBackup()">✕</button>
+    </div>
+    <p style="font-size:13px;color:#94a3b8;margin-bottom:16px;">
+      สำรองคำศัพท์และสถิติความจำทั้งหมดเก็บไว้เป็นไฟล์ JSON สามารถกู้คืนได้ทุกเมื่อ
+    </p>
+    <div style="display:flex;gap:10px;margin-bottom:14px;">
+      <button class="btn-primary-cta" style="margin-top:0;" onclick="exportBackup()">⬇️ บันทึกไฟล์สำรอง</button>
+      <button class="btn-export" style="padding:12px 16px;" onclick="document.getElementById('import-file').click()">⬆️ นำเข้าไฟล์</button>
+      <input type="file" id="import-file" accept=".json,application/json" hidden onchange="importFile(this)">
+    </div>
+    <div id="backup-msg" style="font-size:12.5px;color:#38bdf8;"></div>
+  </div>
+</div>
+
+<!-- ADD WORD MODAL -->
+<div class="modal-overlay" id="add-word-modal" onclick="if(event.target===this)closeAddWordModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span id="add-modal-title">เพิ่มคำศัพท์ใหม่</span>
+      <button class="modal-x" onclick="closeAddWordModal()">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">คำศัพท์ภาษาญี่ปุ่น (คันจิ หรือ คานะ) *</label>
+      <input class="form-input" id="word-jp" placeholder="เช่น 学生 หรือ ほん">
+    </div>
+    <div class="form-group">
+      <label class="form-label">เสียงอ่านฮิรางานะ (ถ้ามีคันจิ)</label>
+      <input class="form-input" id="word-rd" placeholder="เช่น がくせい (เว้นว่างได้ถ้าคำเป็นคานะล้วน)">
+    </div>
+    <div class="form-group">
+      <label class="form-label">ความหมายภาษาไทย *</label>
+      <input class="form-input" id="word-th" placeholder="เช่น นักเรียน, นักศึกษา">
+    </div>
+    <div class="form-group">
+      <label class="form-label">บท / หมวดหมู่</label>
+      <input class="form-input" id="word-ch" placeholder="เช่น 1 หรือ ตัวอย่าง">
+    </div>
+    <button class="btn-primary-cta" onclick="saveCustomWord()">บันทึกคำศัพท์</button>
+  </div>
+</div>
+
+<!-- BULK IMPORT MODAL -->
+<div class="modal-overlay" id="bulk-modal" onclick="if(event.target===this)closeBulkModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span>วางหลายคำพร้อมกัน (Bulk Import)</span>
+      <button class="modal-x" onclick="closeBulkModal()">✕</button>
+    </div>
+    <p style="font-size:12.5px;color:#94a3b8;margin-bottom:10px;">
+      คัดลอกจาก Excel หรือ Google Sheets แล้ววางได้ทันที 1 บรรทัดต่อ 1 คำ คั่นด้วยแท็บหรือเครื่องหมาย <code>|</code><br>
+      รูปแบบ: <code>คำ [|] เสียงอ่าน [|] ความหมาย [|] บท</code>
+    </p>
+    <div class="form-group">
+      <label class="form-label">กำหนดบทเริ่มต้น (ถ้าบรรทัดนั้นไม่ได้ระบุบท)</label>
+      <input class="form-input" id="bulk-default-ch" placeholder="เช่น 1">
+    </div>
+    <div class="form-group">
+      <textarea class="form-textarea" id="bulk-input" rows="8" placeholder="学生 | がくせい | นักเรียน | 1&#10;ほん | หนังสือ&#10;食べる | たべる | กิน"></textarea>
+    </div>
+    <button class="btn-primary-cta" onclick="processBulkImport()">นำเข้าคำศัพท์</button>
+    <div id="bulk-result" style="font-size:12px;margin-top:10px;color:#38bdf8;"></div>
+  </div>
+</div>
+
+<!-- SCRIPTS: Core Data -->
+<script src="data/kanji.js"></script>
+<script src="data/vocab5.js"></script>
+<script src="data/kana.js"></script>
+<script src="data/grammar5.js"></script>
+<script src="data/scenes.js"></script>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  DATA & STORAGE
+// ══════════════════════════════════════════════════════════
+const DEFAULT_WORDS = [
+  { id: 'ex_1', jp: '学生', rd: 'がくせい', th: 'นักเรียน, นักศึกษา', ch: 'ตัวอย่าง', ex: true },
+  { id: 'ex_2', jp: '本', rd: 'ほん', th: 'หนังสือ', ch: 'ตัวอย่าง', ex: true },
+  { id: 'ex_3', jp: '先生', rd: 'せんせい', th: 'ครู, อาจารย์', ch: 'ตัวอย่าง', ex: true },
+  { id: 'ex_4', jp: '日本語', rd: 'にほんご', th: 'ภาษาญี่ปุ่น', ch: 'ตัวอย่าง', ex: true },
+  { id: 'ex_5', jp: '友達', rd: 'ともだち', th: 'เพื่อน', ch: 'ตัวอย่าง', ex: true },
+  { id: 'ex_6', jp: '学校', rd: 'がっこう', th: 'โรงเรียน', ch: 'ตัวอย่าง', ex: true },
+  { id: 'ex_7', jp: '食べる', rd: 'たべる', th: 'กิน, รับประทาน', ch: 'ตัวอย่าง', ex: true },
+  { id: 'ex_8', jp: '行く', rd: 'いく', th: 'ไป', ch: 'ตัวอย่าง', ex: true },
+  { id: 'ex_9', jp: '見る', rd: 'みる', th: 'ดู, มอง', ch: 'ตัวอย่าง', ex: true },
+  { id: 'ex_10', jp: '車', rd: 'くるま', th: 'รถยนต์', ch: 'ตัวอย่าง', ex: true },
+];
+
+function loadLS(k, def){
+  try {
+    const v = localStorage.getItem(k);
+    return v != null ? JSON.parse(v) : def;
+  } catch(e) { return def; }
+}
+function saveLS(k, v){
+  try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){}
+}
+
+function getCustomWords(){
+  const w = loadLS('jlpt_custom_words', null);
+  if(w === null){
+    saveLS('jlpt_custom_words', DEFAULT_WORDS);
+    return DEFAULT_WORDS;
+  }
+  return w;
+}
+function saveCustomWords(words){
+  saveLS('jlpt_custom_words', words);
+  updateWordsTabBadge();
+}
+
+function getMasteryStore(){
+  return loadLS('jlpt_mastery_v2', {});
+}
+function saveMasteryStore(m){
+  saveLS('jlpt_mastery_v2', m);
+}
+
+// ══════════════════════════════════════════════════════════
+//  APP STATE
+// ══════════════════════════════════════════════════════════
+let currentLevel = 'custom';
+let currentTab = 'test'; // 'test' | 'words'
+let currentSubCat = 'ทุกบท'; // 'ทุกบท' | 'ตัวอย่าง' | 'repair' | 'untested' | specific chapter
+let questionDirection = 'mixed'; // 'mixed' | 'm1' (jp->th) | 'm2' (th->jp) | 'm3' (kanji->rd)
+let questionCountMode = 10; // 10 | 20 | 'all'
+
+// Quiz session state
+let quizDeck = [];
+let quizIdx = 0;
+let quizScore = 0;
+let quizFastCount = 0;
+let quizSlowCount = 0;
+let quizWrongCount = 0;
+let quizMistakes = [];
+let quizTimerId = null;
+let qStartTime = 0;
+let currentElapsedMs = 0;
+let quizAnswered = false;
+
+// ══════════════════════════════════════════════════════════
+//  MASTERY LOGIC (แม่น / นิ่ง / ซ่อม / ยังไม่ทดสอบ)
+// ══════════════════════════════════════════════════════════
+function itemKey(item){
+  return (item.id || item.jp || item.w || item.k || item.c || item.p || '') + '_' + (item.rd || item.r || '');
+}
+
+function getMasteryStatus(item){
+  const store = getMasteryStore();
+  const k = itemKey(item);
+  const m = store[k];
+  if(!m || !m.last) return 'untested';
+  if(m.last === 'w') return 'repair';
+  if(m.st >= 2) return 'mastered';
+  return 'learning'; // st === 1
+}
+
+function updateItemMastery(item, isCorrect, elapsedMs){
+  const store = getMasteryStore();
+  const k = itemKey(item);
+  const m = store[k] || { ok: 0, no: 0, st: 0, last: '', tm: 0 };
+  if(isCorrect){
+    m.ok = (m.ok || 0) + 1;
+    m.st = (m.st || 0) + 1;
+    m.last = 'c';
+  } else {
+    m.no = (m.no || 0) + 1;
+    m.st = 0;
+    m.last = 'w';
+  }
+  m.tm = elapsedMs;
+  store[k] = m;
+  saveMasteryStore(store);
+}
+
+// ══════════════════════════════════════════════════════════
+//  DATA RESOLVER
+// ══════════════════════════════════════════════════════════
+function getPoolForLevel(level){
+  if(level === 'custom'){
+    return getCustomWords().map(w => ({
+      jp: w.jp,
+      rd: w.rd || '',
+      th: w.th,
+      ch: w.ch || 'ทั่วไป',
+      ex: !!w.ex,
+      id: w.id
+    }));
+  }
+  if(level === 'vocab5'){
+    return vocab5.map(v => ({
+      jp: v.k || v.w,
+      rd: v.w || v.r || '',
+      th: v.th,
+      ch: v.cat || 'N5',
+      id: v.w
+    }));
+  }
+  if(level === 'n5'){
+    return n5.map(k => ({
+      jp: k.k,
+      rd: k.on ? `${k.on} / ${k.kun}` : '',
+      th: k.th,
+      ch: k.cat || 'N5 คันจิ',
+      id: k.k
+    }));
+  }
+  if(level === 'grammar5'){
+    return grammar5.map(g => ({
+      jp: g.p,
+      rd: g.r || '',
+      th: g.th,
+      ch: g.cat || 'ไวยากรณ์',
+      id: g.p
+    }));
+  }
+  if(level === 'scene'){
+    return scenes.map((s,i) => ({
+      jp: s.j,
+      rd: s.k || '',
+      th: s.th,
+      ch: s.cat || 'สถานการณ์',
+      id: 'sc_'+i
+    }));
+  }
+  if(level === 'hiragana'){
+    return hiragana.map(h => ({
+      jp: h.c,
+      rd: h.r,
+      th: `เสียงอ่าน ${h.r}`,
+      ch: h.row || 'ฮิรางานะ',
+      id: 'h_'+h.c
+    }));
+  }
+  if(level === 'katakana'){
+    return katakana.map(k => ({
+      jp: k.c,
+      rd: k.r,
+      th: `เสียงอ่าน ${k.r}`,
+      ch: k.row || 'คาตาคานะ',
+      id: 'k_'+k.c
+    }));
+  }
+  if(level === 'n4'){
+    return n4.map(k => ({
+      jp: k.k,
+      rd: k.on ? `${k.on} / ${k.kun}` : '',
+      th: k.th,
+      ch: k.cat || 'N4',
+      id: k.k
+    }));
+  }
+  if(level === 'n3'){
+    return n3.map(k => ({
+      jp: k.k,
+      rd: k.on ? `${k.on} / ${k.kun}` : '',
+      th: k.th,
+      ch: k.cat || 'N3',
+      id: k.k
+    }));
+  }
+  return [];
+}
+
+// ══════════════════════════════════════════════════════════
+//  CUSTOM DROPDOWN LOGIC
+// ══════════════════════════════════════════════════════════
+function toggleDropdown(e){
+  if(e) e.stopPropagation();
+  const btn = document.getElementById('dropdown-btn');
+  const menu = document.getElementById('dropdown-menu');
+  const isOpen = menu.classList.contains('show');
+  if(isOpen){
+    closeDropdown();
+  } else {
+    btn.classList.add('open');
+    menu.classList.add('show');
+  }
+}
+
+function closeDropdown(){
+  const btn = document.getElementById('dropdown-btn');
+  const menu = document.getElementById('dropdown-menu');
+  if(btn) btn.classList.remove('open');
+  if(menu) menu.classList.remove('show');
+}
+
+function selectDropdownItem(val){
+  closeDropdown();
+  switchLevel(val);
+}
+
+document.addEventListener('click', (e) => {
+  const dd = document.getElementById('level-dropdown');
+  if(dd && !dd.contains(e.target)){
+    closeDropdown();
+  }
+});
+
+// ══════════════════════════════════════════════════════════
+//  UI NAVIGATION
+// ══════════════════════════════════════════════════════════
+function switchLevel(lv){
+  currentLevel = lv;
+  currentSubCat = 'ทุกบท';
+  
+  // Sync custom dropdown items & trigger button label
+  const items = document.querySelectorAll('.custom-dropdown-item');
+  items.forEach(it => {
+    if(it.dataset.value === lv){
+      it.classList.add('selected');
+      const labelSpan = it.querySelector('span');
+      if(labelSpan){
+        document.getElementById('dropdown-label').textContent = labelSpan.textContent;
+      }
+    } else {
+      it.classList.remove('selected');
+    }
+  });
+  
+  const titleEl = document.getElementById('page-title');
+  const subEl = document.getElementById('page-sub');
+  const wordsTab = document.getElementById('tab-words');
+  
+  if(lv === 'custom'){
+    titleEl.textContent = 'ควิซคำศัพท์ญี่ปุ่น';
+    subEl.textContent = 'เพิ่มศัพท์ของแต่ละบทที่กำลังเรียน แล้วสุ่มทดสอบความหมาย คำ และเสียงอ่านของคันจิ ระบบจับเวลาและจำว่าคำไหนยังติดให้';
+    wordsTab.textContent = `คำศัพท์ของฉัน (${getCustomWords().length})`;
+  } else {
+    const mapName = {
+      vocab5: 'ควิซคำศัพท์ JLPT N5',
+      n5: 'ควิซคันจิ JLPT N5',
+      grammar5: 'ควิซไวยากรณ์ JLPT N5',
+      scene: 'ควิซบทสนทนาสถานการณ์จริง',
+      hiragana: 'ควิซฮิรางานะ 46 ตัว',
+      katakana: 'ควิซคาตาคานะ',
+      n4: 'ควิซ JLPT N4',
+      n3: 'ควิซ JLPT N3'
+    };
+    titleEl.textContent = mapName[lv] || 'ควิซภาษาญี่ปุ่น';
+    subEl.textContent = 'สุ่มทดสอบความหมาย เสียงอ่าน และการจำคำศัพท์ พร้อมระบบจับเวลาและจำคำที่ยังติด';
+    wordsTab.textContent = `คลังคำศัพท์ (${getPoolForLevel(lv).length})`;
+  }
+
+  renderMain();
+}
+
+function setAppTab(tab){
+  currentTab = tab;
+  document.getElementById('tab-test').className = 'nav-tab' + (tab === 'test' ? ' active' : '');
+  document.getElementById('tab-words').className = 'nav-tab' + (tab === 'words' ? ' active' : '');
+  renderMain();
+}
+
+function updateWordsTabBadge(){
+  const wordsTab = document.getElementById('tab-words');
+  if(!wordsTab) return;
+  if(currentLevel === 'custom'){
+    wordsTab.innerHTML = `คำศัพท์ของฉัน (<span id="my-words-count">${getCustomWords().length}</span>)`;
+  } else {
+    wordsTab.textContent = `คลังคำศัพท์ (${getPoolForLevel(currentLevel).length})`;
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  RENDER MAIN VIEW
+// ══════════════════════════════════════════════════════════
+function renderMain(){
+  const container = document.getElementById('main-content');
+  if(currentTab === 'test'){
+    renderTestHome(container);
+  } else {
+    renderWordsManager(container);
+  }
+}
+
+// ── TEST HOME (Exact Look of the User's Screenshot) ──
+function renderTestHome(container){
+  const pool = getPoolForLevel(currentLevel);
+  const totalCount = pool.length;
+
+  let cMastered = 0, cLearning = 0, cRepair = 0, cUntested = 0;
+  pool.forEach(item => {
+    const st = getMasteryStatus(item);
+    if(st === 'mastered') cMastered++;
+    else if(st === 'learning') cLearning++;
+    else if(st === 'repair') cRepair++;
+    else cUntested++;
+  });
+
+  const chapters = [...new Set(pool.map(p => p.ch).filter(Boolean))];
+
+  let filteredPool = pool;
+  let chDisplayLabel = 'ทุกบท';
+  if(currentSubCat === 'ทุกบท'){
+    filteredPool = pool;
+    chDisplayLabel = currentLevel === 'custom' ? (chapters[0] || 'ทุกบท') : 'ทุกบท';
+  } else if(currentSubCat === 'repair'){
+    filteredPool = pool.filter(p => getMasteryStatus(p) === 'repair');
+    chDisplayLabel = 'ที่ยังติด';
+  } else if(currentSubCat === 'untested'){
+    filteredPool = pool.filter(p => getMasteryStatus(p) === 'untested');
+    chDisplayLabel = 'ยังไม่เคยทดสอบ';
+  } else {
+    filteredPool = pool.filter(p => p.ch === currentSubCat);
+    chDisplayLabel = currentSubCat;
+  }
+
+  let fMastered = 0, fLearning = 0, fRepair = 0, fUntested = 0;
+  filteredPool.forEach(item => {
+    const st = getMasteryStatus(item);
+    if(st === 'mastered') fMastered++;
+    else if(st === 'learning') fLearning++;
+    else if(st === 'repair') fRepair++;
+    else fUntested++;
+  });
+
+  const fTotal = filteredPool.length || 1;
+  const pMas = (fMastered / fTotal) * 100;
+  const pLea = (fLearning / fTotal) * 100;
+  const pRep = (fRepair / fTotal) * 100;
+  const pUnt = (fUntested / fTotal) * 100;
+
+  let chaptersChipsHtml = '';
+  if(chapters.length > 0){
+    chaptersChipsHtml = chapters.map(ch => {
+      const cnt = pool.filter(p => p.ch === ch).length;
+      const isAct = currentSubCat === ch;
+      return `<button class="chip${isAct ? ' active' : ''}" onclick="selectSubCat('${ch}')">${ch} (${cnt})</button>`;
+    }).join('');
+  }
+
+  container.innerHTML = `
+    <!-- CARD 1: TEST SETUP -->
+    <div class="quiz-card">
+      <!-- ชุดคำที่จะทดสอบ -->
+      <div class="section-group">
+        <div class="section-label">ชุดคำที่จะทดสอบ</div>
+        <div class="chips-row">
+          <button class="chip${currentSubCat==='ทุกบท'?' active':''}" onclick="selectSubCat('ทุกบท')">ทุกบท (${totalCount})</button>
+          ${chaptersChipsHtml}
+          <button class="chip${currentSubCat==='repair'?' active':''}" onclick="selectSubCat('repair')">ที่ยังติด (${cRepair})</button>
+          <button class="chip${currentSubCat==='untested'?' active':''}" onclick="selectSubCat('untested')">ยังไม่เคยทดสอบ (${cUntested})</button>
+        </div>
+      </div>
+
+      <!-- รูปแบบคำถาม -->
+      <div class="section-group">
+        <div class="section-label">รูปแบบคำถาม</div>
+        <div class="chips-row">
+          <button class="chip${questionDirection==='mixed'?' active':''}" onclick="selectDirection('mixed')">ผสม</button>
+          <button class="chip${questionDirection==='m1'?' active':''}" onclick="selectDirection('m1')">คำ → ความหมาย</button>
+          <button class="chip${questionDirection==='m2'?' active':''}" onclick="selectDirection('m2')">ความหมาย → คำ</button>
+          <button class="chip${questionDirection==='m3'?' active':''}" onclick="selectDirection('m3')">คันจิ → เสียงอ่าน</button>
+        </div>
+      </div>
+
+      <!-- จำนวนข้อ -->
+      <div class="section-group">
+        <div class="section-label">จำนวนข้อ</div>
+        <div class="chips-row">
+          <button class="chip${questionCountMode===10?' active':''}" onclick="selectCountMode(10)">10 ข้อ</button>
+          <button class="chip${questionCountMode===20?' active':''}" onclick="selectCountMode(20)">20 ข้อ</button>
+          <button class="chip${questionCountMode==='all'?' active':''}" onclick="selectCountMode('all')">ทั้งหมด (${filteredPool.length})</button>
+        </div>
+      </div>
+
+      <!-- START BUTTON -->
+      <button class="btn-primary-cta" onclick="startQuiz()">
+        เริ่มทดสอบ
+      </button>
+
+      <!-- CAPTION -->
+      <div class="btn-caption">
+        ระบบเลือกคำที่ยังติดและคำที่ยังไม่เคยทดสอบก่อน ตอบถูกภายใน 4 วินาทีนับว่าเร็ว (ค่านี่ตั้งเองเพื่อวัดว่าอ่านออกทันทีหรือยัง)
+      </div>
+    </div>
+
+    <!-- CARD 2: PROGRESS / MASTERY -->
+    <div class="quiz-card">
+      <div class="progress-card-title">ความคืบหน้าแต่ละบท</div>
+      <div class="progress-summary-row">
+        <span class="progress-ch-name">${chDisplayLabel} · ${filteredPool.length} คำ</span>
+        <span class="progress-stats-txt">
+          แม่น ${fMastered} · นิ่ง ${fLearning} · ซ่อม ${fRepair} · ยังไม่ทดสอบ ${fUntested}
+        </span>
+      </div>
+      
+      <!-- MULTI-SEGMENT PROGRESS BAR -->
+      <div class="multi-seg-bar">
+        <div class="seg seg-mastered" style="width: ${pMas}%;"></div>
+        <div class="seg seg-learning" style="width: ${pLea}%;"></div>
+        <div class="seg seg-repair" style="width: ${pRep}%;"></div>
+        <div class="seg seg-untested" style="width: ${pUnt}%;"></div>
+      </div>
+
+      <!-- LEGEND -->
+      <div class="legend-grid">
+        <div class="legend-item">
+          <span class="legend-dot dot-mastered"></span>
+          <span>แม่นแล้ว: ถูกติดกัน 2 ครั้งขึ้นไป</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot dot-learning"></span>
+          <span>กำลังนิ่ง: ถูกล่าสุด 1 ครั้ง</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot dot-repair"></span>
+          <span>ต้องซ่อม: ล่าสุดตอบผิด</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot dot-untested"></span>
+          <span>ยังไม่ทดสอบ</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function selectSubCat(cat){
+  currentSubCat = cat;
+  renderTestHome(document.getElementById('main-content'));
+}
+function selectDirection(dir){
+  questionDirection = dir;
+  renderTestHome(document.getElementById('main-content'));
+}
+function selectCountMode(c){
+  questionCountMode = c;
+  renderTestHome(document.getElementById('main-content'));
+}
+
+// ══════════════════════════════════════════════════════════
+//  QUIZ RUNNER ENGINE
+// ══════════════════════════════════════════════════════════
+function shuffleArr(a){
+  const b = [...a];
+  for(let i = b.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [b[i], b[j]] = [b[j], b[i]];
+  }
+  return b;
+}
+
+function startQuiz(){
+  const pool = getPoolForLevel(currentLevel);
+  if(pool.length < 2){
+    alert('ต้องมีคำศัพท์อย่างน้อย 2 คำเพื่อเริ่มทำแบบทดสอบ');
+    return;
+  }
+
+  let subPool = pool;
+  if(currentSubCat === 'repair'){
+    subPool = pool.filter(p => getMasteryStatus(p) === 'repair');
+    if(subPool.length === 0){
+      alert('ไม่มีคำที่ต้องซ่อมในขณะนี้! (ยอดเยี่ยมมาก)');
+      return;
+    }
+  } else if(currentSubCat === 'untested'){
+    subPool = pool.filter(p => getMasteryStatus(p) === 'untested');
+    if(subPool.length === 0){
+      alert('ทดสอบครบทุกคำแล้ว!');
+      return;
+    }
+  } else if(currentSubCat !== 'ทุกบท'){
+    subPool = pool.filter(p => p.ch === currentSubCat);
+  }
+
+  const prioritized = [...subPool].map(item => {
+    const st = getMasteryStatus(item);
+    let baseRank = 3;
+    if(st === 'repair') baseRank = 0;
+    else if(st === 'untested') baseRank = 1;
+    else if(st === 'learning') baseRank = 2;
+    return { item, weight: baseRank + Math.random() * 1.5 };
+  });
+
+  prioritized.sort((a,b) => a.weight - b.weight);
+
+  let limit = prioritized.length;
+  if(questionCountMode === 10) limit = Math.min(10, prioritized.length);
+  else if(questionCountMode === 20) limit = Math.min(20, prioritized.length);
+
+  quizDeck = prioritized.slice(0, limit).map(p => p.item);
+  quizIdx = 0;
+  quizScore = 0;
+  quizFastCount = 0;
+  quizSlowCount = 0;
+  quizWrongCount = 0;
+  quizMistakes = [];
+
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  clearInterval(quizTimerId);
+  quizAnswered = false;
+
+  if(quizIdx >= quizDeck.length){
+    renderQuizSummary();
+    return;
+  }
+
+  const item = quizDeck[quizIdx];
+  const allPool = getPoolForLevel(currentLevel);
+
+  let dir = questionDirection;
+  if(dir === 'mixed'){
+    const hasKanji = !!(item.jp && item.rd && item.jp !== item.rd);
+    const availableDirs = ['m1', 'm2'];
+    if(hasKanji) availableDirs.push('m3');
+    dir = availableDirs[Math.floor(Math.random() * availableDirs.length)];
+  }
+
+  let questionPrompt = '';
+  let questionSub = '';
+  let correctAnswer = '';
+  let dirBadge = 'คำ → ความหมาย';
+
+  if(dir === 'm2'){
+    dirBadge = 'ความหมาย → คำ';
+    questionPrompt = `<div class="q-text-thai">${item.th}</div>`;
+    correctAnswer = item.jp;
+  } else if(dir === 'm3' && item.rd){
+    dirBadge = 'คันจิ → เสียงอ่าน';
+    questionPrompt = `<div class="q-text-large">${item.jp}</div>`;
+    correctAnswer = item.rd;
+  } else {
+    dirBadge = 'คำ → ความหมาย';
+    const isBig = item.jp.length <= 4;
+    questionPrompt = `<div class="${isBig ? 'q-text-large' : 'q-text-medium'}">${item.jp}</div>`;
+    if(item.rd && item.rd !== item.jp){
+      questionSub = `<div class="q-sub-text">（${item.rd}）</div>`;
+    }
+    correctAnswer = item.th;
+  }
+
+  const others = allPool.filter(o => itemKey(o) !== itemKey(item));
+  others.sort((a,b) => {
+    const wa = (a.ch === item.ch ? 0 : 2) + Math.random();
+    const wb = (b.ch === item.ch ? 0 : 2) + Math.random();
+    return wa - wb;
+  });
+
+  const wrongChoices = [];
+  for(let candidate of others){
+    let val = '';
+    if(dir === 'm2') val = candidate.jp;
+    else if(dir === 'm3') val = candidate.rd || candidate.jp;
+    else val = candidate.th;
+
+    if(val && val !== correctAnswer && !wrongChoices.includes(val)){
+      wrongChoices.push(val);
+      if(wrongChoices.length >= 3) break;
+    }
+  }
+
+  const choices = shuffleArr([correctAnswer, ...wrongChoices]);
+
+  const container = document.getElementById('main-content');
+  container.innerHTML = `
+    <div class="quiz-card">
+      <!-- HEADER -->
+      <div class="quiz-header">
+        <span class="q-progress-lbl">ข้อ ${quizIdx + 1} / ${quizDeck.length}</span>
+        <span class="q-mode-badge">${dirBadge}</span>
+        <div class="timer-badge">
+          <span class="timer-dot" id="live-timer-dot"></span>
+          <span id="live-timer-txt">0.0s</span>
+        </div>
+      </div>
+
+      <!-- QUESTION DISPLAY -->
+      <div class="question-box">
+        ${questionPrompt}
+        ${questionSub}
+        <button class="q-audio-btn" onclick="speakJp('${item.jp}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          ฟังเสียง
+        </button>
+      </div>
+
+      <!-- CHOICES -->
+      <div class="choices-grid" id="choices-grid">
+        ${choices.map((c, i) => `
+          <button class="choice-btn" id="choice-${i}" onclick="submitQuizAnswer(${i}, '${escapeQuotes(c)}', '${escapeQuotes(correctAnswer)}')">
+            <span class="choice-key">[${i+1}]</span>
+            <span>${c}</span>
+          </button>
+        `).join('')}
+      </div>
+
+      <!-- FEEDBACK AREA -->
+      <div id="quiz-feedback-wrap"></div>
+    </div>
+  `;
+
+  qStartTime = Date.now();
+  currentElapsedMs = 0;
+  quizTimerId = setInterval(() => {
+    currentElapsedMs = Date.now() - qStartTime;
+    const sec = (currentElapsedMs / 1000).toFixed(1);
+    const txtEl = document.getElementById('live-timer-txt');
+    const dotEl = document.getElementById('live-timer-dot');
+    if(txtEl) txtEl.textContent = `${sec}s`;
+    if(dotEl && currentElapsedMs > 4000){
+      dotEl.className = 'timer-dot slow';
+    }
+  }, 100);
+
+  setTimeout(() => speakJp(item.jp), 200);
+}
+
+function escapeQuotes(str){
+  return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+function submitQuizAnswer(chosenIdx, chosenVal, correctVal){
+  if(quizAnswered) return;
+  quizAnswered = true;
+  clearInterval(quizTimerId);
+  const elapsedMs = Date.now() - qStartTime;
+  const isCorrect = (chosenVal === correctVal);
+  const isFast = isCorrect && (elapsedMs <= 4000);
+  const item = quizDeck[quizIdx];
+
+  updateItemMastery(item, isCorrect, elapsedMs);
+
+  document.querySelectorAll('.choice-btn').forEach((btn, idx) => {
+    const textSpan = btn.querySelector('span:last-child');
+    const val = textSpan ? textSpan.textContent.trim() : btn.textContent.trim();
+    if(val === correctVal){
+      btn.className = 'choice-btn correct';
+    } else if(idx === chosenIdx && !isCorrect){
+      btn.className = 'choice-btn wrong';
+    } else {
+      btn.className = 'choice-btn reveal';
+    }
+    btn.onclick = null;
+  });
+
+  const fbWrap = document.getElementById('quiz-feedback-wrap');
+
+  if(isCorrect){
+    quizScore++;
+    if(isFast){
+      quizFastCount++;
+      fbWrap.innerHTML = `
+        <div class="feedback-box fb-fast">
+          ⚡ <b>แม่นยำและรวดเร็ว!</b> (${(elapsedMs/1000).toFixed(1)} วิ)
+        </div>
+      `;
+      setTimeout(() => {
+        quizIdx++;
+        renderQuizQuestion();
+      }, 800);
+      return;
+    } else {
+      quizSlowCount++;
+      fbWrap.innerHTML = `
+        <div class="feedback-box fb-slow">
+          ✓ <b>ถูกต้อง</b> แต่ใช้เวลา ${(elapsedMs/1000).toFixed(1)} วินาที (ช้ากว่า 4 วิ)
+          <div style="font-size:12px;margin-top:4px;color:#cbd5e1;">${item.jp} ${item.rd ? `(${item.rd})` : ''} = ${item.th}</div>
+        </div>
+        <button class="btn-next-q" onclick="advanceNext()">ถัดไป →</button>
+      `;
+    }
+  } else {
+    quizWrongCount++;
+    quizMistakes.push({ item, elapsedMs, correctVal });
+    fbWrap.innerHTML = `
+      <div class="feedback-box fb-wrong">
+        ✕ <b>คำตอบที่ถูกต้องคือ: ${correctVal}</b>
+        <div style="font-size:12px;margin-top:4px;color:#fca5a5;">${item.jp} ${item.rd ? `(${item.rd})` : ''} = ${item.th}</div>
+      </div>
+      <button class="btn-next-q" onclick="advanceNext()">ถัดไป →</button>
+    `;
+  }
+}
+
+function advanceNext(){
+  quizIdx++;
+  renderQuizQuestion();
+}
+
+document.addEventListener('keydown', (e) => {
+  if(!quizDeck || quizDeck.length === 0 || quizIdx >= quizDeck.length) return;
+  if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  if(['1','2','3','4'].includes(e.key)){
+    const idx = parseInt(e.key) - 1;
+    const btn = document.getElementById(`choice-${idx}`);
+    if(btn && !quizAnswered){
+      btn.click();
+    }
+  } else if(e.key === 'Enter' || e.key === ' '){
+    if(quizAnswered){
+      const nextBtn = document.querySelector('.btn-next-q');
+      if(nextBtn) nextBtn.click();
+    }
+  }
+});
+
+// ══════════════════════════════════════════════════════════
+//  QUIZ SUMMARY
+// ══════════════════════════════════════════════════════════
+function renderQuizSummary(){
+  const container = document.getElementById('main-content');
+  const total = quizDeck.length;
+  const pct = Math.round((quizScore / total) * 100);
+
+  let mistakesHtml = '';
+  if(quizMistakes.length > 0){
+    mistakesHtml = `
+      <div class="mistake-list">
+        <div class="mistake-title">📌 คำที่ควรทบทวน (${quizMistakes.length} คำ)</div>
+        ${quizMistakes.map(m => `
+          <div class="mistake-item">
+            <div>
+              <b>${m.item.jp}</b> ${m.item.rd ? `<span style="color:#94a3b8">(${m.item.rd})</span>` : ''}
+              <div style="font-size:12px;color:#38bdf8">${m.item.th}</div>
+            </div>
+            <button class="q-audio-btn" onclick="speakJp('${m.item.jp}')">🔊</button>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  container.innerHTML = `
+    <div class="quiz-card summary-container">
+      <div class="score-circle">${pct}%</div>
+      <div class="summary-sub">ตอบถูก ${quizScore} จากทั้งหมด ${total} ข้อ</div>
+
+      <div class="summary-stats-grid">
+        <div class="sum-stat-card">
+          <div class="sum-stat-n" style="color:#10b981;">${quizFastCount}</div>
+          <div class="sum-stat-l">แม่นและเร็ว (&le; 4วิ)</div>
+        </div>
+        <div class="sum-stat-card">
+          <div class="sum-stat-n" style="color:#f59e0b;">${quizSlowCount}</div>
+          <div class="sum-stat-l">ตอบช้า (&gt; 4วิ)</div>
+        </div>
+        <div class="sum-stat-card">
+          <div class="sum-stat-n" style="color:#ef4444;">${quizWrongCount}</div>
+          <div class="sum-stat-l">ต้องซ่อม (ตอบผิด)</div>
+        </div>
+      </div>
+
+      ${mistakesHtml}
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        ${quizMistakes.length > 0 ? `
+          <button class="btn-primary-cta" style="background:#dc2626;" onclick="retryMistakes()">
+            ทวนเฉพาะข้อที่ผิด (${quizMistakes.length})
+          </button>
+        ` : ''}
+        <button class="btn-primary-cta" onclick="startQuiz()">
+          ทดสอบชุดนี้อีกครั้ง
+        </button>
+        <button class="btn-export" style="justify-content:center;padding:12px;" onclick="renderMain()">
+          กลับหน้าหลัก
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function retryMistakes(){
+  quizDeck = quizMistakes.map(m => m.item);
+  quizIdx = 0;
+  quizScore = 0;
+  quizFastCount = 0;
+  quizSlowCount = 0;
+  quizWrongCount = 0;
+  quizMistakes = [];
+  renderQuizQuestion();
+}
+
+// ══════════════════════════════════════════════════════════
+//  VOCABULARY MANAGER (คำศัพท์ของฉัน / คลังคำศัพท์)
+// ══════════════════════════════════════════════════════════
+function renderWordsManager(container){
+  const isCustom = (currentLevel === 'custom');
+  const pool = getPoolForLevel(currentLevel);
+
+  container.innerHTML = `
+    <div class="quiz-card">
+      <div class="vocab-tools">
+        ${isCustom ? `
+          <button class="tool-btn primary" onclick="openAddWordModal()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            เพิ่มคำศัพท์
+          </button>
+          <button class="tool-btn" onclick="openBulkModal()">
+            📋 วางหลายคำ (Bulk)
+          </button>
+          <button class="tool-btn" style="color:#f87171;" onclick="clearSampleWords()">
+            🗑️ ลบคำตัวอย่าง
+          </button>
+        ` : `
+          <button class="tool-btn primary" onclick="setAppTab('test')">
+            🎯 เริ่มทดสอบระดับนี้
+          </button>
+        `}
+      </div>
+
+      <input class="search-input" id="word-search" placeholder="🔍 ค้นหาคำศัพท์, คำอ่าน, ความหมาย หรือบท..." oninput="filterWordList(this.value)">
+
+      <div id="word-list-container">
+        <!-- Word items rendered via JS -->
+      </div>
+    </div>
+  `;
+
+  renderWordItems(pool);
+}
+
+function renderWordItems(words){
+  const container = document.getElementById('word-list-container');
+  if(!container) return;
+
+  if(words.length === 0){
+    container.innerHTML = `
+      <div style="text-align:center;padding:30px;color:#64748b;font-size:13.5px;">
+        ยังไม่มีคำศัพท์ในรายการ กดปุ่ม "เพิ่มคำศัพท์" หรือ "วางหลายคำ" เพื่อเริ่มต้น
+      </div>
+    `;
+    return;
+  }
+
+  const isCustom = (currentLevel === 'custom');
+
+  container.innerHTML = words.map(item => {
+    const st = getMasteryStatus(item);
+    let badgeClass = 'badge-untested';
+    let badgeTxt = 'ยังไม่ทดสอบ';
+    if(st === 'mastered'){ badgeClass = 'badge-mastered'; badgeTxt = 'แม่นแล้ว'; }
+    else if(st === 'learning'){ badgeClass = 'badge-learning'; badgeTxt = 'กำลังนิ่ง'; }
+    else if(st === 'repair'){ badgeClass = 'badge-repair'; badgeTxt = 'ต้องซ่อม'; }
+
+    return `
+      <div class="word-row">
+        <div>
+          <div>
+            <span class="word-status-badge ${badgeClass}">${badgeTxt}</span>
+            <span class="word-jp">${item.jp}</span>
+            ${item.rd ? `<span class="word-rd">（${item.rd}）</span>` : ''}
+            ${item.ch ? `<span style="font-size:11px;color:#64748b;margin-left:6px;">[${item.ch}]</span>` : ''}
+          </div>
+          <div class="word-th">${item.th}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button class="q-audio-btn" onclick="speakJp('${item.jp}')">🔊</button>
+          ${isCustom ? `
+            <button class="q-audio-btn" style="color:#f87171;" onclick="deleteCustomWord('${item.id || item.jp}')">✕</button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterWordList(q){
+  const pool = getPoolForLevel(currentLevel);
+  const query = q.trim().toLowerCase();
+  if(!query){
+    renderWordItems(pool);
+    return;
+  }
+  const filtered = pool.filter(w => 
+    w.jp.toLowerCase().includes(query) ||
+    (w.rd && w.rd.toLowerCase().includes(query)) ||
+    w.th.toLowerCase().includes(query) ||
+    (w.ch && w.ch.toLowerCase().includes(query))
+  );
+  renderWordItems(filtered);
+}
+
+// ── CUSTOM WORD ACTIONS ──
+function openAddWordModal(){
+  document.getElementById('word-jp').value = '';
+  document.getElementById('word-rd').value = '';
+  document.getElementById('word-th').value = '';
+  document.getElementById('word-ch').value = '';
+  document.getElementById('add-word-modal').classList.add('open');
+}
+function closeAddWordModal(){
+  document.getElementById('add-word-modal').classList.remove('open');
+}
+
+function saveCustomWord(){
+  const jp = document.getElementById('word-jp').value.trim();
+  const rd = document.getElementById('word-rd').value.trim();
+  const th = document.getElementById('word-th').value.trim();
+  const ch = document.getElementById('word-ch').value.trim() || 'ทั่วไป';
+
+  if(!jp || !th){
+    alert('กรุณากรอกคำศัพท์ภาษาญี่ปุ่นและความหมาย');
+    return;
+  }
+
+  const words = getCustomWords();
+  words.unshift({
+    id: 'user_' + Date.now(),
+    jp, rd, th, ch,
+    ex: false
+  });
+  saveCustomWords(words);
+  closeAddWordModal();
+  renderMain();
+}
+
+function deleteCustomWord(idOrJp){
+  if(!confirm('ต้องการลบคำศัพท์นี้ใช่หรือไม่?')) return;
+  let words = getCustomWords();
+  words = words.filter(w => (w.id !== idOrJp && w.jp !== idOrJp));
+  saveCustomWords(words);
+  renderMain();
+}
+
+function clearSampleWords(){
+  if(!confirm('ยืนยันลบคำศัพท์ตัวอย่างทั้งหมด?')) return;
+  let words = getCustomWords();
+  words = words.filter(w => !w.ex && w.ch !== 'ตัวอย่าง');
+  saveCustomWords(words);
+  renderMain();
+}
+
+// ── BULK IMPORT ──
+function openBulkModal(){
+  document.getElementById('bulk-input').value = '';
+  document.getElementById('bulk-default-ch').value = '';
+  document.getElementById('bulk-result').textContent = '';
+  document.getElementById('bulk-modal').classList.add('open');
+}
+function closeBulkModal(){
+  document.getElementById('bulk-modal').classList.remove('open');
+}
+
+function processBulkImport(){
+  const text = document.getElementById('bulk-input').value.trim();
+  const defCh = document.getElementById('bulk-default-ch').value.trim() || 'ทั่วไป';
+  if(!text){
+    alert('กรุณาวางข้อความคำศัพท์');
+    return;
+  }
+
+  const lines = text.split('\n');
+  const words = getCustomWords();
+  let added = 0;
+  let skipped = 0;
+
+  lines.forEach(line => {
+    line = line.trim();
+    if(!line) return;
+    const parts = line.includes('\t') ? line.split('\t') : line.split('|');
+    const cleanParts = parts.map(p => p.trim());
+
+    let jp = '', rd = '', th = '', ch = defCh;
+
+    if(cleanParts.length >= 4){
+      jp = cleanParts[0];
+      rd = cleanParts[1];
+      th = cleanParts[2];
+      ch = cleanParts[3] || defCh;
+    } else if(cleanParts.length === 3){
+      jp = cleanParts[0];
+      rd = cleanParts[1];
+      th = cleanParts[2];
+    } else if(cleanParts.length === 2){
+      jp = cleanParts[0];
+      th = cleanParts[1];
+    }
+
+    if(jp && th){
+      const exists = words.some(w => w.jp === jp && w.rd === rd);
+      if(!exists){
+        words.push({
+          id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+          jp, rd, th, ch,
+          ex: false
+        });
+        added++;
+      } else {
+        skipped++;
+      }
+    }
+  });
+
+  saveCustomWords(words);
+  document.getElementById('bulk-result').textContent = `เพิ่มสำเร็จ ${added} คำ (ข้ามคำซ้ำ ${skipped} คำ)`;
+  setTimeout(() => {
+    closeBulkModal();
+    renderMain();
+  }, 1000);
+}
+
+// ══════════════════════════════════════════════════════════
+//  SPEECH (Web Speech API)
+// ══════════════════════════════════════════════════════════
+function speakJp(text){
+  if(!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const ut = new SpeechSynthesisUtterance(text);
+  ut.lang = 'ja-JP';
+  ut.rate = 0.9;
+  window.speechSynthesis.speak(ut);
+}
+
+// ══════════════════════════════════════════════════════════
+//  BACKUP & RESTORE
+// ══════════════════════════════════════════════════════════
+function openBackup(){
+  document.getElementById('backup-modal').classList.add('open');
+}
+function closeBackup(){
+  document.getElementById('backup-modal').classList.remove('open');
+}
+
+function exportBackup(){
+  const data = {
+    app: 'jlpt-study-quiz',
+    version: 2,
+    exportedAt: new Date().toISOString(),
+    customWords: getCustomWords(),
+    mastery: getMasteryStore()
+  };
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `jlpt-quiz-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  document.getElementById('backup-msg').textContent = 'ส่งออกไฟล์สำรองเรียบร้อย!';
+}
+
+function importFile(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if(data.customWords){
+        saveCustomWords(data.customWords);
+      }
+      if(data.mastery){
+        saveMasteryStore(data.mastery);
+      }
+      document.getElementById('backup-msg').textContent = 'นำเข้าข้อมูลสำเร็จ!';
+      renderMain();
+    } catch(err){
+      alert('ไฟล์ไม่ถูกต้อง ไม่สามารถนำเข้าได้');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ══════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  }
+  switchLevel('custom');
+});
+</script>
+</body>
+</html>
+

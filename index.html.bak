@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>คันจิ JLPT N5–N3 Flashcard</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111111">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="JLPT">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',sans-serif;background:#111;color:#f0f0f0;min-height:100vh;}
+.topbar{background:#1a1a1a;border-bottom:1px solid #2a2a2a;padding:14px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.app-title{font-size:16px;font-weight:500;color:#ccc;margin-right:8px;}
+
+
+.content{max-width:660px;margin:0 auto;padding:20px 16px;}
+.filter-wrap{margin-bottom:14px;}
+.filter-search{
+  width:100%;box-sizing:border-box;
+  background:#161616;border:1px solid #2a2a2a;
+  border-radius:10px;padding:8px 14px;
+  color:#ccc;font-size:13px;margin-bottom:8px;
+  outline:none;transition:border-color .15s;
+}
+.filter-search:focus{border-color:#444;}
+.filter-bar{display:flex;gap:6px;flex-wrap:wrap;}
+.filter-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:12px;padding:5px 12px;border-radius:8px;
+  border:1px solid #252525;background:#161616;
+  color:#666;cursor:pointer;transition:all .15s;
+  white-space:nowrap;
+}
+.filter-chip:hover{border-color:#3a3a3a;color:#999;background:#1c1c1c;}
+.filter-chip.active{border-color:#3a3a5a;background:#1a1a2a;color:#a080f0;}
+.filter-chip.active-n5{border-color:#2a4a6a;background:#0d1a2a;color:#5ba3e8;}
+.filter-chip.active-vocab5{border-color:#3a2a6a;background:#1a1228;color:#a080f0;}
+.filter-chip.active-n4{border-color:#1a4a1a;background:#0d1f0d;color:#4caf70;}
+.filter-chip.active-n3{border-color:#4a2a1a;background:#1f100d;color:#e07850;}
+.filter-chip .chip-count{
+  font-size:10px;color:#444;background:#1e1e1e;
+  border-radius:4px;padding:1px 5px;margin-left:2px;
+}
+.filter-chip.active .chip-count{color:#666;background:#ffffff10;}
+.section-info{font-size:12px;color:#444;margin-bottom:12px;text-align:center;letter-spacing:.3px;}
+/* stats replaced */
+/* stat replaced */
+.stat-n{font-size:22px;font-weight:500;}
+.stat-l{font-size:11px;color:#666;margin-top:2px;}
+.progress-bar{height:4px;background:#222;border-radius:2px;margin-bottom:16px;overflow:hidden;}
+.progress-fill{height:100%;border-radius:2px;transition:width .3s;}
+.pf-n5{background:#378ADD;}
+.pf-vocab5{background:#9060e0;}
+.pf-n4{background:#4caf70;}
+.pf-n3{background:#e07850;}
+.mode-badge{text-align:center;margin-bottom:10px;min-height:24px;}
+.mode-badge span{display:inline-block;font-size:11px;padding:2px 12px;border-radius:20px;background:#2a2200;color:#e0b040;}
+.card{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:16px;min-height:270px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;cursor:pointer;transition:border-color .15s;margin-bottom:12px;user-select:none;}
+.card:hover{border-color:#444;}
+.kanji-big{font-size:96px;line-height:1;margin-bottom:10px;}
+.vocab-big{font-size:38px;line-height:1.3;margin-bottom:10px;font-weight:500;text-align:center;word-break:break-all;}
+.card-hint{font-size:12px;color:#555;}
+.meaning{font-size:26px;font-weight:500;margin-bottom:6px;}
+.readings{font-size:13px;color:#777;margin-bottom:4px;}
+.cat-badge{display:inline-block;font-size:11px;padding:2px 10px;border-radius:10px;margin-top:6px;}
+
+
+.done-screen{text-align:center;padding:2rem 0;}
+.done-pct{font-size:60px;font-weight:500;margin-bottom:6px;}
+.done-title{font-size:20px;font-weight:500;margin-bottom:6px;}
+.done-sub{font-size:13px;color:#777;margin-bottom:20px;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:#111;}
+::-webkit-scrollbar-thumb{background:#333;border-radius:3px;}
+
+/* ── STATS EXTENDED ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.stat{background:#1a1a1a;border-radius:10px;padding:10px;text-align:center;border:1px solid #2a2a2a;}
+.stat-n{font-size:20px;font-weight:600;}
+.stat-l{font-size:10px;color:#555;margin-top:2px;letter-spacing:.5px;}
+.stat-streak{color:#f39c12;}
+.stat-pct{color:#9b59b6;}
+
+/* ── QUIZ MODE ── */
+.quiz-question{font-size:72px;font-weight:300;text-align:center;padding:30px 10px 10px;line-height:1.1;}
+.quiz-question-sub{font-size:14px;color:#666;text-align:center;margin-bottom:20px;}
+.quiz-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+
+
+/* ── MODE SELECTOR ── */
+
+
+/* ── SRS BADGE ── */
+.srs-badge{
+  display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:11px;font-weight:600;letter-spacing:.5px;margin-bottom:8px;
+}
+.srs-new{background:#0d1a2a;color:#5b7fbf;border:1px solid #2a3a5a;}
+.srs-due{background:#2a1a0d;color:#e67e22;border:1px solid #5a3a1a;}
+.srs-ok{background:#0d2a1a;color:#27ae60;border:1px solid #1a5a2a;}
+
+/* ── SESSION DONE ── */
+.done-wrap{padding:20px 0;text-align:center;}
+.done-title{font-size:26px;font-weight:600;margin-bottom:6px;}
+.done-sub{font-size:14px;color:#666;margin-bottom:24px;}
+.done-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.done-card{background:#1a1a1a;border-radius:12px;padding:16px;border:1px solid #2a2a2a;}
+.done-num{font-size:28px;font-weight:700;}
+.done-lbl{font-size:11px;color:#555;margin-top:4px;}
+
+
+/* ── STREAK / CALENDAR ── */
+.streak-row{display:flex;justify-content:center;gap:5px;margin:0 auto 16px;flex-wrap:wrap;}
+.streak-dot{
+  width:28px;height:28px;border-radius:50%;font-size:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:600;
+}
+.streak-dot.done{background:#27ae60;color:#fff;}
+.streak-dot.today{background:#f39c12;color:#fff;}
+.streak-dot.empty{background:#222;color:#444;border:1px solid #2a2a2a;}
+
+/* ── CARD เพิ่ม feedback ── */
+.card-feedback{text-align:center;padding:6px 0 0;font-size:13px;color:#666;}
+
+
+/* ══ BUTTONS — redesigned ══ */
+.btn-wrong,.btn-right{
+  flex:1;position:relative;overflow:hidden;
+  padding:14px 10px;font-size:14px;font-weight:500;
+  border-radius:14px;cursor:pointer;
+  transition:transform .12s, opacity .12s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  border:none;
+}
+.btn-wrong{
+  background:#2a0e0e;color:#f87171;
+  box-shadow:inset 0 0 0 1.5px #7f1d1d;
+}
+.btn-wrong:hover{background:#3a1212;transform:translateY(-1px);}
+.btn-wrong:active{transform:scale(.97);}
+.btn-right{
+  background:#0e2a18;color:#4ade80;
+  box-shadow:inset 0 0 0 1.5px #14532d;
+}
+.btn-right:hover{background:#122e1c;transform:translateY(-1px);}
+.btn-right:active{transform:scale(.97);}
+.btn-row{display:flex;gap:10px;margin-top:14px;}
+
+/* ── Mode tabs ── */
+.mode-tabs{display:flex;gap:8px;margin-bottom:14px;}
+.mode-tab{
+  flex:1;padding:10px 6px;border-radius:11px;font-size:12px;font-weight:500;
+  border:1.5px solid #222;background:#111;
+  color:#555;cursor:pointer;text-align:center;
+  transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.mode-tab:hover{border-color:#333;color:#888;}
+.mode-tab.active{border-color:#3a3a5a;color:#a78bfa;background:#12111f;}
+
+/* ── Level tabs ── */
+.level-tabs{display:flex;gap:6px;}
+.level-tab{
+  padding:6px 14px;border-radius:9px;
+  border:1.5px solid #222;background:#111;
+  color:#666;cursor:pointer;font-size:13px;font-weight:500;
+  transition:all .15s;
+}
+.level-tab:hover{border-color:#333;color:#999;}
+.level-tab.active-n5{background:#0d1a2a;color:#60a5fa;border-color:#1e3a5f;}
+.level-tab.active-vocab5{background:#12111f;color:#a78bfa;border-color:#3730a3;}
+.level-tab.active-n4{background:#0d1f0d;color:#4ade80;border-color:#14532d;}
+.level-tab.active-n3{background:#1c0d07;color:#fb923c;border-color:#7c2d12;}
+
+/* ── Done screen buttons ── */
+.done-btn{
+  width:100%;padding:14px;border-radius:13px;font-size:14px;font-weight:500;
+  cursor:pointer;border:none;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform .12s,opacity .12s;
+}
+.done-btn:hover{opacity:.88;transform:translateY(-1px);}
+.done-btn:active{transform:scale(.97);}
+.done-btn.primary{background:#0e2a18;color:#4ade80;box-shadow:inset 0 0 0 1.5px #14532d;}
+.done-btn.secondary{background:#12111f;color:#a78bfa;box-shadow:inset 0 0 0 1.5px #3730a3;}
+.done-btn.danger{background:#2a0e0e;color:#f87171;box-shadow:inset 0 0 0 1.5px #7f1d1d;}
+.done-actions{display:flex;flex-direction:column;gap:10px;}
+
+/* ── Quiz next button ── */
+.quiz-next{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;margin-top:12px;padding:14px;
+  background:#0e2a18;border:none;box-shadow:inset 0 0 0 1.5px #14532d;
+  border-radius:13px;color:#4ade80;font-size:14px;font-weight:500;
+  cursor:pointer;transition:transform .12s,opacity .12s;
+}
+.quiz-next:hover{opacity:.88;transform:translateY(-1px);}
+.quiz-next:active{transform:scale(.97);}
+
+/* ── Quiz choices ── */
+.quiz-btn{
+  background:#141414;
+  border:1.5px solid #252525;
+  border-radius:12px;padding:15px 12px;
+  font-size:14px;color:#aaa;cursor:pointer;
+  text-align:center;transition:all .15s;line-height:1.4;font-weight:500;
+}
+.quiz-btn:hover{border-color:#444;color:#ccc;background:#1a1a1a;}
+.quiz-btn.correct{background:#0e2a18;border-color:#4ade80;color:#4ade80;}
+.quiz-btn.wrong{background:#2a0e0e;border-color:#f87171;color:#f87171;}
+.quiz-btn.reveal{background:#12111f;border-color:#818cf8;color:#818cf8;}
+
+.speak-btn{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:10px;cursor:pointer;border:1.5px solid #252525;background:#161616;color:#666;transition:all .15s;flex-shrink:0;}
+.speak-btn:hover{border-color:#444;color:#aaa;background:#1c1c1c;}
+.speak-btn:active{transform:scale(.93);}
+.speak-slow-btn{display:inline-flex;align-items:center;justify-content:center;width:38px;height:32px;border-radius:8px;cursor:pointer;border:1.5px solid #252525;background:#161616;color:#555;font-size:11px;font-weight:600;transition:all .15s;}
+.speak-slow-btn:hover{border-color:#444;color:#aaa;}
+.speak-auto-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;cursor:pointer;border:1.5px solid #252525;background:#161616;color:#555;font-size:11px;font-weight:500;transition:all .15s;}
+.speak-auto-btn:hover{border-color:#333;color:#888;}
+.speak-auto-btn.active{border-color:#3730a3;color:#a78bfa;background:#12111f;}
+.speak-row{display:flex;align-items:center;gap:8px;justify-content:center;margin:10px 0 4px;}
+@keyframes pulse-ring{0%{box-shadow:0 0 0 0 #a78bfa40;}70%{box-shadow:0 0 0 6px #a78bfa00;}100%{box-shadow:0 0 0 0 #a78bfa00;}}
+
+/* ── PREVENT SCROLL JUMP ON BUTTON CLICK ── */
+html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
+#main{overflow-anchor:none;}
+.level-tabs{overflow-anchor:none;}
+.filter-bar{overflow-anchor:none;}
+.level-tabs,.mode-tabs,.filter-bar{
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+.level-tab,.mode-tab,.filter-chip,.speak-btn,.speak-slow-btn,.speak-auto-btn,
+.btn-wrong,.btn-right,.quiz-btn,.quiz-next,.done-btn{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+  -webkit-user-select:none;
+}
+/* ป้องกัน layout shift ตอนกดปุ่ม */
+.card{will-change:auto;}
+#main{min-height:320px;}
+
+/* ── PREVENT FILTER REFLOW ── */
+.filter-bar{
+  min-height:36px;
+  align-content:flex-start;
+}
+.filter-chip{
+  flex-shrink:0;
+}
+
+/* ── KANA TABS ── */
+.level-tab.active-hiragana{background:#1a0a2a;color:#c084fc;border-color:#6b21a8;}
+.level-tab.active-katakana{background:#0a1a2a;color:#67e8f9;border-color:#0e7490;}
+.pf-hiragana{background:#9333ea;}
+.pf-katakana{background:#0891b2;}
+
+/* ── KANA CARD ── */
+.kana-big{font-size:120px;line-height:1;text-align:center;margin-bottom:8px;font-weight:300;}
+.kana-row-badge{
+  display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:11px;font-weight:600;letter-spacing:.5px;margin-bottom:6px;
+  background:#1e1e1e;color:#666;border:1px solid #2a2a2a;
+}
+.kana-romaji{font-size:32px;color:#a78bfa;font-weight:500;text-align:center;margin:6px 0;}
+.kana-hint{font-size:12px;color:#444;text-align:center;margin-top:6px;}
+
+
+/* ── PREVENT LAYOUT SHIFT ── */
+#main{
+  min-height:380px;
+  contain:layout style;
+}
+.content-wrap{
+  position:relative;
+}
+
+
+/* ── GRAMMAR CARD ── */
+.level-tab.active-grammar5{background:#1a1200;color:#fbbf24;border-color:#92400e;}
+.pf-grammar5{background:#d97706;}
+.grammar-pattern{font-size:36px;font-weight:600;text-align:center;margin-bottom:6px;color:#f0f0f0;line-height:1.3;}
+.grammar-reading{font-size:14px;color:#888;text-align:center;margin-bottom:10px;}
+.grammar-meaning{font-size:18px;color:#fbbf24;font-weight:500;text-align:center;margin:8px 0;}
+.grammar-ex{
+  background:#1a1a00;border:1px solid #2a2500;border-radius:10px;
+  padding:10px 14px;margin-top:10px;text-align:center;
+}
+.grammar-ex-jp{font-size:16px;color:#d4d4d4;margin-bottom:4px;line-height:1.5;}
+.grammar-ex-th{font-size:13px;color:#888;}
+.grammar-cat-badge{
+  display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:11px;font-weight:600;
+  background:#1a1200;color:#fbbf24;border:1px solid #92400e;
+  margin-bottom:8px;
+}
+
+
+/* ══ BACKUP / RESTORE ══ */
+.level-tab.backup-tab{margin-left:auto;color:#a78bfa;border-color:#3730a3;background:#12111f;}
+.backup-banner{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  background:#2a1a0d;border:1px solid #5a3a1a;color:#e0b040;
+  border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:13px;
+}
+.backup-banner span{flex:1;min-width:150px;}
+.backup-banner button{
+  padding:6px 12px;border-radius:9px;font-size:12px;font-weight:500;cursor:pointer;
+  border:1.5px solid #7c4a1a;background:#3a2410;color:#fbbf24;touch-action:manipulation;
+}
+.backup-banner button.ghost{background:transparent;border-color:#3a2a1a;color:#a08040;}
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;
+  display:none;align-items:center;justify-content:center;padding:16px;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  width:100%;max-width:460px;max-height:90vh;overflow-y:auto;
+  background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:18px;
+}
+.modal-head{display:flex;align-items:center;justify-content:space-between;font-size:16px;font-weight:600;margin-bottom:12px;}
+.modal-x{
+  width:32px;height:32px;border-radius:9px;border:1.5px solid #252525;
+  background:#161616;color:#888;font-size:14px;cursor:pointer;touch-action:manipulation;
+}
+.backup-info{font-size:13px;color:#999;line-height:1.7;margin-bottom:14px;background:#141414;border-radius:10px;padding:10px 12px;}
+.backup-info b{color:#ddd;font-weight:500;}
+.backup-info .ok{color:#4ade80;}
+.backup-info .warn{color:#fbbf24;}
+.modal-actions{display:flex;flex-direction:column;gap:10px;}
+.modal-actions.row{flex-direction:row;margin-top:10px;}
+.modal-actions.row .done-btn{flex:1;font-size:13px;padding:12px 8px;}
+.backup-adv{margin-top:14px;font-size:13px;color:#777;}
+.backup-adv summary{cursor:pointer;padding:6px 0;}
+.backup-adv textarea{
+  width:100%;margin-top:8px;background:#111;border:1px solid #2a2a2a;border-radius:10px;
+  padding:8px 10px;color:#ccc;font-size:12px;font-family:monospace;resize:vertical;
+}
+.backup-msg{min-height:20px;font-size:13px;margin-top:12px;text-align:center;}
+.backup-msg.ok{color:#4ade80;}
+.backup-msg.err{color:#f87171;}
+.backup-tip{font-size:12px;color:#666;line-height:1.6;margin-top:10px;border-top:1px solid #252525;padding-top:10px;}
+
+
+/* ══ SCENES (สถานการณ์จริง) ══ */
+.level-tab{flex-shrink:0;white-space:nowrap;}   /* แท็บเยอะขึ้น: ไม่บีบจนตัวหนังสือขึ้นบรรทัดใหม่ ให้เลื่อนด้านข้างแทน */
+.filter-chip.active-scene{border-color:#14532d;background:#0c1f14;color:#4ade80;}
+.level-tab.active-scene{background:#0c1f14;color:#4ade80;border-color:#14532d;}
+.pf-scene{background:#22c55e;}
+.vocab-big.phrase{font-size:26px;line-height:1.55;word-break:normal;overflow-wrap:anywhere;}
+.quiz-question.phrase-q{font-size:26px;font-weight:500;line-height:1.55;padding:14px 8px 6px;overflow-wrap:anywhere;}
+.who-badge{display:inline-block;font-size:11px;padding:2px 10px;border-radius:10px;margin:0 0 8px 6px;}
+.who-me{background:#0c1f14;color:#4ade80;}
+.who-they{background:#2a1a00;color:#fbbf24;}
+#scene-bar{margin-bottom:10px;text-align:center;}
+.scene-open-btn{
+  padding:9px 16px;border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;
+  border:1.5px solid #14532d;background:#0c1f14;color:#4ade80;touch-action:manipulation;
+}
+.scene-hint{font-size:12px;color:#555;line-height:1.6;}
+.scene-box{max-width:520px;}
+.scene-tip{font-size:12.5px;color:#a08040;background:#1a1408;border:1px solid #3a2a10;border-radius:10px;padding:9px 12px;margin-bottom:12px;line-height:1.7;}
+.scene-play{
+  width:100%;padding:11px;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:12px;
+  border:1.5px solid #14532d;background:#0c1f14;color:#4ade80;touch-action:manipulation;
+}
+.scene-line{border-radius:12px;padding:10px 12px;margin-bottom:8px;border:1px solid #252525;transition:border-color .2s,background .2s;}
+.scene-line.sl-me{background:#101a14;border-left:3px solid #22c55e;}
+.scene-line.sl-they{background:#1a1610;border-left:3px solid #d97706;}
+.scene-line.playing{border-color:#a78bfa;background:#17142a;}
+.scene-who{font-size:11px;color:#777;margin-bottom:4px;}
+.scene-jp{font-size:20px;font-weight:500;line-height:1.5;color:#eee;overflow-wrap:anywhere;}
+.scene-kana{font-size:13px;color:#aaa;margin-top:2px;}
+.scene-ro{font-size:12.5px;color:#7a7a9a;margin-top:2px;}
+.scene-th{font-size:13.5px;color:#cbb26a;margin-top:4px;line-height:1.55;}
+
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="app-title">คันจิ JLPT</span>
+  <div class="level-tabs">
+    <button class="level-tab active-n5" id="tab-n5" onclick="event.preventDefault();switchLevel('n5')">N5 คันจิ</button>
+    <button class="level-tab" id="tab-vocab5" onclick="event.preventDefault();switchLevel('vocab5')">N5 คำศัพท์</button>
+    <button class="level-tab" id="tab-grammar5" onclick="event.preventDefault();switchLevel('grammar5')">N5 ไวยากรณ์</button>
+    <button class="level-tab" id="tab-scene" onclick="event.preventDefault();switchLevel('scene')">🗣️ สถานการณ์</button>
+    <button class="level-tab" id="tab-n4" onclick="event.preventDefault();switchLevel('n4')">N4</button>
+    <button class="level-tab" id="tab-n3" onclick="event.preventDefault();switchLevel('n3')">N3</button>
+    <button class="level-tab" id="tab-hiragana" onclick="event.preventDefault();switchLevel('hiragana')">ฮิรางานะ</button>
+    <button class="level-tab" id="tab-katakana" onclick="event.preventDefault();switchLevel('katakana')">คาตาคานะ</button>
+    <button class="level-tab" id="tab-all" onclick="event.preventDefault();switchLevel('all')">ทั้งหมด</button>
+    <button class="level-tab backup-tab" id="btn-backup" onclick="event.preventDefault();openBackup()">💾 สำรอง</button>
+  </div>
+</div>
+<div class="content">
+  <div id="backup-banner"></div>
+  <div class="filter-wrap"><input class="filter-search" id="filter-search" placeholder="🔍 ค้นหาหมวดหมู่..." oninput="filterChips(this.value)"><div class="filter-bar" id="filters"></div></div>
+  <div class="section-info" id="section-info"></div>
+  <div id="scene-bar"></div>
+  <div class="mode-tabs">
+    <div class="mode-tab active" id="mt-flash" onclick="event.preventDefault();setMode('flash')">📇 Flashcard</div>
+    <div class="mode-tab" id="mt-quiz" onclick="event.preventDefault();setMode('quiz')">🎯 Quiz</div>
+    <div class="mode-tab" id="mt-srs" onclick="event.preventDefault();setMode('srs')">🔁 ทบทวน SRS</div>
+  </div>
+  <div class="streak-row" id="streak-row"></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="s-total">0</div><div class="stat-l">ทำแล้ว</div></div>
+    <div class="stat"><div class="stat-n" id="s-right" style="color:#2ecc71">0</div><div class="stat-l">✅ จำได้</div></div>
+    <div class="stat"><div class="stat-n" id="s-wrong" style="color:#e74c3c">0</div><div class="stat-l">❌ ยังไม่แม่น</div></div>
+    <div class="stat"><div class="stat-n stat-pct" id="s-pct">0%</div><div class="stat-l">แม่น</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill pf-n5" id="prog" style="width:0%"></div></div>
+  <div class="mode-badge" id="mode-label"></div>
+  <div id="main"></div>
+</div>
+<div class="modal-overlay" id="scene-modal" onclick="if(event.target===this)closeScene()">
+  <div class="modal-box scene-box" role="dialog" aria-modal="true" aria-label="บทสนทนา">
+    <div class="modal-head"><span id="scene-title"></span><button class="modal-x" onclick="closeScene()" aria-label="ปิด">✕</button></div>
+    <div class="scene-tip" id="scene-tip"></div>
+    <button class="scene-play" id="scene-play-btn" data-playing="0" onclick="playScene()">▶ เล่นทั้งบท</button>
+    <div id="scene-list"></div>
+  </div>
+</div>
+<div class="modal-overlay" id="backup-modal" onclick="if(event.target===this)closeBackup()">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="สำรองและกู้คืนข้อมูล">
+    <div class="modal-head"><span>💾 สำรอง / กู้คืนข้อมูล</span><button class="modal-x" onclick="closeBackup()" aria-label="ปิด">✕</button></div>
+    <div class="backup-info" id="backup-info"></div>
+    <div class="modal-actions">
+      <button class="done-btn primary" onclick="exportBackup()">⬆️ ส่งออกไฟล์สำรอง</button>
+      <button class="done-btn secondary" onclick="document.getElementById('import-file').click()">⬇️ นำเข้าจากไฟล์</button>
+      <input type="file" id="import-file" accept=".json,application/json" hidden onchange="importFile(this)">
+    </div>
+    <details class="backup-adv">
+      <summary>ใช้ข้อความแทนไฟล์ (คัดลอก / วาง)</summary>
+      <textarea id="backup-text" rows="5" placeholder="วางข้อมูลสำรองที่นี่ แล้วกด นำเข้าจากข้อความ"></textarea>
+      <div class="modal-actions row">
+        <button class="done-btn secondary" onclick="copyBackup()">คัดลอกข้อมูล</button>
+        <button class="done-btn secondary" onclick="importFromTextarea()">นำเข้าจากข้อความ</button>
+      </div>
+    </details>
+    <div class="backup-msg" id="backup-msg"></div>
+    <div class="backup-tip">เคล็ดลับ: ข้อมูลใน Safari กับแอปที่ Add to Home Screen เก็บแยกกัน ถ้าจะย้าย ให้ส่งออกจาก Safari ก่อน แล้วนำเข้าในแอปบนหน้าจอหลัก</div>
+  </div>
+</div>
+<script src="data/kanji.js"></script>
+<script src="data/vocab5.js"></script>
+<script src="data/kana.js"></script>
+<script src="data/grammar5.js"></script>
+<script src="data/scenes.js"></script>
+<script>
+
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+
+// ══════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════
+let currentLevel='n5', activeCat='ทั้งหมด';
+let deck=[], wrongSet=[], idx=0, right=0, wrong=0, flipped=false;
+let currentMode='flash';   // 'flash' | 'quiz' | 'srs'
+let quizAnswered=false;
+
+// ══════════════════════════════════════════════════════════
+//  LOCALSTORAGE  — สถิติ + SRS + Streak
+// ══════════════════════════════════════════════════════════
+function loadLS(k,def){try{const v=localStorage.getItem(k);return v!=null?JSON.parse(v):def;}catch{return def;}}
+function saveLS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+
+// SRS: {word -> {ease, interval, due, reps}}
+function getSRS(){return loadLS('jlpt_srs',{});}
+function saveSRS(d){saveLS('jlpt_srs',d);}
+
+// Streak: {dates:[...], lastDate:'YYYY-MM-DD'}
+function getStreak(){return loadLS('jlpt_streak',{dates:[],lastDate:''});}
+function saveStreak(d){saveLS('jlpt_streak',d);}
+
+// Lifetime stats
+function getLifeStats(){return loadLS('jlpt_life',{sessions:0,totalRight:0,totalWrong:0});}
+function saveLifeStats(d){saveLS('jlpt_life',d);}
+
+function todayStr(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function markTodayDone(){
+  const s=getStreak(), today=todayStr();
+  if(!s.dates.includes(today)) s.dates.push(today);
+  s.lastDate=today;
+  saveStreak(s);
+}
+
+function renderStreakRow(){
+  const s=getStreak(), today=todayStr();
+  const el=document.getElementById('streak-row');
+  if(!el) return;
+  // แสดง 7 วันล่าสุด
+  const days=['อา','จ','อ','พ','พฤ','ศ','ส'];
+  let html='';
+  for(let i=6;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const dow=days[d.getDay()];
+    const done=s.dates.includes(ds);
+    const isToday=ds===today;
+    html+=`<div class="streak-dot ${isToday?'today':done?'done':'empty'}" title="${ds}">${dow}</div>`;
+  }
+  // แสดง streak count
+  let streak=0;
+  for(let i=0;i<30;i++){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const ds=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    if(s.dates.includes(ds)) streak++; else break;
+  }
+  if(streak>0) html+=`<div style="font-size:12px;color:#f39c12;margin-left:6px;display:flex;align-items:center">🔥 ${streak}</div>`;
+  el.innerHTML=html;
+}
+
+// ══════════════════════════════════════════════════════════
+//  SRS ALGORITHM  (SM-2 simplified)
+// ══════════════════════════════════════════════════════════
+function srsKey(d){ return d.w||d.k; }
+
+function srsUpdate(d, ok){
+  const srs=getSRS();
+  const key=srsKey(d);
+  let r=srs[key]||{ease:2.5,interval:1,due:0,reps:0};
+  if(ok){
+    r.reps++;
+    r.interval = r.reps===1?1: r.reps===2?3: Math.round(r.interval*r.ease);
+    r.ease=Math.max(1.3, r.ease+(0.1-(5-4)*(0.08+(5-4)*0.02)));
+  } else {
+    r.reps=0; r.interval=1; r.ease=Math.max(1.3,r.ease-0.2);
+  }
+  r.due=Date.now()+(r.interval*24*60*60*1000);
+  srs[key]=r;
+  saveSRS(srs);
+}
+
+function isDue(d){
+  const srs=getSRS();
+  const r=srs[srsKey(d)];
+  if(!r) return true;  // ใหม่ = ถือว่า due
+  return Date.now()>=r.due;
+}
+
+function srsLabel(d){
+  const srs=getSRS();
+  const r=srs[srsKey(d)];
+  if(!r) return '<span class="srs-badge srs-new">ใหม่</span>';
+  if(Date.now()>=r.due) return '<span class="srs-badge srs-due">ถึงเวลาทบทวน</span>';
+  const days=Math.ceil((r.due-Date.now())/(24*60*60*1000));
+  return `<span class="srs-badge srs-ok">ทบทวนใน ${days} วัน</span>`;
+}
+
+// ══════════════════════════════════════════════════════════
+//  MODE SELECTOR
+// ══════════════════════════════════════════════════════════
+function setMode(m){
+  lockScroll();
+  currentMode=m;
+  ['flash','quiz','srs'].forEach(x=>{
+    const el=document.getElementById('mt-'+x);
+    if(el) el.className='mode-tab'+(m===x?' active':'');
+  });
+  startAll();
+}
+
+// ══════════════════════════════════════════════════════════
+//  BASE DATA
+// ══════════════════════════════════════════════════════════
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function getBase(){
+  if(currentLevel==='n5') return n5;
+  if(currentLevel==='vocab5') return vocab5;
+  if(currentLevel==='scene') return [...scenes];   // สำเนา: shuffle() สลับ array ในที่เดิม ต้องไม่ทำลายลำดับบทสนทนา
+  if(currentLevel==='n4') return n4;
+  if(currentLevel==='n3') return n3;
+  if(currentLevel==='grammar5') return grammar5;
+  if(currentLevel==='hiragana') return hiragana;
+  if(currentLevel==='katakana') return katakana;
+  return [...n5,...n4,...n3];
+}
+
+function getSource(){
+  let base=getBase();
+  const isKanaMode=currentLevel==='hiragana'||currentLevel==='katakana';
+  if(activeCat!=='ทั้งหมด') base=base.filter(d=>isKanaMode?d.row===activeCat:d.cat===activeCat);
+  if(currentMode==='srs'){
+    const due=base.filter(d=>isDue(d));
+    return shuffle(due.length>0?due:base).slice(0,30);
+  }
+  return shuffle(base);
+}
+
+function getCats(){
+  if(currentLevel==='hiragana'||currentLevel==='katakana'){
+    const rows=new Set(getBase().map(d=>d.row));
+    return['ทั้งหมด',...rows];
+  }
+  const s=new Set(getBase().map(d=>d.cat));
+  return['ทั้งหมด',...s];
+}
+
+// ══════════════════════════════════════════════════════════
+//  LEVEL / FILTER
+// ══════════════════════════════════════════════════════════
+function switchLevel(lv){
+  if(currentLevel===lv) return;  // กดซ้ำ level เดิม → ไม่ทำอะไร
+  lockScroll();
+  currentLevel=lv; activeCat='ทั้งหมด';
+  ['n5','vocab5','scene','n4','n3','grammar5','hiragana','katakana','all'].forEach(l=>{
+    const t=document.getElementById('tab-'+l);
+    if(t) t.className='level-tab';
+  });
+  document.getElementById('tab-'+lv).className='level-tab active-'+lv;
+  const pf=document.getElementById('prog');
+  const pfMap={n5:'pf-n5',vocab5:'pf-vocab5',scene:'pf-scene',n4:'pf-n4',n3:'pf-n3',
+               grammar5:'pf-grammar5',hiragana:'pf-hiragana',katakana:'pf-katakana',all:'pf-n3'};
+  pf.className='progress-fill '+(pfMap[lv]||'pf-n3');
+  renderFilters(); startAll();
+}
+
+
+const CAT_EMOJI={
+  'ทั้งหมด':'🗂️','การกระทำ':'⚡','พื้นฐาน':'📌','คน':'👤','เวลา':'⏰',
+  'ธรรมชาติ':'🌿','สถานที่':'📍','ตัวเลข':'🔢','ร่างกาย':'🫁',
+  'กริยา':'🏃','การทักทาย':'👋','ครอบครัว':'👨‍👩‍👧','สรรพนาม':'💬',
+  'บ้าน':'🏠','อาหาร':'🍜','การเดินทาง':'🚆','โรงเรียน':'📚',
+  'ช้อปปิ้ง':'🛍️','สี':'🎨','คุณศัพท์':'✨','สำนวน':'💭',
+  'ปริมาณ':'📊','ทิศทาง':'🧭','งานอดิเรก':'🎮','ประเทศ':'🌏',
+  'ประโยคสำคัญ':'🗣️','การทำงาน':'💼','อนุภาค':'🔗','รูปประโยค':'📝','te-form':'🔄','ない-form':'🚫','ความต้องการ':'💫','ความสามารถ':'💪','ความรู้สึก':'❤️','คำถาม':'❓','อื่นๆ':'🌟',
+};
+function renderFilters(){
+  const cats=getCats();
+  const base=getBase();
+  const lvClass='active-'+(currentLevel==='all'?'n3':currentLevel);
+  const container=document.getElementById('filters');
+
+  // ถ้ายังไม่มี chip หรือ level/cat list เปลี่ยน → สร้างใหม่
+  const existingCats=[...container.querySelectorAll('.filter-chip')].map(b=>b.dataset.cat);
+  const storedLevel=container.dataset.level||'';
+  const needRebuild = storedLevel !== currentLevel ||
+                      existingCats.length !== cats.length ||
+                      cats.some((c,i)=>c!==existingCats[i]);
+  container.dataset.level=currentLevel;
+
+  if(needRebuild){
+    container.innerHTML=cats.map(c=>{
+      const isKM=currentLevel==='hiragana'||currentLevel==='katakana';
+    const cnt=c==='ทั้งหมด'?base.length:base.filter(d=>isKM?d.row===c:d.cat===c).length;
+      const em=CAT_EMOJI[c]||'•';
+      const isAct=c===activeCat;
+      return `<button class="filter-chip${isAct?' '+lvClass:''}" onclick="event.preventDefault();setFilter('${c}')" data-cat="${c}">
+        ${em} ${c}<span class="chip-count">${cnt}</span>
+      </button>`;
+    }).join('');
+    return;
+  }
+
+  // ถ้า chip มีอยู่แล้ว → อัปเดตเฉพาะ class (ไม่ rebuild DOM)
+  container.querySelectorAll('.filter-chip').forEach(btn=>{
+    const c=btn.dataset.cat;
+    const isAct=c===activeCat;
+    btn.className='filter-chip'+(isAct?' '+lvClass:'');
+  });
+}
+
+function filterChips(q){
+  const btns=document.querySelectorAll('.filter-chip');
+  btns.forEach(b=>{
+    const cat=b.dataset.cat||'';
+    b.style.display=(cat==='ทั้งหมด'||cat.includes(q)||CAT_EMOJI[cat]?.includes(q))?'':'none';
+  });
+}
+
+function setFilter(c){
+  if(activeCat===c) return;  // กดซ้ำ cat เดิม → ไม่ทำอะไร
+  lockScroll(); activeCat=c; renderFilters(); startAll();
+}
+
+// ══════════════════════════════════════════════════════════
+//  START SESSION
+// ══════════════════════════════════════════════════════════
+function startAll(){
+  lockScroll();
+  deck=getSource(); wrongSet=[]; idx=0; right=0; wrong=0;
+  updateStats(); renderCard();
+  document.getElementById('mode-label').innerHTML=
+    currentMode==='srs'?'<span class="mode-badge">🔁 SRS Mode</span>':
+    currentMode==='quiz'?'<span class="mode-badge">🎯 Quiz Mode</span>':'';
+  const lblMap={n5:'N5 คันจิ',vocab5:'N5 คำศัพท์',scene:'สถานการณ์จริง',n4:'N4',n3:'N3',all:'ทุกระดับ',grammar5:'N5 ไวยากรณ์',hiragana:'ฮิรางานะ',katakana:'คาตาคานะ'};
+  const lbl=lblMap[currentLevel]||currentLevel.toUpperCase();
+  document.getElementById('section-info').textContent=
+    lbl+(activeCat!=='ทั้งหมด'?' · '+activeCat:'')+' · '+deck.length+' ตัว';
+  renderStreakRow();
+  renderSceneBar();
+}
+
+function startWrong(){
+  if(wrongSet.length===0) return;
+  deck=shuffle([...wrongSet]); wrongSet=[]; idx=0; right=0; wrong=0;
+  updateStats(); renderCard();
+  document.getElementById('mode-label').innerHTML='<span class="mode-badge" style="color:#e74c3c;border-color:#e74c3c">🔴 ทบทวนผิด</span>';
+}
+
+// ══════════════════════════════════════════════════════════
+//  STATS
+// ══════════════════════════════════════════════════════════
+function updateStats(){
+  document.getElementById('s-total').textContent=idx;
+  document.getElementById('s-right').textContent=right;
+  document.getElementById('s-wrong').textContent=wrong;
+  const pct=idx>0?Math.round((right/idx)*100):0;
+  document.getElementById('s-pct').textContent=(idx>0?pct:'—')+'%';
+  const prog=deck.length>0?Math.round((idx/deck.length)*100):0;
+  document.getElementById('prog').style.width=prog+'%';
+}
+
+// ══════════════════════════════════════════════════════════
+//  RENDER CARD  (Flashcard mode)
+// ══════════════════════════════════════════════════════════
+function renderCard(){
+  if(idx>=deck.length){renderDone();return;}
+  flipped=false; quizAnswered=false;
+  const d=deck[idx];
+  if(currentMode==='quiz'){renderQuiz(d);return;}
+  const isGrammar=!!d.p;
+  const isKana2=!!d.c&&!d.p;
+  const isVocab=!!d.w&&!d.c&&!d.p;
+  const dispWord=isKana2?d.c:isVocab?(d.k||d.w):d.k;
+  if(autoSpeak){setTimeout(()=>speakCard(false),250);}
+  const speakRow=`<div class="speak-row">
+    <button class="speak-btn" onclick="event.stopPropagation();speakCard(false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+    <button class="speak-slow-btn" onclick="event.stopPropagation();speakCard(true)">0.6x</button>
+    <button class="speak-auto-btn${autoSpeak?' active':''}" id="auto-speak-btn" onclick="event.stopPropagation();toggleAutoSpeak()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> อัตโนมัติ</button>
+  </div>`;
+  if(isGrammar){
+    document.getElementById('main').innerHTML=`
+      <div class="card" id="card" onclick="flipCard()">
+        <div class="grammar-cat-badge">${d.cat}</div>
+        <div class="grammar-pattern">${d.p}</div>
+        <div class="grammar-reading">${d.r}</div>
+        <div class="card-hint">แตะเพื่อดูความหมาย + ตัวอย่าง (${idx+1}/${deck.length})</div>
+      </div>
+      <div id="reveal"></div>`;
+    return;
+  }
+  if(isKana2){
+    document.getElementById('main').innerHTML=`
+      <div class="card" id="card" onclick="flipCard()">
+        <div class="kana-row-badge">${d.row}</div>
+        <div class="kana-big">${d.c}</div>
+        ${speakRow}
+        <div class="card-hint">แตะเพื่อดูคำอ่าน (${idx+1}/${deck.length})</div>
+      </div>
+      <div id="reveal"></div>`;
+    return;
+  }
+  document.getElementById('main').innerHTML=`
+    <div class="card" id="card" onclick="flipCard()">
+      ${srsLabel(d)}${whoBadge(d)}
+      <div class="${isVocab?'vocab-big':'kanji-big'}${d.who?' phrase':''}">${dispWord}</div>
+      ${isVocab&&d.k?`<div style="color:#666;font-size:13px;text-align:center;margin-top:-4px">${d.w}</div>`:''}
+      ${speakRow}
+      <div class="card-hint">แตะเพื่อดูความหมาย (${idx+1}/${deck.length})</div>
+    </div>
+    <div id="reveal"></div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+//  FLIP CARD
+// ══════════════════════════════════════════════════════════
+
+
+const catColors={
+  'ตัวเลข':'background:#0c2a4a;color:#5ba3e8',
+  'เวลา':'background:#0a2a14;color:#4caf70',
+  'ธรรมชาติ':'background:#052a1e;color:#3dbf90',
+  'คน':'background:#2a0a1e;color:#d47aa0',
+  'สถานที่':'background:#2a1a00;color:#e0a030',
+  'ร่างกาย':'background:#2a1008;color:#e07850',
+  'พื้นฐาน':'background:#1a0a2a;color:#9a80e0',
+  'การกระทำ':'background:#1e1e1e;color:#aaa',
+  'การทักทาย':'background:#0a2a2a;color:#40c0b0',
+  'สรรพนาม':'background:#1a0a3a;color:#b090f0',
+  'ครอบครัว':'background:#2a0a2a;color:#e080c0',
+  'บ้าน':'background:#1a1a00;color:#c0b030',
+  'อาหาร':'background:#2a1500;color:#f09040',
+  'การเดินทาง':'background:#002a1a;color:#40d080',
+  'โรงเรียน':'background:#002020;color:#30b0c0',
+  'ช้อปปิ้ง':'background:#2a002a;color:#d060d0',
+  'สี':'background:#0a0a2a;color:#8090f0',
+  'คุณศัพท์':'background:#2a1a00;color:#e0a040',
+  'กริยา':'background:#001a2a;color:#40a0e0',
+  'ธรรมชาติ':'background:#012a10;color:#50d070',
+  'ทิศทาง':'background:#1a1a2a;color:#90a0d0',
+  'ปริมาณ':'background:#2a1a1a;color:#d09090',
+  'สำนวน':'background:#1a2a1a;color:#80c080',
+  'งานอดิเรก':'background:#2a1a2a;color:#c080b0',
+  'ประเทศ':'background:#002a2a;color:#40c0c0'
+};
+
+function flipCard(){
+  if(flipped) return; flipped=true;
+  const d=deck[idx];
+  const isGrammarF=!!d.p;
+  const isKana2F=!!d.c&&!d.p;
+  const cc=catColors[d.cat]||'background:#222;color:#aaa';
+  // ── Grammar branch ────────────────────────────────────────
+  if(isGrammarF){
+    if(autoSpeak){speak(d.p,false);}
+    document.getElementById('card').innerHTML=`
+      <div class="grammar-cat-badge">${d.cat}</div>
+      <div class="grammar-pattern">${d.p}</div>
+      <div class="grammar-reading">${d.r}</div>
+      <div class="grammar-meaning">${d.th}</div>
+      <div class="grammar-ex">
+        <div class="grammar-ex-jp">${d.ex}</div>
+        <div class="grammar-ex-th">${d.ext}</div>
+      </div>`;
+    document.getElementById('reveal').innerHTML=`
+      <div class="btn-row">
+        <button class="btn-wrong" onclick="answer(false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>ยังไม่แม่น</button>
+        <button class="btn-right" onclick="answer(true)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>จำได้!</button>
+      </div>`;
+    return;
+  }
+  // ── Kana branch ───────────────────────────────────────────
+  if(isKana2F){
+    if(autoSpeak){speakCard(false);}
+    document.getElementById('card').innerHTML=`
+      <div class="kana-row-badge">${d.row}</div>
+      <div class="kana-big">${d.c}</div>
+      <div class="kana-romaji">${d.r}</div>`;
+    document.getElementById('reveal').innerHTML=`
+      <div class="speak-row" style="margin-bottom:6px">
+        <button class="speak-btn" onclick="speakCard(false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+        <button class="speak-slow-btn" onclick="speakCard(true)">0.6x</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn-wrong" onclick="answer(false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>ยังไม่แม่น</button>
+        <button class="btn-right" onclick="answer(true)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>จำได้!</button>
+      </div>`;
+    return;
+  }
+  // ── Kanji / Vocab branch ──────────────────────────────────
+  if(autoSpeak){speakCard(false);}
+  const isVocab=!!d.w&&!d.c&&!d.p;
+  const dispWord2=isVocab?(d.k||d.w):d.k;
+  document.getElementById('card').innerHTML=`
+    <div class="${isVocab?'vocab-big':'kanji-big'}${d.who?' phrase':''}">${dispWord2}</div>
+    <div style="text-align:center">
+      ${isVocab&&d.k?`<div style="color:#aaa;font-size:14px;margin-bottom:4px">${d.w}　(${d.r})</div>`:''}
+      <div class="meaning">${d.th}</div>
+      <div class="readings">${isVocab?(d.k?'':'อ่านว่า: '+d.r):'音: '+d.on+' | 訓: '+d.kun}</div>
+      <span class="cat-badge" style="${cc}">${d.cat}</span>${whoBadge(d)}
+    </div>`;
+  document.getElementById('reveal').innerHTML=`
+    <div class="speak-row" style="margin-bottom:6px">
+      <button class="speak-btn" onclick="speakCard(false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></button>
+      <button class="speak-slow-btn" onclick="speakCard(true)">0.6x</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn-wrong" onclick="answer(false)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>ยังไม่แม่น</button>
+      <button class="btn-right" onclick="answer(true)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>จำได้!</button>
+    </div>`;
+}
+function renderQuiz(d){
+  const isVocab=!!d.w;
+  const isGrammarQ0=!!d.p;
+  const dispWord=isGrammarQ0?d.p:(d.c&&!d.p)?d.c:(isVocab?(d.k||d.w):d.k);   // ไวยากรณ์ใช้ p, คานะใช้ c
+  if(autoSpeak){setTimeout(()=>speakCard(false),250);}
+  // สร้างตัวเลือก: 1 ถูก + 3 หลอก
+  const isKanaQ=!!d.c&&!d.p;
+  const isGrammarQ=!!d.p;
+  const pool=getBase().filter(x=>x!==d);
+  shuffle(pool);
+  const wrongs=pool.slice(0,3).map(x=>isKanaQ?x.r:x.th);
+  const correct=isKanaQ?d.r:d.th;
+  const choices=shuffle([correct,...wrongs]);
+
+  document.getElementById('main').innerHTML=`
+    <div class="card" style="cursor:default;min-height:${isKanaQ?'140':'120'}px">
+      ${isKanaQ?'':srsLabel(d)+whoBadge(d)}
+      <div class="${isKanaQ?'kana-big':'quiz-question'}${(d.who||isGrammarQ0)?' phrase-q':''}">${dispWord}</div>
+      ${isGrammarQ0?`<div class="quiz-question-sub">${d.r}</div>`:''}
+      ${(d.k&&!d.w&&!d.c&&!d.p)?`<div class="quiz-question-sub">音: ${d.on} | 訓: ${d.kun}</div>`:''}
+      ${!isKanaQ&&isVocab&&d.k?`<div class="quiz-question-sub">${d.w}</div>`:''}
+      ${isKanaQ?`<div class="kana-hint">เลือกคำอ่านที่ถูกต้อง</div>`:''}
+    </div>
+    <div class="quiz-choices" id="qchoices">
+      ${choices.map((c,i)=>`
+        <button class="quiz-btn" id="qb-${i}" onclick="quizAnswer(${i},'${c.replace(/'/g,"\'")}','${correct.replace(/'/g,"\'")}')">
+          ${c}
+        </button>`).join('')}
+    </div>
+    <div id="quiz-next-wrap"></div>
+    <div class="card-feedback" id="qfeedback">(${idx+1}/${deck.length})</div>`;
+}
+
+function quizAnswer(i,chosen,correct){
+  if(quizAnswered) return;
+  quizAnswered=true;
+  const d=deck[idx];
+  const ok=chosen===correct;
+  // ไฮไลท์ปุ่ม
+  document.querySelectorAll('.quiz-btn').forEach((btn,j)=>{
+    const txt=btn.textContent.trim();
+    if(txt===correct) btn.classList.add('correct');
+    else if(j===i&&!ok) btn.classList.add('wrong');
+    else btn.classList.add('reveal');
+    btn.onclick=null;
+  });
+  document.getElementById('qfeedback').innerHTML=
+    ok?'<span style="color:#2ecc71;font-size:16px">✅ ถูกต้อง!</span>':
+       '<span style="color:#e74c3c;font-size:16px">❌ ผิด — คำตอบคือ: '+correct+'</span>';
+  // ปุ่มถัดไป
+  document.getElementById('quiz-next-wrap').innerHTML=
+    `<button class="quiz-next" onclick="answer(${ok})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>ถัดไป</button>`;
+}
+
+// ══════════════════════════════════════════════════════════
+//  ANSWER
+// ══════════════════════════════════════════════════════════
+function answer(ok){
+  const d=deck[idx];
+  if(ok) right++; else { wrong++; wrongSet.push(d); }
+  srsUpdate(d, ok);   // อัปเดต SRS ทุกครั้ง
+  idx++; updateStats(); renderCard();
+}
+
+// ══════════════════════════════════════════════════════════
+//  SESSION DONE
+// ══════════════════════════════════════════════════════════
+function renderDone(){
+  // บันทึก streak + lifetime stats
+  markTodayDone();
+  const life=getLifeStats();
+  life.sessions++; life.totalRight+=right; life.totalWrong+=wrong;
+  saveLifeStats(life);
+  renderStreakRow();
+
+  const pct=right+wrong>0?Math.round(right/(right+wrong)*100):0;
+  const wrongCount=wrongSet.length;
+  document.getElementById('main').innerHTML=`
+    <div class="done-wrap">
+      <div class="done-title">${pct>=80?'🎉 เยี่ยมมาก!':pct>=60?'👍 ทำได้ดี':'💪 สู้ต่อไป!'}</div>
+      <div class="done-sub">ผ่านไปแล้ว ${deck.length} ใบ</div>
+      <div class="done-grid">
+        <div class="done-card">
+          <div class="done-num" style="color:#2ecc71">${right}</div>
+          <div class="done-lbl">✅ จำได้</div>
+        </div>
+        <div class="done-card">
+          <div class="done-num" style="color:#e74c3c">${wrong}</div>
+          <div class="done-lbl">❌ ยังไม่แม่น</div>
+        </div>
+        <div class="done-card">
+          <div class="done-num" style="color:#9b59b6">${pct}%</div>
+          <div class="done-lbl">แม่นยำ</div>
+        </div>
+        <div class="done-card">
+          <div class="done-num" style="color:#f39c12">${life.sessions}</div>
+          <div class="done-lbl">เซสชั่นรวม</div>
+        </div>
+      </div>
+      <div class="done-actions">
+        ${wrongCount>0?`<button class="done-btn danger" onclick="startWrong()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>ทบทวน ${wrongCount} ใบที่ผิด</button>`:''}
+        <button class="done-btn secondary" onclick="event.preventDefault();setMode('srs')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>โหมด SRS ทบทวน</button>
+        <button class="done-btn primary" onclick="startAll()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>เริ่มใหม่</button>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+//  KEYBOARD
+// ══════════════════════════════════════════════════════════
+document.addEventListener('keydown',e=>{
+  if(e.target&&/^(INPUT|TEXTAREA)$/.test(e.target.tagName))return;
+  if(e.code==='Space'){e.preventDefault();if(!flipped&&currentMode==='flash') flipCard();}
+  if(e.code==='ArrowRight'&&flipped) answer(true);
+  if(e.code==='ArrowLeft'&&flipped) answer(false);
+  if(e.code==='KeyS') speakCard(false);
+  if(e.code==='KeyD') speakCard(true);
+});
+
+// ══════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════
+
+let autoSpeak=loadLS('jlpt_autospeak',false);
+let jaVoice=null;
+function initVoice(){const vs=speechSynthesis.getVoices();jaVoice=vs.find(v=>v.lang==='ja-JP'&&v.localService)||vs.find(v=>v.lang==='ja-JP')||vs.find(v=>v.lang.startsWith('ja'))||null;}
+speechSynthesis.addEventListener('voiceschanged',initVoice);
+initVoice();
+function speak(text,slow){if(!text)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';u.rate=slow?0.6:0.85;u.pitch=1;if(jaVoice)u.voice=jaVoice;speechSynthesis.speak(u);}
+function speakCard(slow){if(idx>=deck.length)return;const d=deck[idx];speak(d.p||d.c||(d.who&&d.w)||d.k||d.w||d.on||'',slow);}
+function toggleAutoSpeak(){autoSpeak=!autoSpeak;saveLS('jlpt_autospeak',autoSpeak);const b=document.getElementById('auto-speak-btn');if(b)b.className='speak-auto-btn'+(autoSpeak?' active':'');}
+
+
+function lockScroll(){
+  const el = document.documentElement;
+  const y = el.scrollTop || window.scrollY;
+  // lock ทันที ก่อน DOM เปลี่ยน
+  el.style.scrollBehavior = 'auto';
+  requestAnimationFrame(()=>{
+    el.scrollTop = y;
+    window.scrollTo(0, y);
+    // lock ซ้ำหลัง reflow
+    setTimeout(()=>{
+      el.scrollTop = y;
+      window.scrollTo(0, y);
+    }, 80);
+  });
+}
+
+Object.keys(SCENE_INFO).forEach(k=>{CAT_EMOJI[k]=SCENE_INFO[k].emoji;});
+
+function whoBadge(d){
+  if(!d||!d.who) return '';
+  return d.who==='me'
+    ? '<span class="who-badge who-me">🗣️ เราพูด</span>'
+    : '<span class="who-badge who-they">👂 อีกฝ่ายพูด</span>';
+}
+
+// ── แถบปุ่มเปิดตัวดูบทสนทนา ──
+function renderSceneBar(){
+  const el=document.getElementById('scene-bar');
+  if(!el) return;
+  if(currentLevel!=='scene'){el.innerHTML='';return;}
+  if(activeCat==='ทั้งหมด'){
+    el.innerHTML='<div class="scene-hint">เลือกสถานการณ์ด้านบน แล้วกด 📖 เพื่อดูบทสนทนาทั้งบทและฟังเสียงต่อเนื่อง</div>';
+    return;
+  }
+  el.innerHTML='<button class="scene-open-btn" onclick="openScene()">📖 ดูบทสนทนา "'+activeCat+'"</button>';
+}
+
+// ── ตัวดูบทสนทนา ──
+let sceneToken=0;
+function openScene(){
+  const items=scenes.filter(d=>d.cat===activeCat);
+  if(!items.length) return;
+  const info=SCENE_INFO[activeCat]||{emoji:'',tip:''};
+  document.getElementById('scene-title').textContent=(info.emoji?info.emoji+' ':'')+activeCat;
+  document.getElementById('scene-tip').textContent=info.tip||'';
+  document.getElementById('scene-tip').style.display=info.tip?'':'none';
+  document.getElementById('scene-list').innerHTML=items.map((d,i)=>`
+    <div class="scene-line ${d.who==='me'?'sl-me':'sl-they'}" id="sl-${i}">
+      <div class="scene-who">${d.who==='me'?'🗣️ เราพูด':'👂 อีกฝ่ายพูด'}</div>
+      <div class="scene-jp">${d.k||d.w}</div>
+      ${d.k?`<div class="scene-kana">${d.w}</div>`:''}
+      <div class="scene-ro">${d.r}</div>
+      <div class="scene-th">${d.th}</div>
+      <div class="speak-row" style="margin-top:6px">
+        <button class="speak-btn" onclick="speak(scenes.filter(x=>x.cat===activeCat)[${i}].w,false)" aria-label="ฟัง">&#9654;</button>
+        <button class="speak-slow-btn" onclick="speak(scenes.filter(x=>x.cat===activeCat)[${i}].w,true)">0.6x</button>
+      </div>
+    </div>`).join('');
+  document.getElementById('scene-modal').classList.add('open');
+}
+function closeScene(){
+  sceneToken++;
+  try{speechSynthesis.cancel();}catch{}
+  document.querySelectorAll('.scene-line.playing').forEach(e=>e.classList.remove('playing'));
+  const b=document.getElementById('scene-play-btn');
+  if(b) b.textContent='▶ เล่นทั้งบท';
+  const m=document.getElementById('scene-modal');
+  if(m) m.classList.remove('open');
+}
+function playScene(){
+  const b=document.getElementById('scene-play-btn');
+  if(b&&b.dataset.playing==='1'){stopScene();return;}
+  const items=scenes.filter(d=>d.cat===activeCat);
+  const my=++sceneToken;
+  if(b){b.dataset.playing='1';b.textContent='⏹ หยุด';}
+  let i=0;
+  const next=()=>{
+    if(my!==sceneToken) return;
+    document.querySelectorAll('.scene-line.playing').forEach(e=>e.classList.remove('playing'));
+    if(i>=items.length){stopScene(true);return;}
+    const row=document.getElementById('sl-'+i);
+    if(row){row.classList.add('playing');row.scrollIntoView({block:'center',behavior:'smooth'});}
+    const u=new SpeechSynthesisUtterance(items[i].w);
+    u.lang='ja-JP'; u.rate=0.85;
+    if(typeof jaVoice!=='undefined'&&jaVoice) u.voice=jaVoice;
+    const go=()=>{i++;setTimeout(next,450);};
+    u.onend=go; u.onerror=go;
+    try{speechSynthesis.cancel();speechSynthesis.speak(u);}catch{stopScene();}
+  };
+  next();
+}
+function stopScene(done){
+  sceneToken++;
+  try{speechSynthesis.cancel();}catch{}
+  document.querySelectorAll('.scene-line.playing').forEach(e=>e.classList.remove('playing'));
+  const b=document.getElementById('scene-play-btn');
+  if(b){b.dataset.playing='0';b.textContent='▶ เล่นทั้งบท';}
+}
+
+// ══════════════════════════════════════════════════════════
+//  BACKUP / RESTORE / PERSIST / PWA
+// ══════════════════════════════════════════════════════════
+const BACKUP_KEYS=['jlpt_srs','jlpt_streak','jlpt_life','jlpt_autospeak'];
+const BACKUP_META='jlpt_lastbackup';        // ไม่รวมในไฟล์สำรอง
+const BACKUP_SNOOZE='jlpt_backup_snooze';   // ไม่รวมในไฟล์สำรอง
+const BACKUP_REMIND_DAYS=14;
+let persistState=null;                      // true | false | null (ไม่รองรับ/ยังไม่รู้)
+
+function buildBackup(){
+  const data={};
+  BACKUP_KEYS.forEach(k=>{
+    try{const v=localStorage.getItem(k);if(v!==null)data[k]=JSON.parse(v);}catch{}
+  });
+  return {app:'jlpt-study',version:1,exportedAt:new Date().toISOString(),data};
+}
+
+function setBackupMsg(text,type){
+  const el=document.getElementById('backup-msg');
+  if(!el)return;
+  el.textContent=text||'';
+  el.className='backup-msg'+(type?' '+type:'');
+}
+
+function markBackedUp(){
+  saveLS(BACKUP_META,Date.now());
+  renderBackupBanner();
+  renderBackupInfo();
+}
+
+function renderBackupInfo(){
+  const el=document.getElementById('backup-info');
+  if(!el)return;
+  const cards=Object.keys(getSRS()).length;
+  const last=loadLS(BACKUP_META,0);
+  let lastTxt='<span class="warn">ยังไม่เคยสำรอง</span>';
+  if(last){
+    const days=Math.floor((Date.now()-last)/86400000);
+    const d=new Date(last);
+    const ds=d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+    lastTxt=ds+(days>=BACKUP_REMIND_DAYS?` <span class="warn">(${days} วันที่แล้ว)</span>`:days>0?` (${days} วันที่แล้ว)`:' (วันนี้)');
+  }
+  let pTxt='<span class="warn">ไม่ทราบสถานะ / ไม่รองรับ</span>';
+  if(persistState===true)pTxt='<span class="ok">เบราว์เซอร์รับปากเก็บถาวรแล้ว</span>';
+  else if(persistState===false)pTxt='<span class="warn">ยังไม่ได้รับการรับรอง ควรสำรองสม่ำเสมอ</span>';
+  el.innerHTML=`การ์ด SRS ที่บันทึกไว้: <b>${cards}</b><br>สำรองล่าสุด: <b>${lastTxt}</b><br>การเก็บข้อมูลถาวร: ${pTxt}`;
+}
+
+function renderBackupBanner(){
+  const el=document.getElementById('backup-banner');
+  if(!el)return;
+  const hasData=Object.keys(getSRS()).length>0||getStreak().dates.length>0;
+  const last=loadLS(BACKUP_META,0);
+  const days=last?Math.floor((Date.now()-last)/86400000):null;
+  const snooze=loadLS(BACKUP_SNOOZE,0);
+  if(!hasData||Date.now()<snooze||(last&&days<BACKUP_REMIND_DAYS)){el.innerHTML='';return;}
+  const msg=last?`ยังไม่ได้สำรองข้อมูลมา ${days} วันแล้ว`:'ยังไม่เคยสำรองข้อมูลเลย';
+  el.innerHTML=`<div class="backup-banner"><span>💾 ${msg}</span><button onclick="openBackup()">สำรองเลย</button><button class="ghost" onclick="snoozeBackup()">ไว้ก่อน</button></div>`;
+}
+
+function snoozeBackup(){
+  saveLS(BACKUP_SNOOZE,Date.now()+3*86400000);
+  renderBackupBanner();
+}
+
+function openBackup(){
+  const m=document.getElementById('backup-modal');
+  if(!m)return;
+  setBackupMsg('');
+  renderBackupInfo();
+  m.classList.add('open');
+}
+function closeBackup(){
+  const m=document.getElementById('backup-modal');
+  if(m)m.classList.remove('open');
+}
+
+async function exportBackup(){
+  const text=JSON.stringify(buildBackup(),null,2);
+  const name='jlpt-backup-'+todayStr()+'.json';
+  // 1) iOS/Android: เปิด Share Sheet (บันทึกลง Files / AirDrop / ส่งให้ตัวเอง)
+  try{
+    const file=new File([text],name,{type:'application/json'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:'สำรองข้อมูล JLPT'});
+      markBackedUp();
+      setBackupMsg('ส่งออกไฟล์สำรองแล้ว','ok');
+      return;
+    }
+  }catch(e){
+    if(e&&e.name==='AbortError')return;   // ผู้ใช้กดยกเลิก
+  }
+  // 2) เบราว์เซอร์ทั่วไป: ดาวน์โหลดไฟล์
+  try{
+    const blob=new Blob([text],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=name;
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    markBackedUp();
+    setBackupMsg('ดาวน์โหลดไฟล์สำรองแล้ว','ok');
+  }catch{
+    setBackupMsg('ส่งออกไฟล์ไม่สำเร็จ ลองใช้ "คัดลอกข้อมูล" แทน','err');
+  }
+}
+
+async function copyBackup(){
+  const text=JSON.stringify(buildBackup());
+  const ta=document.getElementById('backup-text');
+  if(ta){ta.value=text;}
+  try{
+    await navigator.clipboard.writeText(text);
+    markBackedUp();
+    setBackupMsg('คัดลอกข้อมูลแล้ว นำไปวางเก็บไว้ในที่ปลอดภัย (เช่น Notes)','ok');
+  }catch{
+    if(ta){ta.focus();ta.select();}
+    setBackupMsg('คัดลอกอัตโนมัติไม่ได้ ให้กดค้างที่ช่องข้อความแล้วเลือกคัดลอกเอง','err');
+  }
+}
+
+function parseBackup(text){
+  let obj;
+  try{obj=JSON.parse(text);}catch{throw new Error('ข้อมูลที่ให้มาอ่านเป็น JSON ไม่ได้');}
+  if(!obj||obj.app!=='jlpt-study'||typeof obj.data!=='object'||obj.data===null)
+    throw new Error('ไม่ใช่ไฟล์สำรองของแอปนี้');
+  const d=obj.data,out={};
+  const isNum=v=>typeof v==='number'&&isFinite(v);
+  if('jlpt_srs' in d){
+    const s=d.jlpt_srs;
+    if(!s||typeof s!=='object'||Array.isArray(s))throw new Error('ข้อมูล SRS ในไฟล์ไม่ถูกต้อง');
+    for(const k of Object.keys(s)){
+      const r=s[k];
+      if(!r||!isNum(r.ease)||!isNum(r.interval)||!isNum(r.due)||!isNum(r.reps))
+        throw new Error('ข้อมูล SRS ในไฟล์เสียหาย (การ์ด '+k+')');
+    }
+    out.jlpt_srs=s;
+  }
+  if('jlpt_streak' in d){
+    const s=d.jlpt_streak;
+    if(!s||!Array.isArray(s.dates)||!s.dates.every(x=>typeof x==='string'))
+      throw new Error('ข้อมูล streak ในไฟล์ไม่ถูกต้อง');
+    out.jlpt_streak={dates:s.dates,lastDate:typeof s.lastDate==='string'?s.lastDate:''};
+  }
+  if('jlpt_life' in d){
+    const l=d.jlpt_life;
+    if(!l||!isNum(l.sessions)||!isNum(l.totalRight)||!isNum(l.totalWrong))
+      throw new Error('ข้อมูลสถิติรวมในไฟล์ไม่ถูกต้อง');
+    out.jlpt_life={sessions:l.sessions,totalRight:l.totalRight,totalWrong:l.totalWrong};
+  }
+  if('jlpt_autospeak' in d)out.jlpt_autospeak=!!d.jlpt_autospeak;
+  if(Object.keys(out).length===0)throw new Error('ไม่พบข้อมูลที่นำเข้าได้ในไฟล์');
+  return out;
+}
+
+function applyImport(text){
+  try{
+    const out=parseBackup(text);
+    const n=Object.keys(out.jlpt_srs||{}).length;
+    const msg='นำเข้าข้อมูลสำรอง'+(out.jlpt_srs?' ('+n+' การ์ด SRS)':'')+'?\nข้อมูลปัจจุบันในเครื่องนี้จะถูกแทนที่';
+    if(!confirm(msg))return;
+    saveLS('jlpt_prev_before_import',buildBackup());   // กันพลาด: เก็บข้อมูลเดิมไว้ 1 ชุด
+    Object.keys(out).forEach(k=>saveLS(k,out[k]));
+    saveLS(BACKUP_META,Date.now());
+    setBackupMsg('นำเข้าสำเร็จ กำลังโหลดใหม่...','ok');
+    setTimeout(()=>location.reload(),700);
+  }catch(e){
+    setBackupMsg(e.message||'นำเข้าไม่สำเร็จ','err');
+  }
+}
+
+function importFile(input){
+  const f=input.files&&input.files[0];
+  if(!f)return;
+  const reader=new FileReader();
+  reader.onload=()=>{applyImport(String(reader.result||''));input.value='';};
+  reader.onerror=()=>{setBackupMsg('อ่านไฟล์ไม่สำเร็จ','err');input.value='';};
+  reader.readAsText(f);
+}
+
+function importFromTextarea(){
+  const ta=document.getElementById('backup-text');
+  const t=ta?ta.value.trim():'';
+  if(!t){setBackupMsg('ยังไม่ได้วางข้อมูลในช่องข้อความ','err');return;}
+  applyImport(t);
+}
+
+async function initPersist(){
+  try{
+    if(navigator.storage&&navigator.storage.persist){
+      persistState=(await navigator.storage.persisted())||(await navigator.storage.persist());
+    }
+  }catch{persistState=null;}
+  renderBackupInfo();
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeBackup();closeScene();}});
+
+// PWA: Service Worker (ใช้ได้เมื่อเปิดผ่าน http/https เท่านั้น ไม่ใช่ไฟล์ในเครื่อง)
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
+}
+
+initPersist();
+renderBackupBanner();
+
+renderFilters();
+startAll();
+
+</script>
+</body>
+</html>
