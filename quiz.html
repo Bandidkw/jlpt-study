@@ -514,6 +514,122 @@ a{color:inherit;text-decoration:none;}
   color:#64748b!important;
 }
 
+/* ── PHASE 1: TYPING, LISTENING & SPEED RUN STYLES ── */
+.typing-wrap{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+  align-items:center;
+}
+.typing-input{
+  flex:1;
+  background:#162035;
+  border:2px solid #243250;
+  border-radius:12px;
+  padding:14px 18px;
+  color:#ffffff;
+  font-size:18px;
+  font-weight:600;
+  outline:none;
+  transition:all .15s;
+  letter-spacing:1px;
+}
+.typing-input:focus{
+  border-color:#3b82f6;
+  box-shadow:0 0 0 3px rgba(59,130,246,0.25);
+  background:#1b2742;
+}
+.typing-input.correct{
+  border-color:#10b981;
+  background:#064e3b33;
+  color:#34d399;
+}
+.typing-input.wrong{
+  border-color:#ef4444;
+  background:#4c051933;
+  color:#fca5a5;
+}
+.btn-typing-submit{
+  background:#2563eb;
+  color:#ffffff;
+  border:none;
+  border-radius:12px;
+  padding:14px 22px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .15s;
+  white-space:nowrap;
+}
+.btn-typing-submit:hover{
+  background:#1d4ed8;
+  transform:translateY(-1px);
+}
+.btn-typing-submit:active{transform:scale(.98);}
+
+/* Listening Pulse */
+.listening-pulse-box{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:20px 10px 10px;
+  gap:10px;
+}
+.listening-icon-pulse{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  background:rgba(59,130,246,0.15);
+  border:2px solid #3b82f6;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:32px;
+  animation:pulse-listening 1.8s infinite;
+  cursor:pointer;
+  transition:transform .15s;
+}
+.listening-icon-pulse:hover{transform:scale(1.06);}
+.listening-icon-pulse:active{transform:scale(.94);}
+@keyframes pulse-listening{
+  0%{box-shadow:0 0 0 0 rgba(59,130,246,0.5);}
+  70%{box-shadow:0 0 0 16px rgba(59,130,246,0);}
+  100%{box-shadow:0 0 0 0 rgba(59,130,246,0);}
+}
+
+/* Speed Run Bar & Combo */
+.speedrun-bar-wrap{
+  width:100%;
+  height:8px;
+  background:#1e293b;
+  border-radius:4px;
+  overflow:hidden;
+  margin-bottom:14px;
+}
+.speedrun-bar{
+  height:100%;
+  background:linear-gradient(90deg, #10b981, #f59e0b, #ef4444);
+  transition:width .25s linear;
+}
+.combo-badge{
+  font-size:12px;
+  font-weight:700;
+  color:#f59e0b;
+  background:rgba(245,158,11,0.15);
+  border:1px solid rgba(245,158,11,0.3);
+  border-radius:20px;
+  padding:2px 10px;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.speedrun-score-txt{
+  font-size:13px;
+  font-weight:700;
+  color:#38bdf8;
+}
+
 /* ── FEEDBACK & NEXT BUTTON ── */
 .feedback-box{
   margin-top:16px;
@@ -931,6 +1047,14 @@ let currentSubCat = 'ทุกบท'; // 'ทุกบท' | 'ตัวอย�
 let questionDirection = 'mixed'; // 'mixed' | 'm1' (jp->th) | 'm2' (th->jp) | 'm3' (kanji->rd)
 let questionCountMode = 10; // 10 | 20 | 'all'
 
+// Phase 1: Modalities & Speed Run State
+let quizInteraction = 'choice'; // 'choice' | 'typing' | 'listening' | 'speedrun'
+let speedRunTimeLeft = 60;
+let speedRunTimerId = null;
+let currentCombo = 0;
+let maxCombo = 0;
+let speedRunPoints = 0;
+
 // Quiz session state
 let quizDeck = [];
 let quizIdx = 0;
@@ -977,6 +1101,128 @@ function updateItemMastery(item, isCorrect, elapsedMs){
   m.tm = elapsedMs;
   store[k] = m;
   saveMasteryStore(store);
+}
+
+// ══════════════════════════════════════════════════════════
+//  PHASE 1: ROMAJI CONVERTER & ALTERNATE SPELLINGS
+// ══════════════════════════════════════════════════════════
+const KANA_MAP = {
+  'あ':'a','い':'i','う':'u','え':'e','お':'o',
+  'か':'ka','き':'ki','く':'ku','け':'ke','こ':'ko',
+  'さ':'sa','し':'shi','す':'su','せ':'se','そ':'so',
+  'た':'ta','ち':'chi','つ':'tsu','て':'te','と':'to',
+  'な':'na','に':'ni','ぬ':'nu','ね':'ne','の':'no',
+  'は':'ha','ひ':'hi','ふ':'fu','へ':'he','ほ':'ho',
+  'ま':'ma','み':'mi','む':'mu','め':'me','も':'mo',
+  'や':'ya','ゆ':'yu','よ':'yo',
+  'ら':'ra','り':'ri','る':'ru','れ':'re','ろ':'ro',
+  'わ':'wa','を':'wo','ん':'n',
+  'が':'ga','ぎ':'gi','ぐ':'gu','げ':'ge','ご':'go',
+  'ざ':'za','じ':'ji','ず':'zu','ぜ':'ze','ぞ':'zo',
+  'だ':'da','ぢ':'ji','づ':'zu','で':'de','ど':'do',
+  'ば':'ba','び':'bi','ぶ':'bu','べ':'be','ぼ':'bo',
+  'ぱ':'pa','ぴ':'pi','ぷ':'pu','ぺ':'pe','ぽ':'po',
+  'きゃ':'kya','きゅ':'kyu','きょ':'kyo',
+  'しゃ':'sha','しゅ':'shu','しょ':'sho',
+  'ちゃ':'cha','ちゅ':'chu','ちょ':'cho',
+  'にゃ':'nya','にゅ':'nyu','にょ':'nyo',
+  'ひゃ':'hya','ひゅ':'hyu','ひょ':'hyo',
+  'みゃ':'mya','みゅ':'myu','みょ':'myo',
+  'りゃ':'rya','りゅ':'ryu','りょ':'ryo',
+  'ぎゃ':'gya','ぎゅ':'gyu','ぎょ':'gyo',
+  'じゃ':'ja','じゅ':'ju','じょ':'jo',
+  'びゃ':'bya','びゅ':'byu','びょ':'byo',
+  'ぴゃ':'pya','ぴゅ':'pyu','ぴょ':'pyo',
+  'ア':'a','イ':'i','ウ':'u','エ':'e','オ':'o',
+  'カ':'ka','キ':'ki','ク':'ku','ケ':'ke','コ':'ko',
+  'サ':'sa','シ':'shi','ス':'su','セ':'se','ソ':'so',
+  'タ':'ta','チ':'chi','ツ':'tsu','テ':'te','ト':'to',
+  'ナ':'na','ニ':'ni','ヌ':'nu','ネ':'ne','ノ':'no',
+  'ハ':'ha','ヒ':'hi','フ':'fu','ヘ':'he','ホ':'ho',
+  'マ':'ma','ミ':'mi','ム':'mu','メ':'me','モ':'mo',
+  'ヤ':'ya','ユ':'yu','ヨ':'yo',
+  'ラ':'ra','リ':'ri','ル':'ru','レ':'re','ロ':'ro',
+  'ワ':'wa','ヲ':'wo','ン':'n',
+  'ガ':'ga','ギ':'gi','グ':'gu','ゲ':'ge','ゴ':'go',
+  'ザ':'za','ジ':'ji','ズ':'zu','ゼ':'ze','ぞ':'zo',
+  'ダ':'da','ヂ':'ji','ヅ':'zu','デ':'de','ド':'do',
+  'バ':'ba','ビ':'bi','ブ':'bu','ベ':'be','ボ':'bo',
+  'パ':'pa','ピ':'pi','プ':'pu','ペ':'pe','ポ':'po'
+};
+
+function kanaToRomaji(k){
+  if(!k) return '';
+  let res = '';
+  let i = 0;
+  while(i < k.length){
+    if(i + 1 < k.length){
+      const pair = k.substr(i, 2);
+      if(KANA_MAP[pair]){
+        res += KANA_MAP[pair];
+        i += 2;
+        continue;
+      }
+    }
+    if(k[i] === 'っ' || k[i] === 'ッ'){
+      if(i + 1 < k.length){
+        const nextPair = k.substr(i + 1, 2);
+        const nextSingle = k[i + 1];
+        const nextRom = KANA_MAP[nextPair] || KANA_MAP[nextSingle] || '';
+        if(nextRom && nextRom.length > 0){
+          res += nextRom[0];
+          i++;
+          continue;
+        }
+      }
+    }
+    const ch = k[i];
+    res += (KANA_MAP[ch] !== undefined ? KANA_MAP[ch] : ch);
+    i++;
+  }
+  return res;
+}
+
+function normalizeRomaji(str){
+  if(!str) return '';
+  return str.trim().toLowerCase()
+    .replace(/[ōóô]/g, 'ou')
+    .replace(/[ūúû]/g, 'uu')
+    .replace(/[ēéê]/g, 'ee')
+    .replace(/[āáâ]/g, 'aa')
+    .replace(/[\-_\s\.\,]/g, '');
+}
+
+function checkRomajiMatch(userInput, targetRomaji, targetKana){
+  const u = normalizeRomaji(userInput);
+  if(!u) return false;
+
+  // Direct match with input if user typed Japanese kana
+  if(targetKana && userInput.trim() === targetKana.trim()) return true;
+
+  const t = normalizeRomaji(targetRomaji || kanaToRomaji(targetKana));
+  if(u === t) return true;
+
+  // Alternate spelling normalization
+  // tsu <-> tu, shi <-> si, chi <-> ti, fu <-> hu, wo <-> o, nn <-> n
+  const toCanonical = (s) => {
+    return s
+      .replace(/tsu/g, 'tu')
+      .replace(/shi/g, 'si')
+      .replace(/chi/g, 'ti')
+      .replace(/fu/g, 'hu')
+      .replace(/wo/g, 'o')
+      .replace(/nn/g, 'n');
+  };
+
+  if(toCanonical(u) === toCanonical(t)) return true;
+
+  // If target has kana, check converted canonical
+  if(targetKana){
+    const conv = normalizeRomaji(kanaToRomaji(targetKana));
+    if(toCanonical(u) === toCanonical(conv)) return true;
+  }
+
+  return false;
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1239,6 +1485,17 @@ function renderTestHome(container){
   container.innerHTML = `
     <!-- CARD 1: TEST SETUP -->
     <div class="quiz-card">
+      <!-- โหมดการทดสอบ (Phase 1) -->
+      <div class="section-group">
+        <div class="section-label">โหมดการทดสอบ</div>
+        <div class="chips-row">
+          <button class="chip${quizInteraction==='choice'?' active':''}" onclick="selectInteraction('choice')">🎯 4 ตัวเลือก</button>
+          <button class="chip${quizInteraction==='typing'?' active':''}" onclick="selectInteraction('typing')">⌨️ พิมพ์คำอ่าน (Typing)</button>
+          <button class="chip${quizInteraction==='listening'?' active':''}" onclick="selectInteraction('listening')">🎧 ควิซการฟัง (Listening)</button>
+          <button class="chip${quizInteraction==='speedrun'?' active':''}" onclick="selectInteraction('speedrun')">⚡ สปีดรัน 60 วิ (Speed Run)</button>
+        </div>
+      </div>
+
       <!-- ชุดคำที่จะทดสอบ -->
       <div class="section-group">
         <div class="section-label">ชุดคำที่จะทดสอบ</div>
@@ -1250,8 +1507,8 @@ function renderTestHome(container){
         </div>
       </div>
 
-      <!-- รูปแบบคำถาม -->
-      <div class="section-group">
+      <!-- รูปแบบคำถาม (ซ่อนในโหมดฟังและพิมพ์เพื่อความกระชับ) -->
+      <div class="section-group" style="${quizInteraction==='listening'||quizInteraction==='typing'?'display:none;':''}">
         <div class="section-label">รูปแบบคำถาม</div>
         <div class="chips-row">
           <button class="chip${questionDirection==='mixed'?' active':''}" onclick="selectDirection('mixed')">ผสม</button>
@@ -1262,7 +1519,7 @@ function renderTestHome(container){
       </div>
 
       <!-- จำนวนข้อ -->
-      <div class="section-group">
+      <div class="section-group" style="${quizInteraction==='speedrun'?'display:none;':''}">
         <div class="section-label">จำนวนข้อ</div>
         <div class="chips-row">
           <button class="chip${questionCountMode===10?' active':''}" onclick="selectCountMode(10)">10 ข้อ</button>
@@ -1273,12 +1530,15 @@ function renderTestHome(container){
 
       <!-- START BUTTON -->
       <button class="btn-primary-cta" onclick="startQuiz()">
-        เริ่มทดสอบ
+        ${quizInteraction==='speedrun'?'⚡ เริ่มสปีดรัน 60 วินาที':'เริ่มทดสอบ'}
       </button>
 
       <!-- CAPTION -->
       <div class="btn-caption">
-        ระบบเลือกคำที่ยังติดและคำที่ยังไม่เคยทดสอบก่อน ตอบถูกภายใน 4 วินาทีนับว่าเร็ว (ค่านี่ตั้งเองเพื่อวัดว่าอ่านออกทันทีหรือยัง)
+        ${quizInteraction==='typing' ? 'โหมดพิมพ์คำอ่าน: พิมพ์โรมาจิหรือฮิรางานะ ตอบถูกภายใน 6 วินาทีนับว่าเร็ว และเลื่อนข้ออัตโนมัติ' :
+          quizInteraction==='listening' ? 'โหมดควิซการฟัง: ฟังเสียงอ่านภาษาญี่ปุ่นแล้วเลือกความหมายไทย ตอบถูกภายใน 4 วินาทีนับว่าเร็ว' :
+          quizInteraction==='speedrun' ? 'โหมดสปีดรัน: ตอบให้ได้มากที่สุดภายใน 60 วินาที ตอบถูกติดกันเพื่อสะสม Combo ตัวคูณคะแนน!' :
+          'ระบบเลือกคำที่ยังติดและคำที่ยังไม่เคยทดสอบก่อน ตอบถูกภายใน 4 วินาทีนับว่าเร็ว (ค่านี่ตั้งเองเพื่อวัดว่าอ่านออกทันทีหรือยัง)'}
       </div>
     </div>
 
@@ -1335,6 +1595,10 @@ function selectCountMode(c){
   questionCountMode = c;
   renderTestHome(document.getElementById('main-content'));
 }
+function selectInteraction(m){
+  quizInteraction = m;
+  renderTestHome(document.getElementById('main-content'));
+}
 
 // ══════════════════════════════════════════════════════════
 //  QUIZ RUNNER ENGINE
@@ -1354,6 +1618,10 @@ function startQuiz(){
     alert('ต้องมีคำศัพท์อย่างน้อย 2 คำเพื่อเริ่มทำแบบทดสอบ');
     return;
   }
+
+  // Clear previous timers
+  clearInterval(quizTimerId);
+  clearInterval(speedRunTimerId);
 
   let subPool = pool;
   if(currentSubCat === 'repair'){
@@ -1383,11 +1651,20 @@ function startQuiz(){
 
   prioritized.sort((a,b) => a.weight - b.weight);
 
-  let limit = prioritized.length;
-  if(questionCountMode === 10) limit = Math.min(10, prioritized.length);
-  else if(questionCountMode === 20) limit = Math.min(20, prioritized.length);
+  if(quizInteraction === 'speedrun'){
+    // In Speed Run: 60s mode, deck has ample items
+    quizDeck = shuffleArr([...prioritized.map(p => p.item), ...prioritized.map(p => p.item), ...prioritized.map(p => p.item)]);
+    speedRunTimeLeft = 60;
+    currentCombo = 0;
+    maxCombo = 0;
+    speedRunPoints = 0;
+  } else {
+    let limit = prioritized.length;
+    if(questionCountMode === 10) limit = Math.min(10, prioritized.length);
+    else if(questionCountMode === 20) limit = Math.min(20, prioritized.length);
+    quizDeck = prioritized.slice(0, limit).map(p => p.item);
+  }
 
-  quizDeck = prioritized.slice(0, limit).map(p => p.item);
   quizIdx = 0;
   quizScore = 0;
   quizFastCount = 0;
@@ -1395,7 +1672,31 @@ function startQuiz(){
   quizWrongCount = 0;
   quizMistakes = [];
 
+  if(quizInteraction === 'speedrun'){
+    startSpeedRunTimer();
+  }
+
   renderQuizQuestion();
+}
+
+function startSpeedRunTimer(){
+  clearInterval(speedRunTimerId);
+  speedRunTimerId = setInterval(() => {
+    speedRunTimeLeft--;
+    const barEl = document.getElementById('speedrun-progress-fill');
+    const txtEl = document.getElementById('speedrun-timer-txt');
+    if(barEl){
+      barEl.style.width = ((speedRunTimeLeft / 60) * 100) + '%';
+    }
+    if(txtEl){
+      txtEl.textContent = `${speedRunTimeLeft}s`;
+    }
+    if(speedRunTimeLeft <= 0){
+      clearInterval(speedRunTimerId);
+      clearInterval(quizTimerId);
+      renderQuizSummary();
+    }
+  }, 1000);
 }
 
 function renderQuizQuestion(){
@@ -1403,15 +1704,24 @@ function renderQuizQuestion(){
   quizAnswered = false;
 
   if(quizIdx >= quizDeck.length){
+    clearInterval(speedRunTimerId);
     renderQuizSummary();
     return;
   }
 
   const item = quizDeck[quizIdx];
   const allPool = getPoolForLevel(currentLevel);
+  const isSpeedRun = (quizInteraction === 'speedrun');
+  const isListening = (quizInteraction === 'listening');
+  const isTyping = (quizInteraction === 'typing');
+  const speedThreshold = isTyping ? 6000 : 4000;
 
   let dir = questionDirection;
-  if(dir === 'mixed'){
+  if(isListening){
+    dir = 'm1';
+  } else if(isTyping){
+    dir = 'm3';
+  } else if(dir === 'mixed'){
     const hasKanji = !!(item.jp && item.rd && item.jp !== item.rd);
     const availableDirs = ['m1', 'm2'];
     if(hasKanji) availableDirs.push('m3');
@@ -1423,7 +1733,22 @@ function renderQuizQuestion(){
   let correctAnswer = '';
   let dirBadge = 'คำ → ความหมาย';
 
-  if(dir === 'm2'){
+  if(isListening){
+    dirBadge = '🎧 ควิซการฟัง';
+    questionPrompt = `
+      <div class="listening-pulse-box">
+        <div class="listening-icon-pulse" onclick="speakJp('${item.jp}')" title="แตะเพื่อฟังเสียงซ้ำ">🎧</div>
+        <div style="font-size:13px;color:#94a3b8;margin-top:4px;">กำลังเล่นเสียงอ่าน... แตะหูฟังเพื่อฟังซ้ำ</div>
+      </div>
+    `;
+    correctAnswer = item.th;
+  } else if(isTyping){
+    dirBadge = '⌨️ พิมพ์คำอ่าน (โรมาจิ)';
+    const isBig = item.jp.length <= 4;
+    questionPrompt = `<div class="${isBig ? 'q-text-large' : 'q-text-medium'}">${item.jp}</div>`;
+    questionSub = `<div class="q-sub-text" style="color:#cbd5e1;">ความหมาย: ${item.th}</div>`;
+    correctAnswer = item.rd || kanaToRomaji(item.jp);
+  } else if(dir === 'm2'){
     dirBadge = 'ความหมาย → คำ';
     questionPrompt = `<div class="q-text-thai">${item.th}</div>`;
     correctAnswer = item.jp;
@@ -1432,7 +1757,7 @@ function renderQuizQuestion(){
     questionPrompt = `<div class="q-text-large">${item.jp}</div>`;
     correctAnswer = item.rd;
   } else {
-    dirBadge = 'คำ → ความหมาย';
+    dirBadge = isSpeedRun ? '⚡ สปีดรัน' : 'คำ → ความหมาย';
     const isBig = item.jp.length <= 4;
     questionPrompt = `<div class="${isBig ? 'q-text-large' : 'q-text-medium'}">${item.jp}</div>`;
     if(item.rd && item.rd !== item.jp){
@@ -1441,52 +1766,30 @@ function renderQuizQuestion(){
     correctAnswer = item.th;
   }
 
-  const others = allPool.filter(o => itemKey(o) !== itemKey(item));
-  others.sort((a,b) => {
-    const wa = (a.ch === item.ch ? 0 : 2) + Math.random();
-    const wb = (b.ch === item.ch ? 0 : 2) + Math.random();
-    return wa - wb;
-  });
+  let choicesHtml = '';
+  if(!isTyping){
+    const others = allPool.filter(o => itemKey(o) !== itemKey(item));
+    others.sort((a,b) => {
+      const wa = (a.ch === item.ch ? 0 : 2) + Math.random();
+      const wb = (b.ch === item.ch ? 0 : 2) + Math.random();
+      return wa - wb;
+    });
 
-  const wrongChoices = [];
-  for(let candidate of others){
-    let val = '';
-    if(dir === 'm2') val = candidate.jp;
-    else if(dir === 'm3') val = candidate.rd || candidate.jp;
-    else val = candidate.th;
+    const wrongChoices = [];
+    for(let candidate of others){
+      let val = '';
+      if(dir === 'm2') val = candidate.jp;
+      else if(dir === 'm3') val = candidate.rd || candidate.jp;
+      else val = candidate.th;
 
-    if(val && val !== correctAnswer && !wrongChoices.includes(val)){
-      wrongChoices.push(val);
-      if(wrongChoices.length >= 3) break;
+      if(val && val !== correctAnswer && !wrongChoices.includes(val)){
+        wrongChoices.push(val);
+        if(wrongChoices.length >= 3) break;
+      }
     }
-  }
 
-  const choices = shuffleArr([correctAnswer, ...wrongChoices]);
-
-  const container = document.getElementById('main-content');
-  container.innerHTML = `
-    <div class="quiz-card">
-      <!-- HEADER -->
-      <div class="quiz-header">
-        <span class="q-progress-lbl">ข้อ ${quizIdx + 1} / ${quizDeck.length}</span>
-        <span class="q-mode-badge">${dirBadge}</span>
-        <div class="timer-badge">
-          <span class="timer-dot" id="live-timer-dot"></span>
-          <span id="live-timer-txt">0.0s</span>
-        </div>
-      </div>
-
-      <!-- QUESTION DISPLAY -->
-      <div class="question-box">
-        ${questionPrompt}
-        ${questionSub}
-        <button class="q-audio-btn" onclick="speakJp('${item.jp}')">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-          ฟังเสียง
-        </button>
-      </div>
-
-      <!-- CHOICES -->
+    const choices = shuffleArr([correctAnswer, ...wrongChoices]);
+    choicesHtml = `
       <div class="choices-grid" id="choices-grid">
         ${choices.map((c, i) => `
           <button class="choice-btn" id="choice-${i}" onclick="submitQuizAnswer(${i}, '${escapeQuotes(c)}', '${escapeQuotes(correctAnswer)}')">
@@ -1495,8 +1798,65 @@ function renderQuizQuestion(){
           </button>
         `).join('')}
       </div>
+    `;
+  } else {
+    choicesHtml = `
+      <div class="typing-wrap">
+        <input type="text" id="typing-input" class="typing-input" placeholder="พิมพ์เสียงอ่านโรมาจิ แล้วกด Enter..." autocomplete="off" autofocus>
+        <button class="btn-typing-submit" onclick="submitTypingAnswer()">ส่ง (Enter)</button>
+      </div>
+    `;
+  }
 
-      <!-- FEEDBACK AREA -->
+  let topHeaderHtml = '';
+  if(isSpeedRun){
+    topHeaderHtml = `
+      <div class="speedrun-bar-wrap">
+        <div class="speedrun-bar" id="speedrun-progress-fill" style="width: ${(speedRunTimeLeft/60)*100}%;"></div>
+      </div>
+      <div class="quiz-header" style="margin-bottom:8px;">
+        <span class="timer-badge" style="color:#f59e0b;font-size:14px;">
+          ⏳ <span id="speedrun-timer-txt">${speedRunTimeLeft}s</span>
+        </span>
+        <span class="combo-badge" id="speedrun-combo-txt">
+          🔥 x${currentCombo || 1} Combo
+        </span>
+        <span class="speedrun-score-txt" id="speedrun-score-txt">
+          🏆 ${speedRunPoints} pt
+        </span>
+      </div>
+    `;
+  } else {
+    topHeaderHtml = `
+      <div class="quiz-header">
+        <span class="q-progress-lbl">ข้อ ${quizIdx + 1} / ${quizDeck.length}</span>
+        <span class="q-mode-badge">${dirBadge}</span>
+        <div class="timer-badge">
+          <span class="timer-dot" id="live-timer-dot"></span>
+          <span id="live-timer-txt">0.0s</span>
+        </div>
+      </div>
+    `;
+  }
+
+  const container = document.getElementById('main-content');
+  container.innerHTML = `
+    <div class="quiz-card">
+      ${topHeaderHtml}
+
+      <div class="question-box">
+        ${questionPrompt}
+        ${questionSub}
+        ${!isListening ? `
+          <button class="q-audio-btn" onclick="speakJp('${item.jp}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            ฟังเสียง
+          </button>
+        ` : ''}
+      </div>
+
+      ${choicesHtml}
+
       <div id="quiz-feedback-wrap"></div>
     </div>
   `;
@@ -1509,12 +1869,84 @@ function renderQuizQuestion(){
     const txtEl = document.getElementById('live-timer-txt');
     const dotEl = document.getElementById('live-timer-dot');
     if(txtEl) txtEl.textContent = `${sec}s`;
-    if(dotEl && currentElapsedMs > 4000){
+    if(dotEl && currentElapsedMs > speedThreshold){
       dotEl.className = 'timer-dot slow';
     }
   }, 100);
 
-  setTimeout(() => speakJp(item.jp), 200);
+  setTimeout(() => speakJp(item.jp), isListening ? 100 : 250);
+
+  if(isTyping){
+    const inp = document.getElementById('typing-input');
+    if(inp){
+      inp.focus();
+      inp.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter'){
+          e.preventDefault();
+          submitTypingAnswer();
+        }
+      });
+    }
+  }
+}
+
+function submitTypingAnswer(){
+  if(quizAnswered) return;
+  const inp = document.getElementById('typing-input');
+  if(!inp) return;
+  const val = inp.value.trim();
+  if(!val) return;
+
+  quizAnswered = true;
+  clearInterval(quizTimerId);
+  const elapsedMs = Date.now() - qStartTime;
+  const item = quizDeck[quizIdx];
+  const isCorrect = checkRomajiMatch(val, item.rd, item.jp);
+  const isFast = isCorrect && (elapsedMs <= 6000);
+
+  updateItemMastery(item, isCorrect, elapsedMs);
+
+  inp.disabled = true;
+  const fbWrap = document.getElementById('quiz-feedback-wrap');
+  const targetRom = kanaToRomaji(item.rd || item.jp);
+
+  if(isCorrect){
+    inp.className = 'typing-input correct';
+    quizScore++;
+    if(isFast){
+      quizFastCount++;
+      fbWrap.innerHTML = `
+        <div class="feedback-box fb-fast">
+          ⚡ <b>แม่นยำและรวดเร็ว!</b> [${item.rd ? `${item.rd} · ` : ''}${targetRom}] (${(elapsedMs/1000).toFixed(1)} วิ)
+        </div>
+      `;
+      setTimeout(() => {
+        quizIdx++;
+        renderQuizQuestion();
+      }, 800);
+      return;
+    } else {
+      quizSlowCount++;
+      fbWrap.innerHTML = `
+        <div class="feedback-box fb-slow">
+          ✓ <b>ถูกต้อง</b> (${targetRom}) แต่ใช้เวลา ${(elapsedMs/1000).toFixed(1)} วินาที (&gt; 6 วิ)
+          <div style="font-size:12px;margin-top:4px;color:#cbd5e1;">${item.jp} = ${item.th}</div>
+        </div>
+        <button class="btn-next-q" onclick="advanceNext()">ถัดไป (Enter) →</button>
+      `;
+    }
+  } else {
+    inp.className = 'typing-input wrong';
+    quizWrongCount++;
+    quizMistakes.push({ item, elapsedMs, correctVal: `${item.rd ? `${item.rd} · ` : ''}${targetRom}` });
+    fbWrap.innerHTML = `
+      <div class="feedback-box fb-wrong">
+        ✕ <b>คำอ่านที่ถูกต้องคือ: ${item.rd ? `${item.rd} · ` : ''}${targetRom}</b>
+        <div style="font-size:12px;margin-top:4px;color:#fca5a5;">${item.jp} = ${item.th}</div>
+      </div>
+      <button class="btn-next-q" onclick="advanceNext()">ถัดไป (Enter) →</button>
+    `;
+  }
 }
 
 function escapeQuotes(str){
@@ -1529,6 +1961,7 @@ function submitQuizAnswer(chosenIdx, chosenVal, correctVal){
   const isCorrect = (chosenVal === correctVal);
   const isFast = isCorrect && (elapsedMs <= 4000);
   const item = quizDeck[quizIdx];
+  const isSpeedRun = (quizInteraction === 'speedrun');
 
   updateItemMastery(item, isCorrect, elapsedMs);
 
@@ -1546,6 +1979,39 @@ function submitQuizAnswer(chosenIdx, chosenVal, correctVal){
   });
 
   const fbWrap = document.getElementById('quiz-feedback-wrap');
+
+  if(isSpeedRun){
+    if(isCorrect){
+      quizScore++;
+      currentCombo++;
+      maxCombo = Math.max(maxCombo, currentCombo);
+      const mult = currentCombo >= 6 ? 2.0 : (currentCombo >= 3 ? 1.5 : 1.0);
+      speedRunPoints += Math.round(100 * mult);
+      fbWrap.innerHTML = `
+        <div class="feedback-box fb-fast" style="padding:8px 12px;margin-top:10px;">
+          ⚡ <b>ถูกต้อง!</b> +${Math.round(100*mult)} pt ${currentCombo >= 3 ? `(Combo x${mult})` : ''}
+        </div>
+      `;
+      setTimeout(() => {
+        quizIdx++;
+        renderQuizQuestion();
+      }, 350);
+    } else {
+      quizWrongCount++;
+      quizMistakes.push({ item, elapsedMs, correctVal });
+      currentCombo = 0;
+      fbWrap.innerHTML = `
+        <div class="feedback-box fb-wrong" style="padding:8px 12px;margin-top:10px;">
+          ✕ คำตอบคือ: ${correctVal}
+        </div>
+      `;
+      setTimeout(() => {
+        quizIdx++;
+        renderQuizQuestion();
+      }, 650);
+    }
+    return;
+  }
 
   if(isCorrect){
     quizScore++;
@@ -1611,8 +2077,10 @@ document.addEventListener('keydown', (e) => {
 //  QUIZ SUMMARY
 // ══════════════════════════════════════════════════════════
 function renderQuizSummary(){
+  clearInterval(speedRunTimerId);
+  clearInterval(quizTimerId);
   const container = document.getElementById('main-content');
-  const total = quizDeck.length;
+  const total = quizIdx || 1;
   const pct = Math.round((quizScore / total) * 100);
 
   let mistakesHtml = '';
@@ -1633,19 +2101,72 @@ function renderQuizSummary(){
     `;
   }
 
+  if(quizInteraction === 'speedrun'){
+    let rank = 'D';
+    let rankColor = '#94a3b8';
+    let rankTitle = 'กำลังพัฒนา';
+    if(speedRunPoints >= 2500){ rank = 'S'; rankColor = '#f59e0b'; rankTitle = 'ระดับเซียน ความเร็วสูงสุด!'; }
+    else if(speedRunPoints >= 1800){ rank = 'A'; rankColor = '#10b981'; rankTitle = 'ยอดเยี่ยม แม่นยำรวดเร็ว'; }
+    else if(speedRunPoints >= 1200){ rank = 'B'; rankColor = '#3b82f6'; rankTitle = 'ดีมาก ผ่านเกณฑ์'; }
+    else if(speedRunPoints >= 600){ rank = 'C'; rankColor = '#a855f7'; rankTitle = 'ปานกลาง ฝึกฝนเพิ่ม'; }
+
+    container.innerHTML = `
+      <div class="quiz-card summary-container">
+        <div style="font-size:14px;color:#f59e0b;font-weight:600;margin-bottom:4px;">⚡ สรุปผล SPEED RUN 60 วินาที</div>
+        <div class="score-circle" style="color:${rankColor};font-size:68px;">${rank}</div>
+        <div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:4px;">${rankTitle}</div>
+        <div class="summary-sub">ทำคะแนนได้ <b>${speedRunPoints}</b> คะแนน (ตอบทั้งหมด ${total} ข้อ)</div>
+
+        <div class="summary-stats-grid">
+          <div class="sum-stat-card">
+            <div class="sum-stat-n" style="color:#10b981;">${quizScore}</div>
+            <div class="sum-stat-l">ตอบถูก (${pct}%)</div>
+          </div>
+          <div class="sum-stat-card">
+            <div class="sum-stat-n" style="color:#f59e0b;">x${maxCombo}</div>
+            <div class="sum-stat-l">Max Combo สูงสุด</div>
+          </div>
+          <div class="sum-stat-card">
+            <div class="sum-stat-n" style="color:#ef4444;">${quizWrongCount}</div>
+            <div class="sum-stat-l">ตอบผิด</div>
+          </div>
+        </div>
+
+        ${mistakesHtml}
+
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <button class="btn-primary-cta" style="background:#f59e0b;" onclick="startQuiz()">
+            ⚡ เริ่มสปีดรันอีกรอบ
+          </button>
+          <button class="btn-export" style="justify-content:center;padding:12px;" onclick="renderMain()">
+            กลับหน้าหลัก
+          </button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Standard / Typing / Listening Summary
+  const isTyping = (quizInteraction === 'typing');
+  const isListening = (quizInteraction === 'listening');
+  const modeTitle = isTyping ? '⌨️ สรุปผลโหมดพิมพ์คำอ่าน' : (isListening ? '🎧 สรุปผลโหมดควิซการฟัง' : '🎯 สรุปผลการทดสอบ');
+  const speedLabel = isTyping ? 'แม่นและเร็ว (≤ 6วิ)' : 'แม่นและเร็ว (≤ 4วิ)';
+
   container.innerHTML = `
     <div class="quiz-card summary-container">
+      <div style="font-size:13px;color:#38bdf8;font-weight:600;margin-bottom:4px;">${modeTitle}</div>
       <div class="score-circle">${pct}%</div>
       <div class="summary-sub">ตอบถูก ${quizScore} จากทั้งหมด ${total} ข้อ</div>
 
       <div class="summary-stats-grid">
         <div class="sum-stat-card">
           <div class="sum-stat-n" style="color:#10b981;">${quizFastCount}</div>
-          <div class="sum-stat-l">แม่นและเร็ว (&le; 4วิ)</div>
+          <div class="sum-stat-l">${speedLabel}</div>
         </div>
         <div class="sum-stat-card">
           <div class="sum-stat-n" style="color:#f59e0b;">${quizSlowCount}</div>
-          <div class="sum-stat-l">ตอบช้า (&gt; 4วิ)</div>
+          <div class="sum-stat-l">ตอบช้า</div>
         </div>
         <div class="sum-stat-card">
           <div class="sum-stat-n" style="color:#ef4444;">${quizWrongCount}</div>
