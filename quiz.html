@@ -1281,7 +1281,7 @@ function getPoolForLevel(level){
     return hiragana.map(h => ({
       jp: h.c,
       rd: h.r,
-      th: `เสียงอ่าน ${h.r}`,
+      th: h.r,
       ch: h.row || 'ฮิรางานะ',
       id: 'h_'+h.c
     }));
@@ -1290,7 +1290,7 @@ function getPoolForLevel(level){
     return katakana.map(k => ({
       jp: k.c,
       rd: k.r,
-      th: `เสียงอ่าน ${k.r}`,
+      th: k.r,
       ch: k.row || 'คาตาคานะ',
       id: 'k_'+k.c
     }));
@@ -1523,6 +1523,14 @@ function renderTestHome(container){
           <button class="chip${isRepairActive ? ' active' : ''}" onclick="toggleStatusFilter('repair')">ที่ยังติด (${cRepair})</button>
           <button class="chip${isUntestedActive ? ' active' : ''}" onclick="toggleStatusFilter('untested')">ยังไม่เคยทดสอบ (${cUntested})</button>
         </div>
+        ${cUntested > 0 ? `
+          <div style="margin-top:10px;padding:9px 12px;background:#0f2b38;border:1px solid #0284c7;border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:12.5px;color:#bae6fd;">💡 มี <b>${cUntested} คำ</b> ในบทที่เลือกที่ยังไม่ได้ทดสอบ</span>
+            <button type="button" onclick="startRemainingUntested()" style="background:#0284c7;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;">
+              ⏩ ทำเฉพาะข้อที่ยังไม่ได้ทำ (${Math.min(typeof questionCountMode === 'number' ? questionCountMode : cUntested, cUntested)} ข้อ)
+            </button>
+          </div>
+        ` : ''}
       </div>
 
       <!-- รูปแบบคำถาม (ซ่อนในโหมดฟังและพิมพ์เพื่อความกระชับ) -->
@@ -1542,6 +1550,8 @@ function renderTestHome(container){
         <div class="chips-row">
           <button class="chip${questionCountMode===10?' active':''}" onclick="selectCountMode(10)">10 ข้อ</button>
           <button class="chip${questionCountMode===20?' active':''}" onclick="selectCountMode(20)">20 ข้อ</button>
+          ${filteredPool.length >= 30 ? `<button class="chip${questionCountMode===30?' active':''}" onclick="selectCountMode(30)">30 ข้อ</button>` : ''}
+          ${filteredPool.length >= 50 ? `<button class="chip${questionCountMode===50?' active':''}" onclick="selectCountMode(50)">50 ข้อ</button>` : ''}
           <button class="chip${questionCountMode==='all'?' active':''}" onclick="selectCountMode('all')">ทั้งหมด (${filteredPool.length})</button>
         </div>
       </div>
@@ -1688,8 +1698,8 @@ function startQuiz(){
     }
   }
 
-  if(subPool.length < 2){
-    alert(`ต้องมีคำศัพท์อย่างน้อย 2 คำเพื่อเริ่มทำแบบทดสอบ (ชุดที่เลือกมีเพียง ${subPool.length} คำ)`);
+  if(subPool.length === 0){
+    alert('ไม่มีคำศัพท์ในชุดบทที่เลือก');
     return;
   }
 
@@ -1713,9 +1723,58 @@ function startQuiz(){
     speedRunPoints = 0;
   } else {
     let limit = prioritized.length;
-    if(questionCountMode === 10) limit = Math.min(10, prioritized.length);
-    else if(questionCountMode === 20) limit = Math.min(20, prioritized.length);
+    if(typeof questionCountMode === 'number') limit = Math.min(questionCountMode, prioritized.length);
     quizDeck = prioritized.slice(0, limit).map(p => p.item);
+  }
+
+  quizIdx = 0;
+  quizScore = 0;
+  quizFastCount = 0;
+  quizSlowCount = 0;
+  quizWrongCount = 0;
+  quizMistakes = [];
+
+  if(quizInteraction === 'speedrun'){
+    startSpeedRunTimer();
+  }
+
+  renderQuizQuestion();
+}
+
+function startRemainingUntested(){
+  const pool = getPoolForLevel(currentLevel);
+  if(pool.length < 2){
+    alert('ต้องมีคำศัพท์อย่างน้อย 2 คำเพื่อเริ่มทำแบบทดสอบ');
+    return;
+  }
+
+  // Clear previous timers
+  clearInterval(quizTimerId);
+  clearInterval(speedRunTimerId);
+
+  let chapterPool = pool;
+  if(selectedChapters.length > 0){
+    chapterPool = pool.filter(p => selectedChapters.includes(p.ch));
+  }
+
+  const remainingUntested = shuffleArr(chapterPool.filter(p => getMasteryStatus(p) === 'untested'));
+  if(remainingUntested.length === 0){
+    alert('ยอดเยี่ยมมาก! คุณได้ทดสอบครบทุกคำในบทที่เลือกแล้ว');
+    return;
+  }
+
+  let limit = remainingUntested.length;
+  if(quizInteraction === 'speedrun'){
+    quizDeck = shuffleArr([...remainingUntested, ...remainingUntested, ...remainingUntested]);
+    speedRunTimeLeft = 60;
+    currentCombo = 0;
+    maxCombo = 0;
+    speedRunPoints = 0;
+  } else {
+    if(typeof questionCountMode === 'number'){
+      limit = Math.min(questionCountMode, remainingUntested.length);
+    }
+    quizDeck = remainingUntested.slice(0, limit);
   }
 
   quizIdx = 0;
@@ -1799,7 +1858,15 @@ function renderQuizQuestion(){
     dirBadge = '⌨️ พิมพ์คำอ่าน (โรมาจิ)';
     const isBig = item.jp.length <= 4;
     questionPrompt = `<div class="${isBig ? 'q-text-large' : 'q-text-medium'}">${item.jp}</div>`;
-    questionSub = `<div class="q-sub-text" style="color:#cbd5e1;">ความหมาย: ${item.th}</div>`;
+    
+    // ไม่แสดงความหมายหากเป็นฮิรางานะ/คาตาคานะ หรือความหมายตรงกับคำอ่าน เพื่อไม่ให้เฉลยคำตอบ
+    const isKana = (currentLevel === 'hiragana' || currentLevel === 'katakana');
+    const isRedundant = !item.th || isKana || item.th.startsWith('เสียงอ่าน') || normalizeRomaji(item.th) === normalizeRomaji(item.rd || '');
+    if(!isRedundant){
+      questionSub = `<div class="q-sub-text" style="color:#cbd5e1;">ความหมาย: ${item.th}</div>`;
+    } else {
+      questionSub = '';
+    }
     correctAnswer = item.rd || kanaToRomaji(item.jp);
   } else if(dir === 'm2'){
     dirBadge = 'ความหมาย → คำ';
@@ -1813,7 +1880,7 @@ function renderQuizQuestion(){
     dirBadge = isSpeedRun ? '⚡ สปีดรัน' : 'คำ → ความหมาย';
     const isBig = item.jp.length <= 4;
     questionPrompt = `<div class="${isBig ? 'q-text-large' : 'q-text-medium'}">${item.jp}</div>`;
-    if(item.rd && item.rd !== item.jp){
+    if(item.rd && item.rd !== item.jp && currentLevel !== 'hiragana' && currentLevel !== 'katakana'){
       questionSub = `<div class="q-sub-text">（${item.rd}）</div>`;
     }
     correctAnswer = item.th;
@@ -1980,10 +2047,11 @@ function submitTypingAnswer(){
       return;
     } else {
       quizSlowCount++;
+      const showMeaning = item.th && currentLevel !== 'hiragana' && currentLevel !== 'katakana' && !item.th.startsWith('เสียงอ่าน') && normalizeRomaji(item.th) !== normalizeRomaji(item.rd || '');
       fbWrap.innerHTML = `
         <div class="feedback-box fb-slow">
           ✓ <b>ถูกต้อง</b> (${targetRom}) แต่ใช้เวลา ${(elapsedMs/1000).toFixed(1)} วินาที (&gt; 6 วิ)
-          <div style="font-size:12px;margin-top:4px;color:#cbd5e1;">${item.jp} = ${item.th}</div>
+          ${showMeaning ? `<div style="font-size:12px;margin-top:4px;color:#cbd5e1;">${item.jp} = ${item.th}</div>` : ''}
         </div>
         <button class="btn-next-q" onclick="advanceNext()">ถัดไป (Enter) →</button>
       `;
@@ -1992,10 +2060,11 @@ function submitTypingAnswer(){
     inp.className = 'typing-input wrong';
     quizWrongCount++;
     quizMistakes.push({ item, elapsedMs, correctVal: `${item.rd ? `${item.rd} · ` : ''}${targetRom}` });
+    const showMeaning = item.th && currentLevel !== 'hiragana' && currentLevel !== 'katakana' && !item.th.startsWith('เสียงอ่าน') && normalizeRomaji(item.th) !== normalizeRomaji(item.rd || '');
     fbWrap.innerHTML = `
       <div class="feedback-box fb-wrong">
         ✕ <b>คำอ่านที่ถูกต้องคือ: ${item.rd ? `${item.rd} · ` : ''}${targetRom}</b>
-        <div style="font-size:12px;margin-top:4px;color:#fca5a5;">${item.jp} = ${item.th}</div>
+        ${showMeaning ? `<div style="font-size:12px;margin-top:4px;color:#fca5a5;">${item.jp} = ${item.th}</div>` : ''}
       </div>
       <button class="btn-next-q" onclick="advanceNext()">ถัดไป (Enter) →</button>
     `;
@@ -2136,20 +2205,31 @@ function renderQuizSummary(){
   const total = quizIdx || 1;
   const pct = Math.round((quizScore / total) * 100);
 
+  // Remaining untested in selected chapters
+  const pool = getPoolForLevel(currentLevel);
+  let chapterPool = pool;
+  if(selectedChapters.length > 0){
+    chapterPool = pool.filter(p => selectedChapters.includes(p.ch));
+  }
+  const remainingUntested = chapterPool.filter(p => getMasteryStatus(p) === 'untested');
+  const nextBatchCount = Math.min(typeof questionCountMode === 'number' ? questionCountMode : remainingUntested.length, remainingUntested.length);
+
   let mistakesHtml = '';
   if(quizMistakes.length > 0){
     mistakesHtml = `
       <div class="mistake-list">
         <div class="mistake-title">📌 คำที่ควรทบทวน (${quizMistakes.length} คำ)</div>
-        ${quizMistakes.map(m => `
+        ${quizMistakes.map(m => {
+          const showMeaning = m.item.th && currentLevel !== 'hiragana' && currentLevel !== 'katakana' && !m.item.th.startsWith('เสียงอ่าน') && normalizeRomaji(m.item.th) !== normalizeRomaji(m.item.rd || '');
+          return `
           <div class="mistake-item">
             <div>
               <b>${m.item.jp}</b> ${m.item.rd ? `<span style="color:#94a3b8">(${m.item.rd})</span>` : ''}
-              <div style="font-size:12px;color:#38bdf8">${m.item.th}</div>
+              ${showMeaning ? `<div style="font-size:12px;color:#38bdf8">${m.item.th}</div>` : ''}
             </div>
             <button class="q-audio-btn" onclick="speakJp('${m.item.jp}')">🔊</button>
           </div>
-        `).join('')}
+        `;}).join('')}
       </div>
     `;
   }
@@ -2186,6 +2266,21 @@ function renderQuizSummary(){
         </div>
 
         ${mistakesHtml}
+
+        ${remainingUntested.length > 0 ? `
+          <div style="background:#0f2b38;border:1.5px solid #0284c7;border-radius:12px;padding:14px 16px;margin:14px 0;text-align:center;">
+            <div style="font-size:13.5px;color:#e0f2fe;font-weight:600;margin-bottom:4px;">
+              📌 ยังเหลืออีก <span style="color:#38bdf8;font-size:17px;font-weight:700;">${remainingUntested.length}</span> คำ ที่ยังไม่ได้ทดสอบในบทที่เลือก
+            </div>
+            <button class="btn-primary-cta" style="background:#0284c7;box-shadow:0 0 16px rgba(2,132,199,0.35);margin-top:8px;" onclick="startRemainingUntested()">
+              ⏩ ทดสอบข้อที่ยังไม่ได้ทำต่อ (${remainingUntested.length} คำที่เหลือ)
+            </button>
+          </div>
+        ` : `
+          <div style="background:#064e3b33;border:1.5px solid #10b981;border-radius:12px;padding:12px 16px;margin:14px 0;text-align:center;color:#6ee7b7;font-size:13.5px;">
+            🎉 <b>ยินดีด้วย!</b> คุณทดสอบคำศัพท์ครบทุกคำในบทที่เลือกแล้ว (${chapterPool.length} คำ)
+          </div>
+        `}
 
         <div style="display:flex;flex-direction:column;gap:10px;">
           <button class="btn-primary-cta" style="background:#f59e0b;" onclick="startQuiz()">
@@ -2229,6 +2324,24 @@ function renderQuizSummary(){
 
       ${mistakesHtml}
 
+      ${remainingUntested.length > 0 ? `
+        <div style="background:#0f2b38;border:1.5px solid #0284c7;border-radius:12px;padding:14px 16px;margin:14px 0;text-align:center;">
+          <div style="font-size:14px;color:#e0f2fe;font-weight:600;margin-bottom:4px;">
+            📌 ยังเหลืออีก <span style="color:#38bdf8;font-size:18px;font-weight:700;">${remainingUntested.length}</span> คำ ที่ยังไม่เคยทดสอบ
+          </div>
+          <div style="font-size:12px;color:#94a3b8;margin-bottom:12px;">
+            จากบทที่เลือกทั้งหมด ${chapterPool.length} คำ · ทำต่อรอบละ ${nextBatchCount} ข้อ
+          </div>
+          <button class="btn-primary-cta" style="background:#0284c7;box-shadow:0 0 16px rgba(2,132,199,0.4);margin:0;" onclick="startRemainingUntested()">
+            ⏩ ทำข้อที่ยังไม่ได้ทำต่อ (${nextBatchCount} ข้อ)
+          </button>
+        </div>
+      ` : `
+        <div style="background:#064e3b33;border:1.5px solid #10b981;border-radius:12px;padding:14px 16px;margin:14px 0;text-align:center;color:#6ee7b7;font-size:13.5px;">
+          🎉 <b>ยินดีด้วย!</b> คุณทดสอบคำศัพท์ครบทุกคำในบทที่เลือกแล้ว (${chapterPool.length} คำ)
+        </div>
+      `}
+
       <div style="display:flex;flex-direction:column;gap:10px;">
         ${quizMistakes.length > 0 ? `
           <button class="btn-primary-cta" style="background:#dc2626;" onclick="retryMistakes()">
@@ -2236,7 +2349,7 @@ function renderQuizSummary(){
           </button>
         ` : ''}
         <button class="btn-primary-cta" onclick="startQuiz()">
-          ทดสอบชุดนี้อีกครั้ง
+          ทดสอบชุดนี้อีกครั้ง (สุ่มใหม่)
         </button>
         <button class="btn-export" style="justify-content:center;padding:12px;" onclick="renderMain()">
           กลับหน้าหลัก
