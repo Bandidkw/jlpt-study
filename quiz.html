@@ -1043,7 +1043,9 @@ function saveMasteryStore(m){
 // ══════════════════════════════════════════════════════════
 let currentLevel = 'custom';
 let currentTab = 'test'; // 'test' | 'words'
-let currentSubCat = 'ทุกบท'; // 'ทุกบท' | 'ตัวอย่าง' | 'repair' | 'untested' | specific chapter
+let selectedChapters = []; // [] = ทุกบท, or array of selected chapter names e.g. ['บท 1', 'บท 2']
+let statusFilter = 'all';  // 'all' | 'repair' | 'untested'
+let currentSubCat = 'ทุกบท'; // backward compatibility alias
 let questionDirection = 'mixed'; // 'mixed' | 'm1' (jp->th) | 'm2' (th->jp) | 'm3' (kanji->rd)
 let questionCountMode = 10; // 10 | 20 | 'all'
 
@@ -1354,6 +1356,8 @@ document.addEventListener('click', (e) => {
 // ══════════════════════════════════════════════════════════
 function switchLevel(lv){
   currentLevel = lv;
+  selectedChapters = [];
+  statusFilter = 'all';
   currentSubCat = 'ทุกบท';
   
   // Sync custom dropdown items & trigger button label
@@ -1430,32 +1434,39 @@ function renderMain(){
 function renderTestHome(container){
   const pool = getPoolForLevel(currentLevel);
   const totalCount = pool.length;
-
-  let cMastered = 0, cLearning = 0, cRepair = 0, cUntested = 0;
-  pool.forEach(item => {
-    const st = getMasteryStatus(item);
-    if(st === 'mastered') cMastered++;
-    else if(st === 'learning') cLearning++;
-    else if(st === 'repair') cRepair++;
-    else cUntested++;
-  });
-
   const chapters = [...new Set(pool.map(p => p.ch).filter(Boolean))];
 
-  let filteredPool = pool;
-  let chDisplayLabel = 'ทุกบท';
-  if(currentSubCat === 'ทุกบท'){
-    filteredPool = pool;
-    chDisplayLabel = currentLevel === 'custom' ? (chapters[0] || 'ทุกบท') : 'ทุกบท';
-  } else if(currentSubCat === 'repair'){
-    filteredPool = pool.filter(p => getMasteryStatus(p) === 'repair');
-    chDisplayLabel = 'ที่ยังติด';
-  } else if(currentSubCat === 'untested'){
-    filteredPool = pool.filter(p => getMasteryStatus(p) === 'untested');
-    chDisplayLabel = 'ยังไม่เคยทดสอบ';
+  // Base pool of selected chapters (or all if none selected)
+  let chapterPool = pool;
+  if(selectedChapters.length > 0){
+    chapterPool = pool.filter(p => selectedChapters.includes(p.ch));
+  }
+
+  // Count repair and untested based on chapterPool
+  const cRepair = chapterPool.filter(p => getMasteryStatus(p) === 'repair').length;
+  const cUntested = chapterPool.filter(p => getMasteryStatus(p) === 'untested').length;
+
+  // Filtered pool applying statusFilter
+  let filteredPool = chapterPool;
+  if(statusFilter === 'repair'){
+    filteredPool = chapterPool.filter(p => getMasteryStatus(p) === 'repair');
+  } else if(statusFilter === 'untested'){
+    filteredPool = chapterPool.filter(p => getMasteryStatus(p) === 'untested');
+  }
+
+  // Dynamic label
+  let chDisplayLabel = '';
+  if(selectedChapters.length === 0){
+    chDisplayLabel = 'ทุกบท';
+  } else if(selectedChapters.length <= 3){
+    chDisplayLabel = selectedChapters.join(', ');
   } else {
-    filteredPool = pool.filter(p => p.ch === currentSubCat);
-    chDisplayLabel = currentSubCat;
+    chDisplayLabel = `${selectedChapters.slice(0, 2).join(', ')} และอีก ${selectedChapters.length - 2} บท`;
+  }
+  if(statusFilter === 'repair'){
+    chDisplayLabel += ' (ที่ยังติด)';
+  } else if(statusFilter === 'untested'){
+    chDisplayLabel += ' (ยังไม่เคยทดสอบ)';
   }
 
   let fMastered = 0, fLearning = 0, fRepair = 0, fUntested = 0;
@@ -1473,12 +1484,16 @@ function renderTestHome(container){
   const pRep = (fRepair / fTotal) * 100;
   const pUnt = (fUntested / fTotal) * 100;
 
+  const isAllActive = (selectedChapters.length === 0 && statusFilter === 'all');
+  const isRepairActive = (statusFilter === 'repair');
+  const isUntestedActive = (statusFilter === 'untested');
+
   let chaptersChipsHtml = '';
   if(chapters.length > 0){
     chaptersChipsHtml = chapters.map(ch => {
       const cnt = pool.filter(p => p.ch === ch).length;
-      const isAct = currentSubCat === ch;
-      return `<button class="chip${isAct ? ' active' : ''}" onclick="selectSubCat('${ch}')">${ch} (${cnt})</button>`;
+      const isAct = selectedChapters.includes(ch);
+      return `<button class="chip${isAct ? ' active' : ''}" onclick="toggleChapter('${ch}')">${ch} (${cnt})</button>`;
     }).join('');
   }
 
@@ -1498,12 +1513,15 @@ function renderTestHome(container){
 
       <!-- ชุดคำที่จะทดสอบ -->
       <div class="section-group">
-        <div class="section-label">ชุดคำที่จะทดสอบ</div>
+        <div class="section-label" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>ชุดคำที่จะทดสอบ ${selectedChapters.length > 1 ? `<span style="color:#60a5fa;font-size:11.5px;">(เลือก ${selectedChapters.length} บท)</span>` : ''}</span>
+          ${selectedChapters.length > 0 || statusFilter !== 'all' ? `<button onclick="toggleChapter('ทุกบท')" style="background:none;border:none;color:#94a3b8;font-size:11.5px;cursor:pointer;text-decoration:underline;">ล้างการเลือก</button>` : ''}
+        </div>
         <div class="chips-row">
-          <button class="chip${currentSubCat==='ทุกบท'?' active':''}" onclick="selectSubCat('ทุกบท')">ทุกบท (${totalCount})</button>
+          <button class="chip${isAllActive ? ' active' : ''}" onclick="toggleChapter('ทุกบท')">ทุกบท (${totalCount})</button>
           ${chaptersChipsHtml}
-          <button class="chip${currentSubCat==='repair'?' active':''}" onclick="selectSubCat('repair')">ที่ยังติด (${cRepair})</button>
-          <button class="chip${currentSubCat==='untested'?' active':''}" onclick="selectSubCat('untested')">ยังไม่เคยทดสอบ (${cUntested})</button>
+          <button class="chip${isRepairActive ? ' active' : ''}" onclick="toggleStatusFilter('repair')">ที่ยังติด (${cRepair})</button>
+          <button class="chip${isUntestedActive ? ' active' : ''}" onclick="toggleStatusFilter('untested')">ยังไม่เคยทดสอบ (${cUntested})</button>
         </div>
       </div>
 
@@ -1538,7 +1556,7 @@ function renderTestHome(container){
         ${quizInteraction==='typing' ? 'โหมดพิมพ์คำอ่าน: พิมพ์โรมาจิหรือฮิรางานะ ตอบถูกภายใน 6 วินาทีนับว่าเร็ว และเลื่อนข้ออัตโนมัติ' :
           quizInteraction==='listening' ? 'โหมดควิซการฟัง: ฟังเสียงอ่านภาษาญี่ปุ่นแล้วเลือกความหมายไทย ตอบถูกภายใน 4 วินาทีนับว่าเร็ว' :
           quizInteraction==='speedrun' ? 'โหมดสปีดรัน: ตอบให้ได้มากที่สุดภายใน 60 วินาที ตอบถูกติดกันเพื่อสะสม Combo ตัวคูณคะแนน!' :
-          'ระบบเลือกคำที่ยังติดและคำที่ยังไม่เคยทดสอบก่อน ตอบถูกภายใน 4 วินาทีนับว่าเร็ว (ค่านี่ตั้งเองเพื่อวัดว่าอ่านออกทันทีหรือยัง)'}
+          'สามารถกดเลือกหลายบทพร้อมกันเพื่อจัดชุดทดสอบเฉพาะกลุ่มได้ ตอบถูกภายใน 4 วินาทีนับว่าเร็ว'}
       </div>
     </div>
 
@@ -1583,9 +1601,38 @@ function renderTestHome(container){
   `;
 }
 
-function selectSubCat(cat){
-  currentSubCat = cat;
+function toggleChapter(ch){
+  if(ch === 'ทุกบท'){
+    selectedChapters = [];
+    statusFilter = 'all';
+    currentSubCat = 'ทุกบท';
+  } else {
+    const idx = selectedChapters.indexOf(ch);
+    if(idx >= 0){
+      selectedChapters.splice(idx, 1);
+    } else {
+      selectedChapters.push(ch);
+    }
+    currentSubCat = selectedChapters.length > 0 ? selectedChapters[0] : 'ทุกบท';
+  }
   renderTestHome(document.getElementById('main-content'));
+}
+
+function toggleStatusFilter(st){
+  if(statusFilter === st){
+    statusFilter = 'all';
+  } else {
+    statusFilter = st;
+  }
+  renderTestHome(document.getElementById('main-content'));
+}
+
+function selectSubCat(cat){
+  if(cat === 'repair' || cat === 'untested'){
+    toggleStatusFilter(cat);
+  } else {
+    toggleChapter(cat);
+  }
 }
 function selectDirection(dir){
   questionDirection = dir;
@@ -1624,20 +1671,26 @@ function startQuiz(){
   clearInterval(speedRunTimerId);
 
   let subPool = pool;
-  if(currentSubCat === 'repair'){
-    subPool = pool.filter(p => getMasteryStatus(p) === 'repair');
+  if(selectedChapters.length > 0){
+    subPool = subPool.filter(p => selectedChapters.includes(p.ch));
+  }
+  if(statusFilter === 'repair'){
+    subPool = subPool.filter(p => getMasteryStatus(p) === 'repair');
     if(subPool.length === 0){
-      alert('ไม่มีคำที่ต้องซ่อมในขณะนี้! (ยอดเยี่ยมมาก)');
+      alert('ไม่มีคำที่ต้องซ่อมในชุดบทที่เลือกในขณะนี้! (ยอดเยี่ยมมาก)');
       return;
     }
-  } else if(currentSubCat === 'untested'){
-    subPool = pool.filter(p => getMasteryStatus(p) === 'untested');
+  } else if(statusFilter === 'untested'){
+    subPool = subPool.filter(p => getMasteryStatus(p) === 'untested');
     if(subPool.length === 0){
-      alert('ทดสอบครบทุกคำแล้ว!');
+      alert('ทดสอบครบทุกคำในชุดบทที่เลือกแล้ว!');
       return;
     }
-  } else if(currentSubCat !== 'ทุกบท'){
-    subPool = pool.filter(p => p.ch === currentSubCat);
+  }
+
+  if(subPool.length < 2){
+    alert(`ต้องมีคำศัพท์อย่างน้อย 2 คำเพื่อเริ่มทำแบบทดสอบ (ชุดที่เลือกมีเพียง ${subPool.length} คำ)`);
+    return;
   }
 
   const prioritized = [...subPool].map(item => {
