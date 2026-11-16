@@ -1146,10 +1146,26 @@ const KANA_MAP = {
   'ラ':'ra','リ':'ri','ル':'ru','レ':'re','ロ':'ro',
   'ワ':'wa','ヲ':'wo','ン':'n',
   'ガ':'ga','ギ':'gi','グ':'gu','ゲ':'ge','ゴ':'go',
-  'ザ':'za','ジ':'ji','ズ':'zu','ゼ':'ze','ぞ':'zo',
+  'ザ':'za','ジ':'ji','ズ':'zu','ゼ':'ze','ゾ':'zo',
   'ダ':'da','ヂ':'ji','ヅ':'zu','デ':'de','ド':'do',
   'バ':'ba','ビ':'bi','ブ':'bu','ベ':'be','ボ':'bo',
-  'パ':'pa','ピ':'pi','プ':'pu','ペ':'pe','ポ':'po'
+  'パ':'pa','ピ':'pi','プ':'pu','ペ':'pe','ポ':'po',
+  'キャ':'kya','キュ':'kyu','キョ':'kyo',
+  'シャ':'sha','シュ':'shu','ショ':'sho',
+  'チャ':'cha','チュ':'chu','チョ':'cho',
+  'ニャ':'nya','ニュ':'nyu','ニョ':'nyo',
+  'ヒャ':'hya','ヒュ':'hyu','ヒョ':'hyo',
+  'ミャ':'mya','ミュ':'myu','ミョ':'myo',
+  'リャ':'rya','リュ':'ryu','リョ':'ryo',
+  'ギャ':'gya','ギュ':'gyu','ギョ':'gyo',
+  'ジャ':'ja','ジュ':'ju','ジョ':'jo',
+  'ビャ':'bya','ビュ':'byu','ビョ':'byo',
+  'ピャ':'pya','ピュ':'pyu','ピョ':'pyo',
+  'ファ':'fa','フィ':'fi','เฟ':'fe','フォ':'fo',
+  'ティ':'ti','ディ':'di','ドゥ':'du',
+  'ウィ':'wi','ウェ':'we','ウォ':'wo',
+  'ヴ':'vu','ヴァ':'va','ヴィ':'vi','ヴェ':'ve','ヴォ':'vo',
+  'チェ':'che','シェ':'she','ジェ':'je'
 };
 
 function kanaToRomaji(k){
@@ -1157,6 +1173,16 @@ function kanaToRomaji(k){
   let res = '';
   let i = 0;
   while(i < k.length){
+    if(k[i] === 'ー'){
+      if(res.length > 0){
+        const last = res.slice(-1);
+        if(['a','i','u','e','o'].includes(last)){
+          res += last;
+        }
+      }
+      i++;
+      continue;
+    }
     if(i + 1 < k.length){
       const pair = k.substr(i, 2);
       if(KANA_MAP[pair]){
@@ -1194,6 +1220,38 @@ function normalizeRomaji(str){
     .replace(/[\-_\s\.\,]/g, '');
 }
 
+function toCanonical(s){
+  if(!s) return '';
+  return s
+    .replace(/sya/g, 'sha').replace(/syu/g, 'shu').replace(/syo/g, 'sho')
+    .replace(/tya/g, 'cha').replace(/tyu/g, 'chu').replace(/tyo/g, 'cho')
+    .replace(/zya/g, 'ja').replace(/zyu/g, 'ju').replace(/zyo/g, 'jo')
+    .replace(/jya/g, 'ja').replace(/jyu/g, 'ju').replace(/jyo/g, 'jo')
+    .replace(/tsu/g, 'tu')
+    .replace(/shi/g, 'si')
+    .replace(/chi/g, 'ti')
+    .replace(/fu/g, 'hu')
+    .replace(/dzu/g, 'zu')
+    .replace(/du/g, 'zu')
+    .replace(/di/g, 'ji')
+    .replace(/zi/g, 'ji')
+    .replace(/wo/g, 'o')
+    .replace(/ou/g, 'oo')
+    .replace(/ei/g, 'ee')
+    .replace(/nn/g, 'n');
+}
+
+function stripLongVowels(s){
+  if(!s) return '';
+  return s
+    .replace(/ou/g, 'o')
+    .replace(/oo/g, 'o')
+    .replace(/uu/g, 'u')
+    .replace(/ee/g, 'e')
+    .replace(/aa/g, 'a')
+    .replace(/ii/g, 'i');
+}
+
 function checkRomajiMatch(userInput, targetRomaji, targetKana){
   const u = normalizeRomaji(userInput);
   if(!u) return false;
@@ -1204,24 +1262,18 @@ function checkRomajiMatch(userInput, targetRomaji, targetKana){
   const t = normalizeRomaji(targetRomaji || kanaToRomaji(targetKana));
   if(u === t) return true;
 
-  // Alternate spelling normalization
-  // tsu <-> tu, shi <-> si, chi <-> ti, fu <-> hu, wo <-> o, nn <-> n
-  const toCanonical = (s) => {
-    return s
-      .replace(/tsu/g, 'tu')
-      .replace(/shi/g, 'si')
-      .replace(/chi/g, 'ti')
-      .replace(/fu/g, 'hu')
-      .replace(/wo/g, 'o')
-      .replace(/nn/g, 'n');
-  };
-
-  if(toCanonical(u) === toCanonical(t)) return true;
+  // Comprehensive Alternate spellings: Hepburn, Nihon-shiki, Kunrei-shiki, IME
+  const cu = toCanonical(u);
+  const ct = toCanonical(t);
+  if(cu === ct) return true;
+  if(toCanonical(stripLongVowels(u)) === toCanonical(stripLongVowels(t))) return true;
 
   // If target has kana, check converted canonical
   if(targetKana){
     const conv = normalizeRomaji(kanaToRomaji(targetKana));
-    if(toCanonical(u) === toCanonical(conv)) return true;
+    const cConv = toCanonical(conv);
+    if(cu === cConv) return true;
+    if(toCanonical(stripLongVowels(u)) === toCanonical(stripLongVowels(cConv))) return true;
   }
 
   return false;
@@ -1253,7 +1305,7 @@ function getPoolForLevel(level){
   if(level === 'n5'){
     return n5.map(k => ({
       jp: k.k,
-      rd: k.on ? `${k.on} / ${k.kun}` : '',
+      rd: [k.on, k.kun].filter(Boolean).join(' / '),
       th: k.th,
       ch: k.cat || 'N5 คันจิ',
       id: k.k
@@ -1270,8 +1322,8 @@ function getPoolForLevel(level){
   }
   if(level === 'scene'){
     return scenes.map((s,i) => ({
-      jp: s.j,
-      rd: s.k || '',
+      jp: s.k || s.w,
+      rd: s.w,
       th: s.th,
       ch: s.cat || 'สถานการณ์',
       id: 'sc_'+i
@@ -1298,7 +1350,7 @@ function getPoolForLevel(level){
   if(level === 'n4'){
     return n4.map(k => ({
       jp: k.k,
-      rd: k.on ? `${k.on} / ${k.kun}` : '',
+      rd: [k.on, k.kun].filter(Boolean).join(' / '),
       th: k.th,
       ch: k.cat || 'N4',
       id: k.k
@@ -1307,7 +1359,7 @@ function getPoolForLevel(level){
   if(level === 'n3'){
     return n3.map(k => ({
       jp: k.k,
-      rd: k.on ? `${k.on} / ${k.kun}` : '',
+      rd: [k.on, k.kun].filter(Boolean).join(' / '),
       th: k.th,
       ch: k.cat || 'N3',
       id: k.k
