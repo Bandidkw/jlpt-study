@@ -1,6 +1,6 @@
 // Service Worker — JLPT Study App
 // เปลี่ยนเลขเวอร์ชันนี้ทุกครั้งที่แก้ไฟล์ เพื่อให้เครื่องผู้ใช้ดึงของใหม่
-const CACHE_VERSION = 'jlpt-v11';
+const CACHE_VERSION = 'jlpt-v12';
 const PRECACHE = [
   './',
   './index.html',
