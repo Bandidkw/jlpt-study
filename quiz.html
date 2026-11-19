@@ -433,11 +433,11 @@ a{color:inherit;text-decoration:none;}
   font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo","BIZ UDPGothic","Noto Sans JP",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
 }
 .small-kana{
-  font-size:0.62em;
+  font-size:0.56em;
   display:inline-block;
   vertical-align:baseline;
   transform:translateY(0.04em);
-  margin-left:-0.03em;
+  margin-left:-0.04em;
   margin-right:0.02em;
   line-height:1;
 }
@@ -2287,6 +2287,41 @@ function renderQuizSummary(){
   const remainingUntested = chapterPool.filter(p => getMasteryStatus(p) === 'untested');
   const nextBatchCount = Math.min(typeof questionCountMode === 'number' ? questionCountMode : remainingUntested.length, remainingUntested.length);
 
+  const levelNames = {
+    custom: 'คำศัพท์ของฉัน',
+    vocab5: 'คำศัพท์ JLPT N5',
+    n5: 'คันจิ JLPT N5',
+    grammar5: 'ไวยากรณ์ JLPT N5',
+    scene: 'บทสนทนาสถานการณ์จริง',
+    hiragana: 'ฮิรางานะ 46 ตัว',
+    katakana: 'คาตาคานะ',
+    n4: 'JLPT N4',
+    n3: 'JLPT N3'
+  };
+  const levelName = levelNames[currentLevel] || 'ภาษาญี่ปุ่น';
+
+  let chDisplayLabel = '';
+  if(selectedChapters.length === 0){
+    chDisplayLabel = 'ทุกบท';
+  } else if(selectedChapters.length <= 3){
+    chDisplayLabel = selectedChapters.join(', ');
+  } else {
+    chDisplayLabel = `${selectedChapters.slice(0, 2).join(', ')} และอีก ${selectedChapters.length - 2} บท`;
+  }
+  if(statusFilter === 'repair'){
+    chDisplayLabel += ' (ที่ยังติด)';
+  } else if(statusFilter === 'untested'){
+    chDisplayLabel += ' (ยังไม่เคยทดสอบ)';
+  }
+
+  const topicBadgeHtml = `
+    <div style="display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:4px 14px;border-radius:20px;background:#162035;border:1px solid #23314f;color:#94a3b8;font-size:12.5px;margin-bottom:12px;">
+      <span>📖 <b>${levelName}</b></span>
+      <span style="color:#475569;">·</span>
+      <span style="color:#60a5fa;">หัวข้อ: <b>${chDisplayLabel}</b></span>
+    </div>
+  `;
+
   let mistakesHtml = '';
   if(quizMistakes.length > 0){
     mistakesHtml = `
@@ -2297,7 +2332,7 @@ function renderQuizSummary(){
           return `
           <div class="mistake-item">
             <div>
-              <b>${m.item.jp}</b> ${m.item.rd ? `<span style="color:#94a3b8">(${m.item.rd})</span>` : ''}
+              <b>${formatJpText(m.item.jp)}</b> ${m.item.rd ? `<span style="color:#94a3b8">(${m.item.rd})</span>` : ''}
               ${showMeaning ? `<div style="font-size:12px;color:#38bdf8">${m.item.th}</div>` : ''}
             </div>
             <button class="q-audio-btn" onclick="speakJp('${m.item.jp}')">🔊</button>
@@ -2318,7 +2353,8 @@ function renderQuizSummary(){
 
     container.innerHTML = `
       <div class="quiz-card summary-container">
-        <div style="font-size:14px;color:#f59e0b;font-weight:600;margin-bottom:4px;">⚡ สรุปผล SPEED RUN 60 วินาที</div>
+        <div style="font-size:14px;color:#f59e0b;font-weight:600;margin-bottom:6px;">⚡ สรุปผล SPEED RUN 60 วินาที</div>
+        ${topicBadgeHtml}
         <div class="score-circle" style="color:${rankColor};font-size:68px;">${rank}</div>
         <div style="font-size:16px;font-weight:600;color:#fff;margin-bottom:4px;">${rankTitle}</div>
         <div class="summary-sub">ทำคะแนนได้ <b>${speedRunPoints}</b> คะแนน (ตอบทั้งหมด ${total} ข้อ)</div>
@@ -2343,7 +2379,7 @@ function renderQuizSummary(){
         ${remainingUntested.length > 0 ? `
           <div style="background:#0f2b38;border:1.5px solid #0284c7;border-radius:12px;padding:14px 16px;margin:14px 0;text-align:center;">
             <div style="font-size:13.5px;color:#e0f2fe;font-weight:600;margin-bottom:4px;">
-              📌 ยังเหลืออีก <span style="color:#38bdf8;font-size:17px;font-weight:700;">${remainingUntested.length}</span> คำ ที่ยังไม่ได้ทดสอบในบทที่เลือก
+              📌 ยังเหลืออีก <span style="color:#38bdf8;font-size:17px;font-weight:700;">${remainingUntested.length}</span> คำ ที่ยังไม่ได้ทดสอบในหัวข้อ <b>"${chDisplayLabel}"</b>
             </div>
             <button class="btn-primary-cta" style="background:#0284c7;box-shadow:0 0 16px rgba(2,132,199,0.35);margin-top:8px;" onclick="startRemainingUntested()">
               ⏩ ทดสอบข้อที่ยังไม่ได้ทำต่อ (${remainingUntested.length} คำที่เหลือ)
@@ -2351,7 +2387,7 @@ function renderQuizSummary(){
           </div>
         ` : `
           <div style="background:#064e3b33;border:1.5px solid #10b981;border-radius:12px;padding:12px 16px;margin:14px 0;text-align:center;color:#6ee7b7;font-size:13.5px;">
-            🎉 <b>ยินดีด้วย!</b> คุณทดสอบคำศัพท์ครบทุกคำในบทที่เลือกแล้ว (${chapterPool.length} คำ)
+            🎉 <b>ยินดีด้วย!</b> คุณทดสอบคำศัพท์ครบทุกคำในหัวข้อ <b>"${chDisplayLabel}"</b> แล้ว (${chapterPool.length} คำ)
           </div>
         `}
 
@@ -2376,7 +2412,8 @@ function renderQuizSummary(){
 
   container.innerHTML = `
     <div class="quiz-card summary-container">
-      <div style="font-size:13px;color:#38bdf8;font-weight:600;margin-bottom:4px;">${modeTitle}</div>
+      <div style="font-size:13px;color:#38bdf8;font-weight:600;margin-bottom:6px;">${modeTitle}</div>
+      ${topicBadgeHtml}
       <div class="score-circle">${pct}%</div>
       <div class="summary-sub">ตอบถูก ${quizScore} จากทั้งหมด ${total} ข้อ</div>
 
@@ -2400,7 +2437,7 @@ function renderQuizSummary(){
       ${remainingUntested.length > 0 ? `
         <div style="background:#0f2b38;border:1.5px solid #0284c7;border-radius:12px;padding:14px 16px;margin:14px 0;text-align:center;">
           <div style="font-size:14px;color:#e0f2fe;font-weight:600;margin-bottom:4px;">
-            📌 ยังเหลืออีก <span style="color:#38bdf8;font-size:18px;font-weight:700;">${remainingUntested.length}</span> คำ ที่ยังไม่เคยทดสอบ
+            📌 ยังเหลืออีก <span style="color:#38bdf8;font-size:18px;font-weight:700;">${remainingUntested.length}</span> คำ ที่ยังไม่เคยทดสอบในหัวข้อ <b>"${chDisplayLabel}"</b>
           </div>
           <div style="font-size:12px;color:#94a3b8;margin-bottom:12px;">
             จากบทที่เลือกทั้งหมด ${chapterPool.length} คำ · ทำต่อรอบละ ${nextBatchCount} ข้อ
@@ -2411,7 +2448,7 @@ function renderQuizSummary(){
         </div>
       ` : `
         <div style="background:#064e3b33;border:1.5px solid #10b981;border-radius:12px;padding:14px 16px;margin:14px 0;text-align:center;color:#6ee7b7;font-size:13.5px;">
-          🎉 <b>ยินดีด้วย!</b> คุณทดสอบคำศัพท์ครบทุกคำในบทที่เลือกแล้ว (${chapterPool.length} คำ)
+          🎉 <b>ยินดีด้วย!</b> คุณทดสอบคำศัพท์ครบทุกคำในหัวข้อ <b>"${chDisplayLabel}"</b> แล้ว (${chapterPool.length} คำ)
         </div>
       `}
 
