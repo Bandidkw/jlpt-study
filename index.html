@@ -381,6 +381,104 @@ html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
 .scene-ro{font-size:12.5px;color:#7a7a9a;margin-top:2px;}
 .scene-th{font-size:13.5px;color:#cbb26a;margin-top:4px;line-height:1.55;}
 
+/* ── CHANGELOG ── */
+.btn-changelog-tab{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  background:#1e1b4b!important;
+  color:#c4b5fd!important;
+  border-color:#6366f1!important;
+  font-weight:600;
+}
+.btn-changelog-tab:hover{background:#312e81!important;border-color:#818cf8!important;color:#fff!important;}
+.changelog-unread-dot{
+  position:absolute;
+  top:-3px;
+  right:-3px;
+  width:9px;
+  height:9px;
+  background:#ec4899;
+  border:2px solid #111;
+  border-radius:50%;
+  box-shadow:0 0 8px #ec4899;
+  display:none;
+}
+.changelog-unread-dot.show{
+  display:block;
+  animation:pulse-dot 1.8s infinite;
+}
+@keyframes pulse-dot{
+  0%,100%{transform:scale(1);opacity:1;}
+  50%{transform:scale(1.25);opacity:0.8;}
+}
+.changelog-timeline{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  margin-top:12px;
+}
+.changelog-card{
+  background:#18181b;
+  border:1px solid #27272a;
+  border-radius:12px;
+  padding:14px 16px;
+  position:relative;
+}
+.changelog-card.latest{
+  border-color:#6366f1;
+  background:#1e1b4b33;
+  box-shadow:0 0 16px rgba(99,102,241,0.15);
+}
+.changelog-badge-new{
+  display:inline-block;
+  font-size:10px;
+  font-weight:700;
+  padding:2px 7px;
+  background:#ec4899;
+  color:#fff;
+  border-radius:10px;
+  margin-left:6px;
+  vertical-align:middle;
+}
+.changelog-version-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+  padding-bottom:6px;
+  border-bottom:1px solid #27272a;
+}
+.changelog-version{
+  font-size:14.5px;
+  font-weight:700;
+  color:#fff;
+}
+.changelog-date{
+  font-size:12px;
+  color:#a1a1aa;
+}
+.changelog-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  font-size:12.5px;
+  color:#d4d4d8;
+  line-height:1.55;
+}
+.changelog-list li{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+}
+.changelog-list li span.emoji{
+  flex-shrink:0;
+  font-size:15px;
+}
 </style>
 </head>
 <body>
@@ -397,6 +495,10 @@ html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
     <button class="level-tab" id="tab-katakana" onclick="event.preventDefault();switchLevel('katakana')">คาตาคานะ</button>
     <button class="level-tab" id="tab-all" onclick="event.preventDefault();switchLevel('all')">ทั้งหมด</button>
     <button class="level-tab backup-tab" id="btn-backup" onclick="event.preventDefault();openBackup()">💾 สำรอง</button>
+    <button class="level-tab btn-changelog-tab" id="btn-changelog" onclick="event.preventDefault();openChangelog()" title="บันทึกการอัปเดตระบบ">
+      <span>✨ v2.5</span>
+      <span class="changelog-unread-dot" id="changelog-badge-dot"></span>
+    </button>
     <a href="quiz.html" class="level-tab" style="background:#1e293b;color:#60a5fa;border-color:#3b82f6;display:inline-flex;align-items:center;gap:4px;text-decoration:none;">🎯 ควิซคำศัพท์ใหม่</a>
   </div>
 </div>
@@ -448,6 +550,104 @@ html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
     </details>
     <div class="backup-msg" id="backup-msg"></div>
     <div class="backup-tip">เคล็ดลับ: ข้อมูลใน Safari กับแอปที่ Add to Home Screen เก็บแยกกัน ถ้าจะย้าย ให้ส่งออกจาก Safari ก่อน แล้วนำเข้าในแอปบนหน้าจอหลัก</div>
+  </div>
+</div>
+<!-- CHANGELOG MODAL -->
+<div class="modal-overlay" id="changelog-modal" onclick="if(event.target===this)closeChangelog()">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="บันทึกการอัปเดตระบบ" style="max-width:560px;max-height:85vh;display:flex;flex-direction:column;">
+    <div class="modal-head" style="flex-shrink:0;">
+      <span style="display:flex;align-items:center;gap:8px;">
+        <span>✨ บันทึกการอัปเดตระบบ</span>
+        <span style="font-size:11px;background:#6366f122;color:#a5b4fc;border:1px solid #6366f155;padding:2px 8px;border-radius:10px;font-weight:600;">v2.5</span>
+      </span>
+      <button class="modal-x" onclick="closeChangelog()">✕</button>
+    </div>
+    <div style="overflow-y:auto;padding-right:4px;margin-top:8px;">
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:14px;line-height:1.5;">
+        รายละเอียดการพัฒนาและฟังก์ชันใหม่ในแต่ละเวอร์ชัน เพื่อให้คุณเรียนและฝึกจำภาษาญี่ปุ่นได้อย่างมีประสิทธิภาพสูงสุด
+      </p>
+      <div class="changelog-timeline">
+        <!-- v2.5 -->
+        <div class="changelog-card latest">
+          <div class="changelog-version-header">
+            <div class="changelog-version">
+              v2.5.0 <span class="changelog-badge-new">LATEST</span>
+            </div>
+            <div class="changelog-date">20 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">⏳</span><div><b>ระบบวิเคราะห์คำที่ตอบช้า:</b> หน้าสรุปผลควิซแสดงรายการคำที่ตอบช้าเกินเกณฑ์ ระบุเวลาที่ใช้ พร้อมปุ่มฟังเสียง 🔊 และปุ่ม <code>[ ฝึกเฉพาะคำที่ตอบช้า ]</code> ให้ทบทวนเฉพาะคำที่ยังไม่คล่องได้ทันที</div></li>
+            <li><span class="emoji">🏷️</span><div><b>แยกหัวข้อ/บทเรียนในหน้าผลลัพธ์:</b> แยกป้ายชื่อหัวข้อออกมาให้ชัดเจน ไม่ปะปนกับข้อความยินดี</div></li>
+            <li><span class="emoji">⌨️</span><div><b>ปรับปรุงโหมดพิมพ์คำอ่าน (Typing Mode):</b> ซ่อนคำใบ้ "ความหมาย: เสียงอ่าน" ไม่ให้สปอยล์คำตอบขณะทำแบบทดสอบตัวอักษร</div></li>
+            <li><span class="emoji">🔤</span><div><b>ระบบตรวจโรมาจิอัจฉริยะ (Romaji Normalizer):</b> พิมพ์ <code>ぢ</code> รองรับทั้ง <code>ji</code> และ <code>di</code>, พิมพ์ <code>づ</code> รองรับทั้ง <code>zu</code> และ <code>du</code> ตามการสะกดมาตรฐานสากล</div></li>
+            <li><span class="emoji">📐</span><div><b>ปรับสัดส่วนเสียงควบและเสียงกัก (拗音/促音):</b> ปรับขนาดตัวเล็กพิเศษ (ゃ, ゅ, ょ, っ ฯลฯ) ให้มีสัดส่วนชัดเจน อ่านง่าย ไม่สับสนกับตัวเต็ม</div></li>
+            <li><span class="emoji">🔄</span><div><b>ระบบทดสอบต่อเนื่องข้ามหลายหัวข้อ:</b> เมื่อเลือกหลายบทและมีคำศัพท์ที่ยังไม่ได้ทำ ระบบจะแสดงกล่องแจ้งเตือนพร้อมปุ่มให้ทำคำที่เหลือต่อได้ทันที</div></li>
+            <li><span class="emoji">🔍</span><div><b>ตรวจทานฐานข้อมูลทั้งระบบ (1,736 รายการ):</b> ตรวจสอบความถูกต้องของคันจิ คำศัพท์ ไวยากรณ์ และบทสนทนาสถานการณ์จริงทั้งหมด</div></li>
+            <li><span class="emoji">📢</span><div><b>หน้าต่างแจ้งเตือนการอัปเดต (Changelog):</b> เพิ่มปุ่ม ✨ v2.5 พร้อมไฟแจ้งเตือนสีชมพูเมื่อมีการอัปเดตระบบ</div></li>
+          </ul>
+        </div>
+
+        <!-- v2.4 -->
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.4.0</div>
+            <div class="changelog-date">18 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">⚡</span><div><b>โหมด Speedrun Challenge:</b> จับเวลาแบบรวดเร็วทดสอบความจำระยะสั้น พร้อมจัดระดับเกรด S, A, B, C, D</div></li>
+            <li><span class="emoji">🎧</span><div><b>โหมดฟังเสียงแล้วตอบ (Listening Quiz):</b> ฝึกทักษะการฟังเสียงเจ้าของภาษาโดยตรง</div></li>
+            <li><span class="emoji">📚</span><div><b>ระบบคลังคำศัพท์และจัดการคำศัพท์:</b> เพิ่ม แก้ไข ลบคำศัพท์ในแต่ละบทเรียนได้เองอย่างอิสระ</div></li>
+          </ul>
+        </div>
+
+        <!-- v2.3 -->
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.3.0</div>
+            <div class="changelog-date">16 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">🗣️</span><div><b>หมวดสถานการณ์จริง (Scenes):</b> เพิ่มบทสนทนาที่พบบ่อยในชีวิตประจำวัน เช่น ร้านสะดวกซื้อ ร้านอาหาร การเดินทาง</div></li>
+            <li><span class="emoji">💾</span><div><b>ระบบ Backup & Restore:</b> ส่งออกและนำเข้าข้อมูลความก้าวหน้าและคำศัพท์เป็นไฟล์ JSON สำรองไว้ได้ทุกเมื่อ</div></li>
+          </ul>
+        </div>
+
+        <!-- v2.2 -->
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.2.0</div>
+            <div class="changelog-date">14 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">📖</span><div><b>ควิซไวยากรณ์ N5 (Grammar Quiz):</b> ทดสอบรูปประโยคไวยากรณ์พร้อมตัวอย่างการใช้งานจริง</div></li>
+            <li><span class="emoji">🇯🇵</span><div><b>หมวดตัวอักษร ฮิรางานะ และ คาตาคานะ:</b> คลังอักษรพื้นฐาน พร้อมเสียงขุ่น (濁音) และเสียงควบ (拗音)</div></li>
+          </ul>
+        </div>
+
+        <!-- v2.1 -->
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.1.0</div>
+            <div class="changelog-date">12 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">📊</span><div><b>ระบบความจำ SRS (Spaced Repetition):</b> ติดตามสถิติความจำ จำแนกคำที่แม่นยำและคำที่ต้องทบทวน</div></li>
+            <li><span class="emoji">🔊</span><div><b>ระบบออกเสียงคำศัพท์ (TTS):</b> เสียงอ่านภาษาญี่ปุ่นที่เป็นธรรมชาติในทุกโหมดการเรียนรู้</div></li>
+          </ul>
+        </div>
+
+        <!-- v2.0 -->
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.0.0</div>
+            <div class="changelog-date">10 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">🚀</span><div><b>เปิดตัว Progressive Web App (PWA):</b> รองรับการทำงาน Offline 100% สามารถติดตั้งลงหน้าจอโฮมทั้ง iOS และ Android</div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <script src="data/kanji.js"></script>
@@ -1304,7 +1504,36 @@ async function initPersist(){
   renderBackupInfo();
 }
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeBackup();closeScene();}});
+// ══════════════════════════════════════════════════════════
+//  CHANGELOG / VERSION NOTIFICATION
+// ══════════════════════════════════════════════════════════
+const CURRENT_APP_VERSION = '2.5';
+
+function checkChangelogBadge(){
+  const seen = localStorage.getItem('jlpt_seen_version');
+  const dot = document.getElementById('changelog-badge-dot');
+  if(dot){
+    if(seen !== CURRENT_APP_VERSION){
+      dot.classList.add('show');
+    } else {
+      dot.classList.remove('show');
+    }
+  }
+}
+
+function openChangelog(){
+  const m = document.getElementById('changelog-modal');
+  if(m) m.classList.add('open');
+  localStorage.setItem('jlpt_seen_version', CURRENT_APP_VERSION);
+  checkChangelogBadge();
+}
+
+function closeChangelog(){
+  const m = document.getElementById('changelog-modal');
+  if(m) m.classList.remove('open');
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeBackup();closeScene();closeChangelog();}});
 
 // PWA: Service Worker (ใช้ได้เมื่อเปิดผ่าน http/https เท่านั้น ไม่ใช่ไฟล์ในเครื่อง)
 if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
@@ -1315,6 +1544,7 @@ if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol)){
 
 initPersist();
 renderBackupBanner();
+checkChangelogBadge();
 
 renderFilters();
 startAll();

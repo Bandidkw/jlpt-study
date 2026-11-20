@@ -170,6 +170,108 @@ a{color:inherit;text-decoration:none;}
   transition:all .15s;
 }
 .btn-export:hover{background:#1e2a44;border-color:#33446b;color:#fff;}
+.btn-changelog{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  background:#1e1b4b55;
+  color:#c4b5fd;
+  border:1px solid #6366f166;
+  border-radius:10px;
+  padding:7px 12px;
+  font-size:12.5px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .15s;
+}
+.btn-changelog:hover{background:#312e8166;border-color:#818cf8;color:#fff;}
+.changelog-unread-dot{
+  position:absolute;
+  top:-3px;
+  right:-3px;
+  width:9px;
+  height:9px;
+  background:#ec4899;
+  border:2px solid #0b0f19;
+  border-radius:50%;
+  box-shadow:0 0 8px #ec4899;
+  display:none;
+}
+.changelog-unread-dot.show{
+  display:block;
+  animation:pulse-dot 1.8s infinite;
+}
+@keyframes pulse-dot{
+  0%,100%{transform:scale(1);opacity:1;}
+  50%{transform:scale(1.25);opacity:0.8;}
+}
+.changelog-timeline{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  margin-top:12px;
+}
+.changelog-card{
+  background:#131b2e;
+  border:1px solid #243250;
+  border-radius:12px;
+  padding:14px 16px;
+  position:relative;
+}
+.changelog-card.latest{
+  border-color:#6366f1;
+  background:#161d36;
+  box-shadow:0 0 16px rgba(99,102,241,0.15);
+}
+.changelog-badge-new{
+  display:inline-block;
+  font-size:10px;
+  font-weight:700;
+  padding:2px 7px;
+  background:#ec4899;
+  color:#fff;
+  border-radius:10px;
+  margin-left:6px;
+  vertical-align:middle;
+}
+.changelog-version-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+  padding-bottom:6px;
+  border-bottom:1px solid #1f2a44;
+}
+.changelog-version{
+  font-size:14.5px;
+  font-weight:700;
+  color:#fff;
+}
+.changelog-date{
+  font-size:12px;
+  color:#94a3b8;
+}
+.changelog-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  font-size:12.5px;
+  color:#cbd5e1;
+  line-height:1.55;
+}
+.changelog-list li{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+}
+.changelog-list li span.emoji{
+  flex-shrink:0;
+  font-size:15px;
+}
 
 /* ── TITLE SECTION ── */
 .header-intro{
@@ -902,6 +1004,10 @@ a{color:inherit;text-decoration:none;}
         </div>
       </div>
     </div>
+    <button class="btn-changelog" id="btn-changelog" onclick="openChangelog()" title="บันทึกการอัปเดตระบบ">
+      <span>✨ v2.5</span>
+      <span class="changelog-unread-dot" id="changelog-badge-dot"></span>
+    </button>
     <button class="btn-export" onclick="openBackup()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Export
@@ -942,6 +1048,105 @@ a{color:inherit;text-decoration:none;}
       <input type="file" id="import-file" accept=".json,application/json" hidden onchange="importFile(this)">
     </div>
     <div id="backup-msg" style="font-size:12.5px;color:#38bdf8;"></div>
+  </div>
+</div>
+
+<!-- CHANGELOG MODAL -->
+<div class="modal-overlay" id="changelog-modal" onclick="if(event.target===this)closeChangelog()">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="บันทึกการอัปเดตระบบ" style="max-width:560px;max-height:85vh;display:flex;flex-direction:column;">
+    <div class="modal-head" style="flex-shrink:0;">
+      <span style="display:flex;align-items:center;gap:8px;">
+        <span>✨ บันทึกการอัปเดตระบบ</span>
+        <span style="font-size:11px;background:#6366f122;color:#a5b4fc;border:1px solid #6366f155;padding:2px 8px;border-radius:10px;font-weight:600;">v2.5</span>
+      </span>
+      <button class="modal-x" onclick="closeChangelog()">✕</button>
+    </div>
+    <div style="overflow-y:auto;padding-right:4px;margin-top:8px;">
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:14px;line-height:1.5;">
+        รายละเอียดการพัฒนาและฟังก์ชันใหม่ในแต่ละเวอร์ชัน เพื่อให้คุณเรียนและฝึกจำภาษาญี่ปุ่นได้อย่างมีประสิทธิภาพสูงสุด
+      </p>
+      <div class="changelog-timeline">
+        <!-- v2.5 -->
+        <div class="changelog-card latest">
+          <div class="changelog-version-header">
+            <div class="changelog-version">
+              v2.5.0 <span class="changelog-badge-new">LATEST</span>
+            </div>
+            <div class="changelog-date">20 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">⏳</span><div><b>ระบบวิเคราะห์คำที่ตอบช้า:</b> หน้าสรุปผลควิซแสดงรายการคำที่ตอบช้าเกินเกณฑ์ ระบุเวลาที่ใช้ พร้อมปุ่มฟังเสียง 🔊 และปุ่ม <code>[ ฝึกเฉพาะคำที่ตอบช้า ]</code> ให้ทบทวนเฉพาะคำที่ยังไม่คล่องได้ทันที</div></li>
+            <li><span class="emoji">🏷️</span><div><b>แยกหัวข้อ/บทเรียนในหน้าผลลัพธ์:</b> แยกป้ายชื่อหัวข้อออกมาให้ชัดเจน ไม่ปะปนกับข้อความยินดี</div></li>
+            <li><span class="emoji">⌨️</span><div><b>ปรับปรุงโหมดพิมพ์คำอ่าน (Typing Mode):</b> ซ่อนคำใบ้ "ความหมาย: เสียงอ่าน" ไม่ให้สปอยล์คำตอบขณะทำแบบทดสอบตัวอักษร</div></li>
+            <li><span class="emoji">🔤</span><div><b>ระบบตรวจโรมาจิอัจฉริยะ (Romaji Normalizer):</b> พิมพ์ <code>ぢ</code> รองรับทั้ง <code>ji</code> และ <code>di</code>, พิมพ์ <code>づ</code> รองรับทั้ง <code>zu</code> และ <code>du</code> ตามการสะกดมาตรฐานสากล</div></li>
+            <li><span class="emoji">📐</span><div><b>ปรับสัดส่วนเสียงควบและเสียงกัก (拗音/促音):</b> ปรับขนาดตัวเล็กพิเศษ (ゃ, ゅ, ょ, っ ฯลฯ) ให้มีสัดส่วนชัดเจน อ่านง่าย ไม่สับสนกับตัวเต็ม</div></li>
+            <li><span class="emoji">🔄</span><div><b>ระบบทดสอบต่อเนื่องข้ามหลายหัวข้อ:</b> เมื่อเลือกหลายบทและมีคำศัพท์ที่ยังไม่ได้ทำ ระบบจะแสดงกล่องแจ้งเตือนพร้อมปุ่มให้ทำคำที่เหลือต่อได้ทันที</div></li>
+            <li><span class="emoji">🔍</span><div><b>ตรวจทานฐานข้อมูลทั้งระบบ (1,736 รายการ):</b> ตรวจสอบความถูกต้องของคันจิ คำศัพท์ ไวยากรณ์ และบทสนทนาสถานการณ์จริงทั้งหมด</div></li>
+            <li><span class="emoji">📢</span><div><b>หน้าต่างแจ้งเตือนการอัปเดต (Changelog):</b> เพิ่มปุ่ม ✨ v2.5 พร้อมไฟแจ้งเตือนสีชมพูเมื่อมีการอัปเดตระบบ</div></li>
+          </ul>
+        </div>
+
+        <!-- v2.4 -->
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.4.0</div>
+            <div class="changelog-date">18 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">⚡</span><div><b>โหมด Speedrun Challenge:</b> จับเวลาแบบรวดเร็วทดสอบความจำระยะสั้น พร้อมจัดระดับเกรด S, A, B, C, D</div></li>
+            <li><span class="emoji">🎧</span><div><b>โหมดฟังเสียงแล้วตอบ (Listening Quiz):</b> ฝึกทักษะการฟังเสียงเจ้าของภาษาโดยตรง</div></li>
+            <li><span class="emoji">📚</span><div><b>ระบบคลังคำศัพท์และจัดการคำศัพท์:</b> เพิ่ม แก้ไข ลบคำศัพท์ในแต่ละบทเรียนได้เองอย่างอิสระ</div></li>
+          </ul>
+        </div>
+
+        <!-- v2.3 -->
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.3.0</div>
+            <div class="changelog-date">16 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">🗣️</span><div><b>หมวดสถานการณ์จริง (Scenes):</b> เพิ่มบทสนทนาที่พบบ่อยในชีวิตประจำวัน เช่น ร้านสะดวกซื้อ ร้านอาหาร การเดินทาง</div></li>
+            <li><span class="emoji">💾</span><div><b>ระบบ Backup & Restore:</b> ส่งออกและนำเข้าข้อมูลความก้าวหน้าและคำศัพท์เป็นไฟล์ JSON สำรองไว้ได้ทุกเมื่อ</div></li>
+          </ul>
+        </div>
+
+        <!-- v2.2 -->
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.2.0</div>
+            <div class="changelog-date">14 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">📖</span><div><b>ควิซไวยากรณ์ N5 (Grammar Quiz):</b> ทดสอบรูปประโยคไวยากรณ์พร้อมตัวอย่างการใช้งานจริง</div></li>
+            <li><span class="emoji">🇯🇵</span><div><b>หมวดตัวอักษร ฮิรางานะ และ คาตาคานะ:</b> คลังอักษรพื้นฐาน พร้อมเสียงขุ่น (濁音) และเสียงควบ (拗音)</div></li>
+          </ul>
+        </div>
+
+        <!-- v2.1 -->
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.1.0</div>
+            <div class="changelog-date">12 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">📊</span><div><b>ระบบความจำ SRS (Spaced Repetition):</b> ติดตามสถิติความจำ จำแนกคำที่แม่นยำและคำที่ต้องทบทวน</div></li>
+            <li><span class="emoji">🔊</span><div><b>ระบบออกเสียงคำศัพท์ (TTS):</b> เสียงอ่านภาษาญี่ปุ่นที่เป็นธรรมชาติในทุกโหมดการเรียนรู้</div></li>
+          </ul>
+        </div>
+
+        <!-- v2.0 -->
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.0.0</div>
+            <div class="changelog-date">10 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">🚀</span><div><b>เปิดตัว Progressive Web App (PWA):</b> รองรับการทำงาน Offline 100% สามารถติดตั้งลงหน้าจอโฮมทั้ง iOS และ Android</div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1076,6 +1281,7 @@ let quizFastCount = 0;
 let quizSlowCount = 0;
 let quizWrongCount = 0;
 let quizMistakes = [];
+let quizSlowItems = [];
 let quizTimerId = null;
 let qStartTime = 0;
 let currentElapsedMs = 0;
@@ -1806,6 +2012,7 @@ function startQuiz(){
   quizSlowCount = 0;
   quizWrongCount = 0;
   quizMistakes = [];
+  quizSlowItems = [];
 
   if(quizInteraction === 'speedrun'){
     startSpeedRunTimer();
@@ -1856,6 +2063,7 @@ function startRemainingUntested(){
   quizSlowCount = 0;
   quizWrongCount = 0;
   quizMistakes = [];
+  quizSlowItems = [];
 
   if(quizInteraction === 'speedrun'){
     startSpeedRunTimer();
@@ -2120,6 +2328,7 @@ function submitTypingAnswer(){
       return;
     } else {
       quizSlowCount++;
+      quizSlowItems.push({ item, elapsedMs, correctVal: `${item.rd ? `${item.rd} · ` : ''}${targetRom}` });
       const showMeaning = item.th && currentLevel !== 'hiragana' && currentLevel !== 'katakana' && !item.th.startsWith('เสียงอ่าน') && normalizeRomaji(item.th) !== normalizeRomaji(item.rd || '');
       fbWrap.innerHTML = `
         <div class="feedback-box fb-slow">
@@ -2224,6 +2433,7 @@ function submitQuizAnswer(chosenIdx, chosenVal, correctVal){
       return;
     } else {
       quizSlowCount++;
+      quizSlowItems.push({ item, elapsedMs, correctVal });
       fbWrap.innerHTML = `
         <div class="feedback-box fb-slow">
           ✓ <b>ถูกต้อง</b> แต่ใช้เวลา ${(elapsedMs/1000).toFixed(1)} วินาที (ช้ากว่า 4 วิ)
@@ -2325,8 +2535,8 @@ function renderQuizSummary(){
   let mistakesHtml = '';
   if(quizMistakes.length > 0){
     mistakesHtml = `
-      <div class="mistake-list">
-        <div class="mistake-title">📌 คำที่ควรทบทวน (${quizMistakes.length} คำ)</div>
+      <div class="mistake-list" style="border-left:3px solid #ef4444;margin-bottom:12px;">
+        <div class="mistake-title" style="color:#f87171;">✕ คำที่ต้องซ่อม (ตอบผิด ${quizMistakes.length} คำ)</div>
         ${quizMistakes.map(m => {
           const showMeaning = m.item.th && currentLevel !== 'hiragana' && currentLevel !== 'katakana' && !m.item.th.startsWith('เสียงอ่าน') && normalizeRomaji(m.item.th) !== normalizeRomaji(m.item.rd || '');
           return `
@@ -2334,8 +2544,30 @@ function renderQuizSummary(){
             <div>
               <b>${formatJpText(m.item.jp)}</b> ${m.item.rd ? `<span style="color:#94a3b8">(${m.item.rd})</span>` : ''}
               ${showMeaning ? `<div style="font-size:12px;color:#38bdf8">${m.item.th}</div>` : ''}
+              <div style="font-size:11.5px;color:#fca5a5;margin-top:2px;">คำตอบที่ถูก: ${m.correctVal}</div>
             </div>
             <button class="q-audio-btn" onclick="speakJp('${m.item.jp}')">🔊</button>
+          </div>
+        `;}).join('')}
+      </div>
+    `;
+  }
+
+  let slowItemsHtml = '';
+  if(quizSlowItems.length > 0){
+    slowItemsHtml = `
+      <div class="mistake-list" style="border-left:3px solid #f59e0b;margin-bottom:12px;">
+        <div class="mistake-title" style="color:#fbbf24;">⏳ คำที่ตอบช้าเกินเกณฑ์ (${quizSlowItems.length} คำ)</div>
+        ${quizSlowItems.map(s => {
+          const showMeaning = s.item.th && currentLevel !== 'hiragana' && currentLevel !== 'katakana' && !s.item.th.startsWith('เสียงอ่าน') && normalizeRomaji(s.item.th) !== normalizeRomaji(s.item.rd || '');
+          return `
+          <div class="mistake-item">
+            <div>
+              <b>${formatJpText(s.item.jp)}</b> ${s.item.rd ? `<span style="color:#94a3b8">(${s.item.rd})</span>` : ''}
+              ${showMeaning ? `<div style="font-size:12px;color:#38bdf8">${s.item.th}</div>` : ''}
+              <div style="font-size:11.5px;color:#fcd34d;margin-top:2px;">ใช้เวลา ${(s.elapsedMs/1000).toFixed(1)} วินาที</div>
+            </div>
+            <button class="q-audio-btn" onclick="speakJp('${s.item.jp}')">🔊</button>
           </div>
         `;}).join('')}
       </div>
@@ -2375,6 +2607,7 @@ function renderQuizSummary(){
         </div>
 
         ${mistakesHtml}
+        ${slowItemsHtml}
 
         ${remainingUntested.length > 0 ? `
           <div style="background:#0f2b38;border:1.5px solid #0284c7;border-radius:12px;padding:14px 16px;margin:14px 0;text-align:center;">
@@ -2447,6 +2680,7 @@ function renderQuizSummary(){
       </div>
 
       ${mistakesHtml}
+      ${slowItemsHtml}
 
       ${remainingUntested.length > 0 ? `
         <div style="background:#0f2b38;border:1.5px solid #0284c7;border-radius:12px;padding:14px 16px;margin:14px 0;text-align:center;">
@@ -2483,6 +2717,11 @@ function renderQuizSummary(){
             ทวนเฉพาะข้อที่ผิด (${quizMistakes.length})
           </button>
         ` : ''}
+        ${quizSlowItems.length > 0 ? `
+          <button class="btn-primary-cta" style="background:#d97706;" onclick="retrySlowItems()">
+            ฝึกเฉพาะคำที่ตอบช้า (${quizSlowItems.length})
+          </button>
+        ` : ''}
         <button class="btn-primary-cta" onclick="startQuiz()">
           ทดสอบชุดนี้อีกครั้ง (สุ่มใหม่)
         </button>
@@ -2502,6 +2741,19 @@ function retryMistakes(){
   quizSlowCount = 0;
   quizWrongCount = 0;
   quizMistakes = [];
+  quizSlowItems = [];
+  renderQuizQuestion();
+}
+
+function retrySlowItems(){
+  quizDeck = quizSlowItems.map(s => s.item);
+  quizIdx = 0;
+  quizScore = 0;
+  quizFastCount = 0;
+  quizSlowCount = 0;
+  quizWrongCount = 0;
+  quizMistakes = [];
+  quizSlowItems = [];
   renderQuizQuestion();
 }
 
@@ -2788,12 +3040,50 @@ function importFile(input){
 }
 
 // ══════════════════════════════════════════════════════════
+//  CHANGELOG / VERSION NOTIFICATION
+// ══════════════════════════════════════════════════════════
+const CURRENT_APP_VERSION = '2.5';
+
+function checkChangelogBadge(){
+  const seen = localStorage.getItem('jlpt_seen_version');
+  const dot = document.getElementById('changelog-badge-dot');
+  if(dot){
+    if(seen !== CURRENT_APP_VERSION){
+      dot.classList.add('show');
+    } else {
+      dot.classList.remove('show');
+    }
+  }
+}
+
+function openChangelog(){
+  const m = document.getElementById('changelog-modal');
+  if(m) m.classList.add('active');
+  localStorage.setItem('jlpt_seen_version', CURRENT_APP_VERSION);
+  checkChangelogBadge();
+}
+
+function closeChangelog(){
+  const m = document.getElementById('changelog-modal');
+  if(m) m.classList.remove('active');
+}
+
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape'){
+    closeChangelog();
+    closeBackup();
+    closeAddWordModal();
+  }
+});
+
+// ══════════════════════════════════════════════════════════
 //  INIT
 // ══════════════════════════════════════════════════════════
 window.addEventListener('DOMContentLoaded', () => {
   if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
+  checkChangelogBadge();
   switchLevel('custom');
 });
 </script>
