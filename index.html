@@ -320,7 +320,8 @@ html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
   position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:1000;
   display:none;align-items:center;justify-content:center;padding:16px;
 }
-.modal-overlay.open{display:flex;}
+.modal-overlay.open,
+.modal-overlay.active{display:flex;}
 .modal-box{
   width:100%;max-width:460px;max-height:90vh;overflow-y:auto;
   background:#1a1a1a;border:1px solid #2a2a2a;border-radius:16px;padding:18px;
@@ -495,12 +496,12 @@ html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
     <button class="level-tab" id="tab-katakana" onclick="event.preventDefault();switchLevel('katakana')">คาตาคานะ</button>
     <button class="level-tab" id="tab-all" onclick="event.preventDefault();switchLevel('all')">ทั้งหมด</button>
     <button class="level-tab backup-tab" id="btn-backup" onclick="event.preventDefault();openBackup()">💾 สำรอง</button>
-    <button class="level-tab btn-changelog-tab" id="btn-changelog" onclick="event.preventDefault();openChangelog()" title="บันทึกการอัปเดตระบบ">
-      <span>✨ v2.5</span>
-      <span class="changelog-unread-dot" id="changelog-badge-dot"></span>
-    </button>
     <a href="quiz.html" class="level-tab" style="background:#1e293b;color:#60a5fa;border-color:#3b82f6;display:inline-flex;align-items:center;gap:4px;text-decoration:none;">🎯 ควิซคำศัพท์ใหม่</a>
   </div>
+  <button class="level-tab btn-changelog-tab" id="btn-changelog" onclick="event.preventDefault();openChangelog()" style="margin-left:auto;flex-shrink:0;" title="บันทึกการอัปเดตระบบ">
+    <span>✨ v2.5</span>
+    <span class="changelog-unread-dot" id="changelog-badge-dot"></span>
+  </button>
 </div>
 <div class="content">
   <div id="backup-banner"></div>
@@ -1523,14 +1524,20 @@ function checkChangelogBadge(){
 
 function openChangelog(){
   const m = document.getElementById('changelog-modal');
-  if(m) m.classList.add('open');
+  if(m){
+    m.classList.add('open');
+    m.classList.add('active');
+  }
   localStorage.setItem('jlpt_seen_version', CURRENT_APP_VERSION);
   checkChangelogBadge();
 }
 
 function closeChangelog(){
   const m = document.getElementById('changelog-modal');
-  if(m) m.classList.remove('open');
+  if(m){
+    m.classList.remove('open');
+    m.classList.remove('active');
+  }
 }
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeBackup();closeScene();closeChangelog();}});
