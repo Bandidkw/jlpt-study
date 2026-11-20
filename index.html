@@ -177,6 +177,7 @@ body{font-family:'Segoe UI',sans-serif;background:#111;color:#f0f0f0;min-height:
 .level-tab.active-vocab5{background:#12111f;color:#a78bfa;border-color:#3730a3;}
 .level-tab.active-n4{background:#0d1f0d;color:#4ade80;border-color:#14532d;}
 .level-tab.active-n3{background:#1c0d07;color:#fb923c;border-color:#7c2d12;}
+.level-tab.active-quiz{background:#1e1b4b;color:#c4b5fd;border-color:#6366f1;}
 
 /* ── Done screen buttons ── */
 .done-btn{
@@ -496,12 +497,15 @@ html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
     <button class="level-tab" id="tab-katakana" onclick="event.preventDefault();switchLevel('katakana')">คาตาคานะ</button>
     <button class="level-tab" id="tab-all" onclick="event.preventDefault();switchLevel('all')">ทั้งหมด</button>
     <button class="level-tab backup-tab" id="btn-backup" onclick="event.preventDefault();openBackup()">💾 สำรอง</button>
-    <a href="quiz.html" class="level-tab" style="background:#1e293b;color:#60a5fa;border-color:#3b82f6;display:inline-flex;align-items:center;gap:4px;text-decoration:none;">🎯 ควิซคำศัพท์ใหม่</a>
+    <button class="level-tab" id="tab-quiz" onclick="event.preventDefault();switchLevel('quiz')">🎯 ควิซคำศัพท์ใหม่</button>
   </div>
   <button class="level-tab btn-changelog-tab" id="btn-changelog" onclick="event.preventDefault();openChangelog()" style="margin-left:auto;flex-shrink:0;" title="บันทึกการอัปเดตระบบ">
     <span>✨ v2.5</span>
     <span class="changelog-unread-dot" id="changelog-badge-dot"></span>
   </button>
+</div>
+<div id="quiz-view" style="display:none;width:100%;height:calc(100dvh - 58px);min-height:500px;background:#111;">
+  <iframe id="quiz-frame" src="quiz.html?embedded=1" style="width:100%;height:100%;border:none;display:block;" title="ควิซคำศัพท์ใหม่"></iframe>
 </div>
 <div class="content">
   <div id="backup-banner"></div>
@@ -819,16 +823,38 @@ function getCats(){
 function switchLevel(lv){
   if(currentLevel===lv) return;  // กดซ้ำ level เดิม → ไม่ทำอะไร
   lockScroll();
-  currentLevel=lv; activeCat='ทั้งหมด';
-  ['n5','vocab5','scene','n4','n3','grammar5','hiragana','katakana','all'].forEach(l=>{
+  currentLevel=lv;
+
+  const contentEl = document.querySelector('.content');
+  const quizViewEl = document.getElementById('quiz-view');
+
+  ['n5','vocab5','scene','n4','n3','grammar5','hiragana','katakana','all','quiz'].forEach(l=>{
     const t=document.getElementById('tab-'+l);
     if(t) t.className='level-tab';
   });
-  document.getElementById('tab-'+lv).className='level-tab active-'+lv;
+  const actTab = document.getElementById('tab-'+lv);
+  if(actTab) actTab.className='level-tab active-'+lv;
+
+  if(lv === 'quiz'){
+    if(contentEl) contentEl.style.display = 'none';
+    if(quizViewEl){
+      quizViewEl.style.display = 'block';
+      const iframe = document.getElementById('quiz-frame');
+      if(iframe && !iframe.getAttribute('src')){
+        iframe.src = 'quiz.html?embedded=1';
+      }
+    }
+    return;
+  }
+
+  if(contentEl) contentEl.style.display = 'block';
+  if(quizViewEl) quizViewEl.style.display = 'none';
+
+  activeCat='ทั้งหมด';
   const pf=document.getElementById('prog');
   const pfMap={n5:'pf-n5',vocab5:'pf-vocab5',scene:'pf-scene',n4:'pf-n4',n3:'pf-n3',
                grammar5:'pf-grammar5',hiragana:'pf-hiragana',katakana:'pf-katakana',all:'pf-n3'};
-  pf.className='progress-fill '+(pfMap[lv]||'pf-n3');
+  if(pf) pf.className='progress-fill '+(pfMap[lv]||'pf-n3');
   renderFilters(); startAll();
 }
 
