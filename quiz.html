@@ -3024,19 +3024,39 @@ function closeBackup(){
 }
 
 function exportBackup(){
-  const data = {
-    app: 'jlpt-study-quiz',
+  // รวมข้อมูลทุกอย่างเป็นไฟล์เดียว: คำศัพท์ + Mastery + SRS + Streak + สถิติ
+  const ALL_KEYS = ['jlpt_srs','jlpt_streak','jlpt_life','jlpt_autospeak','jlpt_custom_words','jlpt_mastery_v2'];
+  const dataObj = {};
+  ALL_KEYS.forEach(k => {
+    try{ const v = localStorage.getItem(k); if(v !== null) dataObj[k] = JSON.parse(v); }catch{}
+  });
+  const payload = {
+    app: 'jlpt-study',
     version: 2,
     exportedAt: new Date().toISOString(),
-    customWords: getCustomWords(),
-    mastery: getMasteryStore()
+    data: dataObj
   };
-  const json = JSON.stringify(data, null, 2);
+  const json = JSON.stringify(payload, null, 2);
+  const today = new Date().toISOString().slice(0,10);
   const blob = new Blob([json], { type: 'application/json' });
+  // iOS/Android: Share Sheet
+  try{
+    const file = new File([json], `jlpt-backup-${today}.json`, {type:'application/json'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      navigator.share({files:[file], title:'สำรองข้อมูล JLPT'})
+        .then(()=>{ document.getElementById('backup-msg').textContent = 'ส่งออกไฟล์สำรองเรียบร้อย!'; })
+        .catch(e=>{ if(e&&e.name!=='AbortError') downloadBlob(blob, today); });
+      return;
+    }
+  }catch{}
+  downloadBlob(blob, today);
+}
+
+function downloadBlob(blob, today){
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `jlpt-quiz-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `jlpt-backup-${today}.json`;
   a.click();
   URL.revokeObjectURL(url);
   document.getElementById('backup-msg').textContent = 'ส่งออกไฟล์สำรองเรียบร้อย!';
@@ -3048,17 +3068,35 @@ function importFile(input){
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
-      const data = JSON.parse(e.target.result);
-      if(data.customWords){
-        saveCustomWords(data.customWords);
+      const obj = JSON.parse(e.target.result);
+      let customWords = null, mastery = null;
+
+      // รูปแบบใหม่ (รวม): {app:'jlpt-study', data:{...}}
+      if(obj.app === 'jlpt-study' && typeof obj.data === 'object'){
+        const d = obj.data;
+        if(Array.isArray(d.jlpt_custom_words)) customWords = d.jlpt_custom_words;
+        if(d.jlpt_mastery_v2 && typeof d.jlpt_mastery_v2 === 'object') mastery = d.jlpt_mastery_v2;
+        // กู้คืน SRS / Streak / Stats ของหน้าหลักด้วย
+        const mainKeys = ['jlpt_srs','jlpt_streak','jlpt_life','jlpt_autospeak'];
+        mainKeys.forEach(k => { if(k in d) try{ localStorage.setItem(k, JSON.stringify(d[k])); }catch{} });
       }
-      if(data.mastery){
-        saveMasteryStore(data.mastery);
+      // รูปแบบเก่าจากหน้าควิซ: {app:'jlpt-study-quiz', customWords:[], mastery:{}}
+      else if(obj.app === 'jlpt-study-quiz'){
+        if(Array.isArray(obj.customWords)) customWords = obj.customWords;
+        if(obj.mastery && typeof obj.mastery === 'object') mastery = obj.mastery;
+      } else {
+        throw new Error('ไม่ใช่ไฟล์สำรองของแอปนี้');
       }
-      document.getElementById('backup-msg').textContent = 'นำเข้าข้อมูลสำเร็จ!';
+
+      if(!customWords && !mastery) throw new Error('ไม่พบข้อมูลที่นำเข้าได้');
+      const nWords = customWords ? customWords.length : 0;
+      if(!confirm(`นำเข้าข้อมูลสำรอง (${nWords} คำศัพท์)?\nข้อมูลคำศัพท์ปัจจุบันจะถูกแทนที่`)) return;
+      if(customWords) saveCustomWords(customWords);
+      if(mastery) saveMasteryStore(mastery);
+      document.getElementById('backup-msg').textContent = `นำเข้าสำเร็จ! (${nWords} คำ)`;
       renderMain();
     } catch(err){
-      alert('ไฟล์ไม่ถูกต้อง ไม่สามารถนำเข้าได้');
+      alert('ไฟล์ไม่ถูกต้อง: ' + (err.message || 'นำเข้าไม่สำเร็จ'));
     }
   };
   reader.readAsText(file);

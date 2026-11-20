@@ -1339,6 +1339,8 @@ function stopScene(done){
 //  BACKUP / RESTORE / PERSIST / PWA
 // ══════════════════════════════════════════════════════════
 const BACKUP_KEYS=['jlpt_srs','jlpt_streak','jlpt_life','jlpt_autospeak'];
+// เพิ่ม key ของระบบควิซคำศัพท์ใหม่เข้าในชุดเดียวกัน
+const BACKUP_QUIZ_KEYS=['jlpt_custom_words','jlpt_mastery_v2'];
 const BACKUP_META='jlpt_lastbackup';        // ไม่รวมในไฟล์สำรอง
 const BACKUP_SNOOZE='jlpt_backup_snooze';   // ไม่รวมในไฟล์สำรอง
 const BACKUP_REMIND_DAYS=14;
@@ -1346,10 +1348,10 @@ let persistState=null;                      // true | false | null (ไม่ร
 
 function buildBackup(){
   const data={};
-  BACKUP_KEYS.forEach(k=>{
+  [...BACKUP_KEYS,...BACKUP_QUIZ_KEYS].forEach(k=>{
     try{const v=localStorage.getItem(k);if(v!==null)data[k]=JSON.parse(v);}catch{}
   });
-  return {app:'jlpt-study',version:1,exportedAt:new Date().toISOString(),data};
+  return {app:'jlpt-study',version:2,exportedAt:new Date().toISOString(),data};
 }
 
 function setBackupMsg(text,type){
@@ -1459,9 +1461,23 @@ async function copyBackup(){
 function parseBackup(text){
   let obj;
   try{obj=JSON.parse(text);}catch{throw new Error('ข้อมูลที่ให้มาอ่านเป็น JSON ไม่ได้');}
-  if(!obj||obj.app!=='jlpt-study'||typeof obj.data!=='object'||obj.data===null)
+  // รองรับทั้งไฟล์จากหน้าหลัก (app:'jlpt-study') และจากหน้าควิซ (app:'jlpt-study-quiz')
+  if(!obj||!obj.app||(obj.app!=='jlpt-study'&&obj.app!=='jlpt-study-quiz')||
+     (typeof obj.data!=='object'&&typeof obj.customWords==='undefined'))
     throw new Error('ไม่ใช่ไฟล์สำรองของแอปนี้');
+
+  // ไฟล์จากหน้าควิซเก่า: {app:'jlpt-study-quiz', customWords:[], mastery:{}}
+  if(obj.app==='jlpt-study-quiz'){
+    const out={};
+    if(Array.isArray(obj.customWords)&&obj.customWords.length>0) out.jlpt_custom_words=obj.customWords;
+    if(obj.mastery&&typeof obj.mastery==='object') out.jlpt_mastery_v2=obj.mastery;
+    if(Object.keys(out).length===0) throw new Error('ไม่พบข้อมูลที่นำเข้าได้ในไฟล์');
+    return out;
+  }
+
+  // ไฟล์รูปแบบปัจจุบัน: {app:'jlpt-study', data:{...}}
   const d=obj.data,out={};
+  if(typeof d!=='object'||d===null) throw new Error('รูปแบบข้อมูลในไฟล์ไม่ถูกต้อง');
   const isNum=v=>typeof v==='number'&&isFinite(v);
   if('jlpt_srs' in d){
     const s=d.jlpt_srs;
@@ -1485,16 +1501,23 @@ function parseBackup(text){
       throw new Error('ข้อมูลสถิติรวมในไฟล์ไม่ถูกต้อง');
     out.jlpt_life={sessions:l.sessions,totalRight:l.totalRight,totalWrong:l.totalWrong};
   }
-  if('jlpt_autospeak' in d)out.jlpt_autospeak=!!d.jlpt_autospeak;
-  if(Object.keys(out).length===0)throw new Error('ไม่พบข้อมูลที่นำเข้าได้ในไฟล์');
+  if('jlpt_autospeak' in d) out.jlpt_autospeak=!!d.jlpt_autospeak;
+  // ข้อมูลจากระบบควิซคำศัพท์ใหม่
+  if('jlpt_custom_words' in d && Array.isArray(d.jlpt_custom_words)) out.jlpt_custom_words=d.jlpt_custom_words;
+  if('jlpt_mastery_v2' in d && typeof d.jlpt_mastery_v2==='object') out.jlpt_mastery_v2=d.jlpt_mastery_v2;
+  if(Object.keys(out).length===0) throw new Error('ไม่พบข้อมูลที่นำเข้าได้ในไฟล์');
   return out;
 }
 
 function applyImport(text){
   try{
     const out=parseBackup(text);
-    const n=Object.keys(out.jlpt_srs||{}).length;
-    const msg='นำเข้าข้อมูลสำรอง'+(out.jlpt_srs?' ('+n+' การ์ด SRS)':'')+'?\nข้อมูลปัจจุบันในเครื่องนี้จะถูกแทนที่';
+    const nSRS=Object.keys(out.jlpt_srs||{}).length;
+    const nWords=(out.jlpt_custom_words||[]).length;
+    const parts=[];
+    if(nSRS>0) parts.push(nSRS+' การ์ด SRS');
+    if(nWords>0) parts.push(nWords+' คำศัพท์ใหม่');
+    const msg='นำเข้าข้อมูลสำรอง'+(parts.length?' ('+parts.join(', ')+')':'')+'?\nข้อมูลปัจจุบันในเครื่องนี้จะถูกแทนที่';
     if(!confirm(msg))return;
     saveLS('jlpt_prev_before_import',buildBackup());   // กันพลาด: เก็บข้อมูลเดิมไว้ 1 ชุด
     Object.keys(out).forEach(k=>saveLS(k,out[k]));
