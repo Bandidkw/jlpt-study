@@ -305,7 +305,8 @@ html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
 
 
 /* ══ BACKUP / RESTORE ══ */
-.level-tab.backup-tab{margin-left:auto;color:#a78bfa;border-color:#3730a3;background:#12111f;}
+.level-tab.backup-tab{color:#a78bfa;border-color:#3730a3;background:#12111f;}
+.level-tab.backup-tab:hover{background:#1e1b4b;border-color:#6366f1;color:#c4b5fd;}
 .backup-banner{
   display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   background:#2a1a0d;border:1px solid #5a3a1a;color:#e0b040;
@@ -496,13 +497,15 @@ html,body{scroll-behavior:auto!important;overscroll-behavior:none;}
     <button class="level-tab" id="tab-hiragana" onclick="event.preventDefault();switchLevel('hiragana')">ฮิรางานะ</button>
     <button class="level-tab" id="tab-katakana" onclick="event.preventDefault();switchLevel('katakana')">คาตาคานะ</button>
     <button class="level-tab" id="tab-all" onclick="event.preventDefault();switchLevel('all')">ทั้งหมด</button>
-    <button class="level-tab backup-tab" id="btn-backup" onclick="event.preventDefault();openBackup()">💾 สำรอง</button>
     <button class="level-tab" id="tab-quiz" onclick="event.preventDefault();switchLevel('quiz')">🎯 ควิซคำศัพท์ใหม่</button>
   </div>
-  <button class="level-tab btn-changelog-tab" id="btn-changelog" onclick="event.preventDefault();openChangelog()" style="margin-left:auto;flex-shrink:0;" title="บันทึกการอัปเดตระบบ">
-    <span>✨ v2.5</span>
-    <span class="changelog-unread-dot" id="changelog-badge-dot"></span>
-  </button>
+  <div class="topbar-right-actions" style="display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0;">
+    <button class="level-tab backup-tab" id="btn-backup" onclick="event.preventDefault();openBackup()" title="สำรองและกู้คืนข้อมูล">💾 สำรอง</button>
+    <button class="level-tab btn-changelog-tab" id="btn-changelog" onclick="event.preventDefault();openChangelog()" title="บันทึกการอัปเดตระบบ">
+      <span>✨ v2.5</span>
+      <span class="changelog-unread-dot" id="changelog-badge-dot"></span>
+    </button>
+  </div>
 </div>
 <div id="quiz-view" style="display:none;width:100%;height:calc(100dvh - 58px);min-height:500px;background:#111;">
   <iframe id="quiz-frame" src="quiz.html?embedded=1" style="width:100%;height:100%;border:none;display:block;" title="ควิซคำศัพท์ใหม่"></iframe>
