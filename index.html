@@ -733,7 +733,7 @@ function renderStreakRow(){
 // ══════════════════════════════════════════════════════════
 //  SRS ALGORITHM  (SM-2 simplified)
 // ══════════════════════════════════════════════════════════
-function srsKey(d){ return d.w||d.k; }
+function srsKey(d){ return d.c || d.w || d.k || d.p || ''; }
 
 function srsUpdate(d, ok){
   const srs=getSRS();
@@ -936,9 +936,10 @@ function startAll(){
 
 function startWrong(){
   if(wrongSet.length===0) return;
+  const isKana = (currentLevel === 'hiragana' || currentLevel === 'katakana');
   deck=shuffle([...wrongSet]); wrongSet=[]; idx=0; right=0; wrong=0;
   updateStats(); renderCard();
-  document.getElementById('mode-label').innerHTML='<span class="mode-badge" style="color:#e74c3c;border-color:#e74c3c">🔴 ทบทวนผิด</span>';
+  document.getElementById('mode-label').innerHTML=`<span class="mode-badge" style="color:#e74c3c;border-color:#e74c3c">🔴 ซ่อมเฉพาะ${isKana ? 'ตัว' : 'ข้อ'}ที่ผิด</span>`;
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1180,10 +1181,13 @@ function renderDone(){
 
   const pct=right+wrong>0?Math.round(right/(right+wrong)*100):0;
   const wrongCount=wrongSet.length;
+  const isKana=(currentLevel==='hiragana'||currentLevel==='katakana');
+  const unit=isKana?'ตัว':'ใบ';
+  const unitWord=isKana?'ตัว':'ข้อ';
   document.getElementById('main').innerHTML=`
     <div class="done-wrap">
       <div class="done-title">${pct>=80?'🎉 เยี่ยมมาก!':pct>=60?'👍 ทำได้ดี':'💪 สู้ต่อไป!'}</div>
-      <div class="done-sub">ผ่านไปแล้ว ${deck.length} ใบ</div>
+      <div class="done-sub">ผ่านไปแล้ว ${deck.length} ${unit}</div>
       <div class="done-grid">
         <div class="done-card">
           <div class="done-num" style="color:#2ecc71">${right}</div>
@@ -1202,8 +1206,20 @@ function renderDone(){
           <div class="done-lbl">เซสชั่นรวม</div>
         </div>
       </div>
+      ${wrongCount>0?`
+        <div style="background:#1a0f0f;border:1px solid #7f1d1d;border-radius:12px;padding:12px;margin:12px 0;text-align:left;">
+          <div style="color:#f87171;font-size:13px;font-weight:600;margin-bottom:8px;">✕ ${isKana?'ตัวที่ตอบผิด':'คำที่ยังไม่แม่น'} (${wrongCount} ${unit})</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            ${wrongSet.map(w=>`
+              <span style="background:#261215;border:1px solid #991b1b;color:#fca5a5;padding:4px 10px;border-radius:8px;font-size:13px;">
+                <b>${w.c||w.w||w.k||w.p}</b> ${w.r||w.th?`<span style="color:#94a3b8;font-size:11px;">(${w.r||w.th})</span>`:''}
+              </span>
+            `).join('')}
+          </div>
+        </div>
+      `:''}
       <div class="done-actions">
-        ${wrongCount>0?`<button class="done-btn danger" onclick="startWrong()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>ทบทวน ${wrongCount} ใบที่ผิด</button>`:''}
+        ${wrongCount>0?`<button class="done-btn danger" onclick="startWrong()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>🔧 ซ่อมเฉพาะ${unitWord}ที่ผิด (${wrongCount} ${unit})</button>`:''}
         <button class="done-btn secondary" onclick="event.preventDefault();setMode('srs')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>โหมด SRS ทบทวน</button>
         <button class="done-btn primary" onclick="startAll()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>เริ่มใหม่</button>
       </div>

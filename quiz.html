@@ -1792,6 +1792,10 @@ function renderTestHome(container){
   const isRepairActive = (statusFilter === 'repair');
   const isUntestedActive = (statusFilter === 'untested');
 
+  const isKana = (currentLevel === 'hiragana' || currentLevel === 'katakana');
+  const unitName = isKana ? 'ตัว' : 'คำ';
+  const unitWord = isKana ? 'ตัว' : 'ข้อ';
+
   let chaptersChipsHtml = '';
   if(chapters.length > 0){
     chaptersChipsHtml = chapters.map(ch => {
@@ -1827,9 +1831,17 @@ function renderTestHome(container){
           <button class="chip${isRepairActive ? ' active' : ''}" onclick="toggleStatusFilter('repair')">ที่ยังติด (${cRepair})</button>
           <button class="chip${isUntestedActive ? ' active' : ''}" onclick="toggleStatusFilter('untested')">ยังไม่เคยทดสอบ (${cUntested})</button>
         </div>
+        ${cRepair > 0 ? `
+          <div style="margin-top:10px;padding:9px 12px;background:#2a0e14;border:1px solid #dc2626;border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:12.5px;color:#fca5a5;">⚠️ มี <b>${cRepair} ${unitName}</b> ที่ต้องซ่อม (ตอบผิดล่าสุด)</span>
+            <button type="button" onclick="startRepairQuiz()" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;">
+              🔧 ซ่อมเฉพาะ${unitWord}ที่ผิด (${cRepair} ${unitName})
+            </button>
+          </div>
+        ` : ''}
         ${cUntested > 0 ? `
           <div style="margin-top:10px;padding:9px 12px;background:#0f2b38;border:1px solid #0284c7;border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-            <span style="font-size:12.5px;color:#bae6fd;">💡 มี <b>${cUntested} คำ</b> ในบทที่เลือกที่ยังไม่ได้ทดสอบ</span>
+            <span style="font-size:12.5px;color:#bae6fd;">💡 มี <b>${cUntested} ${unitName}</b> ในบทที่เลือกที่ยังไม่ได้ทดสอบ</span>
             <button type="button" onclick="startRemainingUntested()" style="background:#0284c7;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;">
               ⏩ ทำเฉพาะข้อที่ยังไม่ได้ทำ (${Math.min(typeof questionCountMode === 'number' ? questionCountMode : cUntested, cUntested)} ข้อ)
             </button>
@@ -2029,6 +2041,58 @@ function startQuiz(){
     let limit = prioritized.length;
     if(typeof questionCountMode === 'number') limit = Math.min(questionCountMode, prioritized.length);
     quizDeck = prioritized.slice(0, limit).map(p => p.item);
+  }
+
+  quizIdx = 0;
+  quizScore = 0;
+  quizFastCount = 0;
+  quizSlowCount = 0;
+  quizWrongCount = 0;
+  quizMistakes = [];
+  quizSlowItems = [];
+
+  if(quizInteraction === 'speedrun'){
+    startSpeedRunTimer();
+  }
+
+  renderQuizQuestion();
+}
+
+function startRepairQuiz(){
+  const pool = getPoolForLevel(currentLevel);
+  if(pool.length < 1){
+    return;
+  }
+
+  // Clear previous timers
+  clearInterval(quizTimerId);
+  clearInterval(speedRunTimerId);
+
+  let chapterPool = pool;
+  if(selectedChapters.length > 0){
+    chapterPool = pool.filter(p => selectedChapters.includes(p.ch));
+  }
+
+  const repairItems = shuffleArr(chapterPool.filter(p => getMasteryStatus(p) === 'repair'));
+  const isKana = (currentLevel === 'hiragana' || currentLevel === 'katakana');
+  const unit = isKana ? 'ตัว' : 'คำ';
+  if(repairItems.length === 0){
+    alert(`ยอดเยี่ยมมาก! ไม่มี${unit}ที่ต้องซ่อมในหมวดที่เลือกในขณะนี้`);
+    return;
+  }
+
+  let limit = repairItems.length;
+  if(quizInteraction === 'speedrun'){
+    quizDeck = shuffleArr([...repairItems, ...repairItems, ...repairItems]);
+    speedRunTimeLeft = 60;
+    currentCombo = 0;
+    maxCombo = 0;
+    speedRunPoints = 0;
+  } else {
+    if(typeof questionCountMode === 'number'){
+      limit = Math.min(questionCountMode, repairItems.length);
+    }
+    quizDeck = repairItems.slice(0, limit);
   }
 
   quizIdx = 0;
@@ -2549,6 +2613,10 @@ function renderQuizSummary(){
     chDisplayLabel += ' (ยังไม่เคยทดสอบ)';
   }
 
+  const isKana = (currentLevel === 'hiragana' || currentLevel === 'katakana');
+  const unitName = isKana ? 'ตัว' : 'คำ';
+  const unitWord = isKana ? 'ตัว' : 'ข้อ';
+
   const topicBadgeHtml = `
     <div style="display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:4px 14px;border-radius:20px;background:#162035;border:1px solid #23314f;color:#94a3b8;font-size:12.5px;margin-bottom:12px;">
       <span>📖 <b>${levelName}</b></span>
@@ -2561,7 +2629,7 @@ function renderQuizSummary(){
   if(quizMistakes.length > 0){
     mistakesHtml = `
       <div class="mistake-list" style="border-left:3px solid #ef4444;margin-bottom:12px;">
-        <div class="mistake-title" style="color:#f87171;">✕ คำที่ต้องซ่อม (ตอบผิด ${quizMistakes.length} คำ)</div>
+        <div class="mistake-title" style="color:#f87171;">✕ ${isKana ? 'ตัว' : 'คำ'}ที่ต้องซ่อม (ตอบผิด ${quizMistakes.length} ${unitName})</div>
         ${quizMistakes.map(m => {
           const showMeaning = m.item.th && currentLevel !== 'hiragana' && currentLevel !== 'katakana' && !m.item.th.startsWith('เสียงอ่าน') && normalizeRomaji(m.item.th) !== normalizeRomaji(m.item.rd || '');
           return `
@@ -2582,7 +2650,7 @@ function renderQuizSummary(){
   if(quizSlowItems.length > 0){
     slowItemsHtml = `
       <div class="mistake-list" style="border-left:3px solid #f59e0b;margin-bottom:12px;">
-        <div class="mistake-title" style="color:#fbbf24;">⏳ คำที่ตอบช้าเกินเกณฑ์ (${quizSlowItems.length} คำ)</div>
+        <div class="mistake-title" style="color:#fbbf24;">⏳ ${isKana ? 'ตัว' : 'คำ'}ที่ตอบช้าเกินเกณฑ์ (${quizSlowItems.length} ${unitName})</div>
         ${quizSlowItems.map(s => {
           const showMeaning = s.item.th && currentLevel !== 'hiragana' && currentLevel !== 'katakana' && !s.item.th.startsWith('เสียงอ่าน') && normalizeRomaji(s.item.th) !== normalizeRomaji(s.item.rd || '');
           return `
@@ -2654,7 +2722,7 @@ function renderQuizSummary(){
         ` : `
           <div style="background:#064e3b2b;border:1.5px solid #10b98155;border-radius:12px;padding:14px 16px;margin:14px 0;text-align:center;">
             <div style="color:#6ee7b7;font-size:14px;font-weight:600;">
-              🎉 ยินดีด้วย! คุณทดสอบคำศัพท์ครบทุกคำแล้ว (${chapterPool.length} คำ)
+              🎉 ยินดีด้วย! คุณทดสอบ${isKana ? 'ตัวอักษร' : 'คำศัพท์'}ครบทุก${unitName}แล้ว (${chapterPool.length} ${unitName})
             </div>
             <div style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;padding:3px 12px;background:#064e3b77;border:1px solid #10b98166;border-radius:20px;font-size:12px;color:#a7f3d0;">
               <span>หัวข้อ:</span>
@@ -2664,6 +2732,11 @@ function renderQuizSummary(){
         `}
 
         <div style="display:flex;flex-direction:column;gap:10px;">
+          ${quizMistakes.length > 0 ? `
+            <button class="btn-primary-cta" style="background:#dc2626;" onclick="retryMistakes()">
+              🔧 ซ่อมเฉพาะ${unitWord}ที่ผิด (${quizMistakes.length} ${unitName})
+            </button>
+          ` : ''}
           <button class="btn-primary-cta" style="background:#f59e0b;" onclick="startQuiz()">
             ⚡ เริ่มสปีดรันอีกรอบ
           </button>
@@ -2727,7 +2800,7 @@ function renderQuizSummary(){
       ` : `
         <div style="background:#064e3b2b;border:1.5px solid #10b98155;border-radius:12px;padding:14px 16px;margin:14px 0;text-align:center;">
           <div style="color:#6ee7b7;font-size:14px;font-weight:600;">
-            🎉 ยินดีด้วย! คุณทดสอบคำศัพท์ครบทุกคำแล้ว (${chapterPool.length} คำ)
+            🎉 ยินดีด้วย! คุณทดสอบ${isKana ? 'ตัวอักษร' : 'คำศัพท์'}ครบทุก${unitName}แล้ว (${chapterPool.length} ${unitName})
           </div>
           <div style="margin-top:8px;display:inline-flex;align-items:center;gap:6px;padding:3px 12px;background:#064e3b77;border:1px solid #10b98166;border-radius:20px;font-size:12px;color:#a7f3d0;">
             <span>หัวข้อ:</span>
@@ -2739,12 +2812,12 @@ function renderQuizSummary(){
       <div style="display:flex;flex-direction:column;gap:10px;">
         ${quizMistakes.length > 0 ? `
           <button class="btn-primary-cta" style="background:#dc2626;" onclick="retryMistakes()">
-            ทวนเฉพาะข้อที่ผิด (${quizMistakes.length})
+            🔧 ซ่อมเฉพาะ${unitWord}ที่ผิด (${quizMistakes.length} ${unitName})
           </button>
         ` : ''}
         ${quizSlowItems.length > 0 ? `
           <button class="btn-primary-cta" style="background:#d97706;" onclick="retrySlowItems()">
-            ฝึกเฉพาะคำที่ตอบช้า (${quizSlowItems.length})
+            ฝึกเฉพาะ${unitWord}ที่ตอบช้า (${quizSlowItems.length} ${unitName})
           </button>
         ` : ''}
         <button class="btn-primary-cta" onclick="startQuiz()">
