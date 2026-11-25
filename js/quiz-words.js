@@ -332,13 +332,15 @@ function renderTestHome(container) {
           <button class="chip${isAllActive ? " active" : ""}" onclick="toggleChapter('ทุกบท')">ทุกบท (${totalCount})</button>
           ${chaptersChipsHtml}
           <button class="chip${isRepairActive ? " active" : ""}" onclick="toggleStatusFilter('repair')">ที่ยังติด (${cRepair})</button>
+          <span id="review-chip-container">
           ${(() => {
             const reviewCount = getReviewList().length;
             if (reviewCount > 0) {
-              return `<button class="chip" style="background:rgba(251,191,36,0.15);border-color:rgba(251,191,36,0.4);color:#fbbf24;" onclick="startReviewQuiz()">🔁 ทบทวนซ้ำ (${reviewCount})</button>`;
+              return `<button class="chip review-chip-btn" style="background:rgba(251,191,36,0.15);border-color:rgba(251,191,36,0.4);color:#fbbf24;" onclick="startReviewQuiz()">🔁 ทบทวนซ้ำ (${reviewCount})</button>`;
             }
             return "";
           })()}
+          </span>
           <button class="chip${isUntestedActive ? " active" : ""}" onclick="toggleStatusFilter('untested')">ยังไม่เคยทดสอบ (${cUntested})</button>
         </div>
         ${
@@ -524,9 +526,10 @@ function renderWordsManager(container) {
           <button class="tool-btn primary" onclick="setAppTab('test')">🎯 เริ่มทดสอบ</button>
         `
         }
-        <button onclick="openReviewModal()" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;background:${reviewCount > 0 ? "rgba(251,191,36,0.12)" : "rgba(255,255,255,0.04)"};border:1px solid ${reviewCount > 0 ? "rgba(251,191,36,0.35)" : "rgba(255,255,255,0.08)"};color:${reviewCount > 0 ? "#fbbf24" : "#475569"};border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;">
+        <button id="btn-open-review" onclick="openReviewModal()" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;background:${reviewCount > 0 ? "rgba(251,191,36,0.12)" : "rgba(255,255,255,0.04)"};border:1px solid ${reviewCount > 0 ? "rgba(251,191,36,0.35)" : "rgba(255,255,255,0.08)"};color:${reviewCount > 0 ? "#fbbf24" : "#475569"};border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="${reviewCount > 0 ? "currentColor" : "none"}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          รายการทบทวน${reviewCount > 0 ? `<span style="background:#fbbf24;color:#0b0f19;border-radius:9999px;padding:0 7px;font-size:11px;font-weight:700;line-height:18px;">${reviewCount}</span>` : ""}
+          <span id="btn-open-review-text">รายการทบทวน</span>
+          <span id="btn-open-review-badge" style="background:#fbbf24;color:#0b0f19;border-radius:9999px;padding:0 7px;font-size:11px;font-weight:700;line-height:18px;display:${reviewCount > 0 ? "inline-block" : "none"};">${reviewCount}</span>
         </button>
       </div>
 
@@ -829,10 +832,39 @@ function toggleReview(wordId, btn) {
 
 function updateReviewChip() {
   const count = getReviewList().length;
-  document.querySelectorAll(".review-chip-btn").forEach(function (el) {
-    el.textContent = "🔁 ทบทวนซ้ำ (" + count + ")";
-    el.style.display = count > 0 ? "" : "none";
-  });
+
+  // 1. อัปเดตปุ่ม "รายการทบทวน" ในแท็บคำศัพท์ (Toolbar)
+  const toolbarBtn = document.getElementById("btn-open-review");
+  const toolbarBadge = document.getElementById("btn-open-review-badge");
+  const toolbarSvg = toolbarBtn ? toolbarBtn.querySelector("svg") : null;
+  if (toolbarBtn) {
+    toolbarBtn.style.background = count > 0 ? "rgba(251,191,36,0.12)" : "rgba(255,255,255,0.04)";
+    toolbarBtn.style.borderColor = count > 0 ? "rgba(251,191,36,0.35)" : "rgba(255,255,255,0.08)";
+    toolbarBtn.style.color = count > 0 ? "#fbbf24" : "#475569";
+    if (toolbarSvg) {
+      toolbarSvg.setAttribute("fill", count > 0 ? "currentColor" : "none");
+    }
+  }
+  if (toolbarBadge) {
+    toolbarBadge.textContent = count;
+    toolbarBadge.style.display = count > 0 ? "inline-block" : "none";
+  }
+
+  // 2. อัปเดตชิปในหน้าทดสอบ (Test Home Chip)
+  const chipContainer = document.getElementById("review-chip-container");
+  if (chipContainer) {
+    chipContainer.innerHTML = count > 0
+      ? `<button class="chip review-chip-btn" style="background:rgba(251,191,36,0.15);border-color:rgba(251,191,36,0.4);color:#fbbf24;" onclick="startReviewQuiz()">🔁 ทบทวนซ้ำ (${count})</button>`
+      : "";
+  }
+
+  // 3. อัปเดตการ์ดในหน้า Overview Dashboard (ถ้ากำลังเปิดอยู่)
+  const overviewActionCard = document.querySelector(".overview-action-card.gold");
+  if (overviewActionCard) {
+    const titleEl = overviewActionCard.querySelector(".overview-act-title");
+    if (titleEl) titleEl.textContent = `รายการทบทวน (${count} คำ)`;
+    if (count === 0) overviewActionCard.style.display = "none";
+  }
 }
 
 function clearReviewList() {
