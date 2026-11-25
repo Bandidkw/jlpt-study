@@ -1,6 +1,6 @@
 // Service Worker — JLPT Study & Quiz App
-// Cache Version v26: Hover / Hold Dropdown support & latest styles
-const CACHE_VERSION = 'jlpt-v26';
+// Cache Version v27: Overview Dashboard, Modern Iconography & Kana updates
+const CACHE_VERSION = 'jlpt-v27';
 const PRECACHE = [
   './',
   './index.html?v=26',
