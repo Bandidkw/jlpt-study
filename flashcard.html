@@ -79,7 +79,7 @@
     <div class="nav-right-actions">
       <button class="nav-action-pill backup-pill" id="btn-backup" onclick="event.preventDefault();openBackup()" title="สำรองและกู้คืนข้อมูล">💾 สำรอง</button>
       <button class="nav-action-pill changelog-pill btn-changelog-tab" id="btn-changelog" onclick="event.preventDefault();openChangelog()" title="บันทึกการอัปเดตระบบ">
-        <span>✨ v2.7.0</span>
+        <span>✨ v2.7.1</span>
         <span class="changelog-unread-dot" id="changelog-badge-dot"></span>
       </button>
     </div>
@@ -144,7 +144,7 @@
     <div class="modal-head" style="flex-shrink:0;">
       <span style="display:flex;align-items:center;gap:8px;">
         <span>✨ บันทึกการอัปเดตระบบ</span>
-        <span style="font-size:11px;background:#6366f122;color:#a5b4fc;border:1px solid #6366f155;padding:2px 8px;border-radius:10px;font-weight:600;">v2.7.0</span>
+        <span style="font-size:11px;background:#6366f122;color:#a5b4fc;border:1px solid #6366f155;padding:2px 8px;border-radius:10px;font-weight:600;">v2.7.1</span>
       </span>
       <button class="modal-x" onclick="closeChangelog()">✕</button>
     </div>
@@ -155,7 +155,17 @@
       <div class="changelog-timeline">
         <div class="changelog-card latest">
           <div class="changelog-version-header">
-            <div class="changelog-version">v2.7.0 <span class="changelog-badge-new">LATEST</span></div>
+            <div class="changelog-version">v2.7.1 <span class="changelog-badge-new">LATEST</span></div>
+            <div class="changelog-date">25 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">🎨</span><div><b>ยกระดับ Navbar ดีไซน์ใหม่:</b> เพิ่มแบดจ์สีประจำหมวดหมู่ (Glassmorphism Badges) แยกสีสวยงามสะดุดตา พร้อมแอนิเมชันขยายขนาดนุ่มนวลเมื่อ Hover</div></li>
+            <li><span class="emoji">⚡</span><div><b>ระบบอัปเดตรายการทบทวนแบบ Real-time:</b> แก้ไขการปักหมุดคำศัพท์ ให้ตัวเลข Badge ด้านบน และชิปทบทวนซ้ำอัปเดตทันทีแบบเสี้ยววินาที ไม่ต้องรีเฟรชหน้า</div></li>
+          </ul>
+        </div>
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.7.0</div>
             <div class="changelog-date">25 พ.ย. 2026</div>
           </div>
           <ul class="changelog-list">
