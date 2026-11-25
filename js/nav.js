@@ -143,6 +143,17 @@ if (typeof document !== "undefined") {
       closeAllNavDropdowns();
     }
   });
+
+  // Back to Top button scroll observer
+  window.addEventListener("scroll", () => {
+    const topBtn = document.getElementById("btn-back-to-top");
+    if (!topBtn) return;
+    if (window.scrollY > 280) {
+      topBtn.classList.add("show");
+    } else {
+      topBtn.classList.remove("show");
+    }
+  }, { passive: true });
 }
 
 function selectDropdownItem(val) {
