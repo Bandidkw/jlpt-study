@@ -58,6 +58,8 @@ function updateNavCapsuleState(lv) {
   [
     "group-kana",
     "group-n5",
+    "group-n4",
+    "group-n3",
     "group-n4n3",
     "tab-scene",
     "tab-custom",
@@ -93,8 +95,11 @@ function updateNavCapsuleState(lv) {
   } else if (lv === "n5" || lv === "vocab5" || lv === "grammar5") {
     const g = document.getElementById("group-n5");
     if (g) g.classList.add("group-active");
-  } else if (lv === "n4" || lv === "n3" || lv === "all") {
-    const g = document.getElementById("group-n4n3");
+  } else if (lv === "n4") {
+    const g = document.getElementById("group-n4") || document.getElementById("group-n4n3");
+    if (g) g.classList.add("group-active");
+  } else if (lv === "n3" || lv === "all") {
+    const g = document.getElementById("group-n3") || document.getElementById("group-n4n3");
     if (g) g.classList.add("group-active");
   } else if (lv === "scene") {
     const g = document.getElementById("tab-scene");

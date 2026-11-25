@@ -95,7 +95,7 @@ function renderOverviewDashboard(container) {
     { key: "n5", name: "คันจิ N5 (Kanji)", icon: "漢", cat: "jlpt" },
     { key: "vocab5", name: "คำศัพท์ N5 (Vocab)", icon: "語", cat: "jlpt" },
     { key: "grammar5", name: "ไวยากรณ์ N5 (Grammar)", icon: "文", cat: "jlpt" },
-    { key: "custom", name: "คำศัพท์ของฉัน", icon: "✏️", cat: "my" }
+    { key: "custom", name: "คำศัพท์ของฉัน", icon: "詞", cat: "my" }
   ];
 
   let totalItemsCount = 0;
@@ -126,7 +126,7 @@ function renderOverviewDashboard(container) {
     <!-- WELCOME / QUICK STATUS HERO -->
     <div class="overview-hero-card">
       <div class="overview-hero-content">
-        <div class="overview-badge-tag">📊 ภาพรวมสถานะการเรียนรู้</div>
+        <div class="overview-badge-tag">ภาพรวมสถานะการเรียนรู้</div>
         <h2 class="overview-hero-title">ความแม่นยำรวม ${overallMasteryPct}%</h2>
         <p class="overview-hero-desc">จำแม่นยำแล้ว <b>${totalMasteredCount}</b> จากคลังทั้งหมด <b>${totalItemsCount}</b> รายการ</p>
       </div>
@@ -141,7 +141,9 @@ function renderOverviewDashboard(container) {
         totalRepairCount > 0
           ? `
         <div class="overview-action-card danger" onclick="selectNavLevel('custom', event); setTimeout(startRepairQuiz, 100);">
-          <div class="overview-act-icon">🔧</div>
+          <div class="overview-act-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
           <div class="overview-act-info">
             <div class="overview-act-title">คำที่ต้องซ่อมค้างอยู่ (${totalRepairCount})</div>
             <div class="overview-act-sub">กดเพื่อเริ่มควิซซ่อมข้อที่ตอบผิด</div>
@@ -151,7 +153,9 @@ function renderOverviewDashboard(container) {
       `
           : `
         <div class="overview-action-card ok" onclick="selectNavLevel('hiragana', event);">
-          <div class="overview-act-icon">🌸</div>
+          <div class="overview-act-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+          </div>
           <div class="overview-act-info">
             <div class="overview-act-title">ฝึกอักษรคานะ</div>
             <div class="overview-act-sub">ฮิรางานะ & คาตาคานะ พื้นฐาน</div>
@@ -162,7 +166,9 @@ function renderOverviewDashboard(container) {
       }
 
       <div class="overview-action-card purple" onclick="selectNavLevel('flashcard', event);">
-        <div class="overview-act-icon">🃏</div>
+        <div class="overview-act-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15h0M2 9.5h20"/></svg>
+        </div>
         <div class="overview-act-info">
           <div class="overview-act-title">ทบทวน Flashcard / SRS</div>
           <div class="overview-act-sub">ระบบจำระยะยาว SM-2</div>
@@ -174,7 +180,9 @@ function renderOverviewDashboard(container) {
         reviewCount > 0
           ? `
         <div class="overview-action-card gold" onclick="openReviewModal();">
-          <div class="overview-act-icon">🔁</div>
+          <div class="overview-act-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </div>
           <div class="overview-act-info">
             <div class="overview-act-title">รายการทบทวน (${reviewCount} คำ)</div>
             <div class="overview-act-sub">คำที่ปักหมุดไว้สำหรับเน้นจำ</div>
@@ -189,7 +197,7 @@ function renderOverviewDashboard(container) {
     <!-- PROGRESS BY CATEGORY SECTION -->
     <div class="quiz-card" style="margin-top:16px;">
       <div class="progress-card-title" style="display:flex;justify-content:space-between;align-items:center;">
-        <span>🎯 ความก้าวหน้ารายหมวดหมู่</span>
+        <span>ความก้าวหน้ารายหมวดหมู่</span>
         <span style="font-size:12px;color:#94a3b8;font-weight:normal;">แตะที่การ์ดเพื่อเริ่มฝึก</span>
       </div>
       
@@ -315,10 +323,10 @@ function renderTestHome(container) {
       <div class="section-group">
         <div class="section-label">โหมดการทดสอบ</div>
         <div class="chips-row">
-          <button class="chip${quizInteraction === "choice" ? " active" : ""}" onclick="selectInteraction('choice')">🎯 4 ตัวเลือก</button>
-          <button class="chip${quizInteraction === "typing" ? " active" : ""}" onclick="selectInteraction('typing')">⌨️ พิมพ์คำอ่าน (Typing)</button>
-          <button class="chip${quizInteraction === "listening" ? " active" : ""}" onclick="selectInteraction('listening')">🎧 ควิซการฟัง (Listening)</button>
-          <button class="chip${quizInteraction === "speedrun" ? " active" : ""}" onclick="selectInteraction('speedrun')">⚡ สปีดรัน 60 วิ (Speed Run)</button>
+          <button class="chip${quizInteraction === "choice" ? " active" : ""}" onclick="selectInteraction('choice')">4 ตัวเลือก</button>
+          <button class="chip${quizInteraction === "typing" ? " active" : ""}" onclick="selectInteraction('typing')">พิมพ์คำอ่าน (Typing)</button>
+          <button class="chip${quizInteraction === "listening" ? " active" : ""}" onclick="selectInteraction('listening')">ควิซการฟัง (Listening)</button>
+          <button class="chip${quizInteraction === "speedrun" ? " active" : ""}" onclick="selectInteraction('speedrun')">สปีดรัน 60 วิ (Speed Run)</button>
         </div>
       </div>
 
@@ -347,9 +355,9 @@ function renderTestHome(container) {
           cRepair > 0
             ? `
           <div style="margin-top:10px;padding:9px 12px;background:#2a0e14;border:1px solid #dc2626;border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-            <span style="font-size:12.5px;color:#fca5a5;">⚠️ มี <b>${cRepair} ${unitName}</b> ที่ต้องซ่อม (ตอบผิดล่าสุด)</span>
+            <span style="font-size:12.5px;color:#fca5a5;">มี <b>${cRepair} ${unitName}</b> ที่ต้องซ่อม (ตอบผิดล่าสุด)</span>
             <button type="button" onclick="startRepairQuiz()" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;">
-              🔧 ซ่อมเฉพาะ${unitWord}ที่ผิด (${cRepair} ${unitName})
+              ซ่อมเฉพาะ${unitWord}ที่ผิด (${cRepair} ${unitName})
             </button>
           </div>
         `
@@ -359,9 +367,9 @@ function renderTestHome(container) {
           cUntested > 0
             ? `
           <div style="margin-top:10px;padding:9px 12px;background:#0f2b38;border:1px solid #0284c7;border-radius:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
-            <span style="font-size:12.5px;color:#bae6fd;">💡 มี <b>${cUntested} ${unitName}</b> ในบทที่เลือกที่ยังไม่ได้ทดสอบ</span>
+            <span style="font-size:12.5px;color:#bae6fd;">มี <b>${cUntested} ${unitName}</b> ในบทที่เลือกที่ยังไม่ได้ทดสอบ</span>
             <button type="button" onclick="startRemainingUntested()" style="background:#0284c7;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;">
-              ⏩ ทำเฉพาะข้อที่ยังไม่ได้ทำ (${Math.min(typeof questionCountMode === "number" ? questionCountMode : cUntested, cUntested)} ข้อ)
+              ทำเฉพาะข้อที่ยังไม่ได้ทำ (${Math.min(typeof questionCountMode === "number" ? questionCountMode : cUntested, cUntested)} ข้อ)
             </button>
           </div>
         `
@@ -394,7 +402,7 @@ function renderTestHome(container) {
 
       <!-- START BUTTON -->
       <button class="btn-primary-cta" onclick="startQuiz()">
-        ${quizInteraction === "speedrun" ? "⚡ เริ่มสปีดรัน 60 วินาที" : "เริ่มทดสอบ"}
+        ${quizInteraction === "speedrun" ? "เริ่มสปีดรัน 60 วินาที" : "เริ่มทดสอบ"}
       </button>
 
       <!-- CAPTION -->
@@ -519,11 +527,17 @@ function renderWordsManager(container) {
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             เพิ่มคำศัพท์
           </button>
-          <button class="tool-btn" onclick="openBulkModal()">📋 วางหลายคำ</button>
-          <button class="tool-btn" style="color:#f87171;" onclick="clearSampleWords()">🗑 ลบตัวอย่าง</button>
+          <button class="tool-btn" onclick="openBulkModal()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+            วางหลายคำ
+          </button>
+          <button class="tool-btn" style="color:#f87171;" onclick="clearSampleWords()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            ลบตัวอย่าง
+          </button>
         `
             : `
-          <button class="tool-btn primary" onclick="setAppTab('test')">🎯 เริ่มทดสอบ</button>
+          <button class="tool-btn primary" onclick="setAppTab('test')">เริ่มทดสอบ</button>
         `
         }
         <button id="btn-open-review" onclick="openReviewModal()" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;background:${reviewCount > 0 ? "rgba(251,191,36,0.12)" : "rgba(255,255,255,0.04)"};border:1px solid ${reviewCount > 0 ? "rgba(251,191,36,0.35)" : "rgba(255,255,255,0.08)"};color:${reviewCount > 0 ? "#fbbf24" : "#475569"};border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;">
@@ -535,7 +549,7 @@ function renderWordsManager(container) {
 
       <!-- SEARCH -->
       <input class="search-input" id="word-search"
-        placeholder="🔍 ค้นหาอักษร, คำอ่าน, หมวด..."
+        placeholder="ค้นหาอักษร, คำอ่าน, หมวด..."
         oninput="filterWordList(this.value)">
 
       <div id="word-list-container" style="margin-top:8px;"></div>
@@ -794,9 +808,9 @@ function addToReviewList(wordId) {
   if (!list.includes(wordId)) {
     list.push(wordId);
     saveReviewList(list);
-    showToast("✅ เพิ่มเข้ารายการทบทวนแล้ว");
+    showToast("เพิ่มเข้ารายการทบทวนแล้ว", false, "bookmark");
   } else {
-    showToast("ℹ️ อยู่ในรายการทบทวนอยู่แล้ว");
+    showToast("อยู่ในรายการทบทวนอยู่แล้ว", false, "info");
   }
 }
 
@@ -818,14 +832,14 @@ function toggleReview(wordId, btn) {
     btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`;
     btn.classList.remove("iBtn--active");
     btn.title = "เพิ่มเข้ารายการทบทวน";
-    showToast("ลบออกจากรายการทบทวนแล้ว");
+    showToast("ลบออกจากรายการทบทวนแล้ว", false, "remove");
   } else {
     list.push(wordId);
     saveReviewList(list);
     btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`;
     btn.classList.add("iBtn--active");
     btn.title = "อยู่ในรายการทบทวนแล้ว — คลิกเพื่อลบออก";
-    showToast("✅ เพิ่มเข้ารายการทบทวนแล้ว");
+    showToast("เพิ่มเข้ารายการทบทวนแล้ว", false, "bookmark");
   }
   updateReviewChip();
 }
@@ -854,7 +868,7 @@ function updateReviewChip() {
   const chipContainer = document.getElementById("review-chip-container");
   if (chipContainer) {
     chipContainer.innerHTML = count > 0
-      ? `<button class="chip review-chip-btn" style="background:rgba(251,191,36,0.15);border-color:rgba(251,191,36,0.4);color:#fbbf24;" onclick="startReviewQuiz()">🔁 ทบทวนซ้ำ (${count})</button>`
+      ? `<button class="chip review-chip-btn" style="background:rgba(251,191,36,0.15);border-color:rgba(251,191,36,0.4);color:#fbbf24;" onclick="startReviewQuiz()"><span style="display:inline-flex;align-items:center;gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>ทบทวนซ้ำ (${count})</span></button>`
       : "";
   }
 
@@ -873,7 +887,7 @@ function clearReviewList() {
     "ยืนยันจะลบคำทั้งหมดออกจากรายการ",
     function () {
       saveReviewList([]);
-      showToast("✅ ลบรายการทบทวนทั้งหมดแล้ว");
+      showToast("ลบรายการทบทวนทั้งหมดแล้ว", false, "check");
       renderMain();
     },
   );
@@ -901,10 +915,12 @@ function openReviewModal() {
   if (items.length === 0) {
     body.innerHTML = `
       <div style="text-align:center;padding:40px 20px;">
-        <div style="font-size:36px;margin-bottom:12px;">📭</div>
+        <div style="display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#64748b;margin-bottom:14px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </div>
         <div style="color:#94a3b8;font-size:14px;line-height:1.6;">
           ยังไม่มีคำในรายการทบทวน<br>
-          กดปุ่ม <span style="background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);color:#fbbf24;border-radius:6px;padding:1px 8px;font-size:12px;font-weight:700;">＋</span>
+          กดปุ่ม <span style="display:inline-flex;align-items:center;vertical-align:middle;padding:2px 6px;border-radius:6px;background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.3);color:#fbbf24;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></span>
           ที่คำศัพท์ใดก็ได้เพื่อเพิ่มเข้ามา
         </div>
       </div>`;
@@ -944,8 +960,9 @@ function openReviewModal() {
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.08);">
         <span id="review-count-label" style="font-size:13px;color:#94a3b8;">${items.length} คำในรายการ</span>
         <button onclick="clearReviewListFromModal()"
-          style="background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);color:#f87171;border-radius:7px;padding:5px 12px;font-size:12px;cursor:pointer;">
-          🗑 ลบทั้งหมด
+          style="display:inline-flex;align-items:center;gap:5px;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.25);color:#f87171;border-radius:7px;padding:5px 12px;font-size:12px;cursor:pointer;transition:all .15s;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          ลบทั้งหมด
         </button>
       </div>
       ${rows}`;
@@ -976,28 +993,48 @@ function clearReviewListFromModal() {
     function () {
       saveReviewList([]);
       openReviewModal();
-      showToast("✅ ลบรายการทบทวนทั้งหมดแล้ว");
+      showToast("ลบรายการทบทวนทั้งหมดแล้ว", false, "check");
     },
   );
 }
 
-function showToast(msg, isError) {
+function showToast(msg, isError, iconType) {
   const existing = document.getElementById("toast-msg");
   if (existing) existing.remove();
   const toast = document.createElement("div");
   toast.id = "toast-msg";
-  toast.textContent = msg;
+
+  // Modern SVG Icons for Toasts
+  let iconHtml = "";
+  if (isError) {
+    iconHtml = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+  } else if (iconType === "bookmark") {
+    iconHtml = `<svg width="15" height="15" viewBox="0 0 24 24" fill="#fbbf24" stroke="none" style="flex-shrink:0;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`;
+  } else if (iconType === "remove") {
+    iconHtml = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+  } else {
+    iconHtml = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`;
+  }
+
+  toast.innerHTML = `
+    <div style="display:inline-flex;align-items:center;gap:9px;">
+      ${iconHtml}
+      <span>${msg}</span>
+    </div>
+  `;
+
   toast.style.cssText =
-    "position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:" +
-    (isError ? "rgba(220,38,38,0.95)" : "rgba(15,23,42,0.95)") +
-    ";border:1px solid rgba(255,255,255,0.15);color:white;padding:10px 22px;border-radius:9999px;font-size:13px;font-weight:500;box-shadow:0 4px 20px rgba(0,0,0,0.5);z-index:10000;white-space:nowrap;";
+    "position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(0);background:rgba(18,24,38,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid " +
+    (isError ? "rgba(239,68,68,0.4)" : "rgba(255,255,255,0.14)") +
+    ";color:#f8fafc;padding:9px 18px;border-radius:9999px;font-size:13px;font-weight:500;box-shadow:0 12px 36px rgba(0,0,0,0.6),0 2px 8px rgba(0,0,0,0.3);z-index:10000;white-space:nowrap;transition:all 0.22s cubic-bezier(0.16,1,0.3,1);";
+  
   document.body.appendChild(toast);
   setTimeout(function () {
     toast.style.opacity = "0";
-    toast.style.transition = "opacity 0.3s";
+    toast.style.transform = "translateX(-50%) translateY(8px)";
     setTimeout(function () {
       toast.remove();
-    }, 300);
+    }, 250);
   }, 2200);
 }
 

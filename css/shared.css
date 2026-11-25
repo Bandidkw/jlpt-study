@@ -152,6 +152,16 @@ a {
   color: #fbbf24;
   border: 1px solid rgba(245, 158, 11, 0.45);
 }
+.badge-n4 {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.25) 0%, rgba(251, 146, 60, 0.15) 100%);
+  color: #fb923c;
+  border: 1px solid rgba(249, 115, 22, 0.45);
+}
+.badge-n3 {
+  background: linear-gradient(135deg, rgba(234, 88, 12, 0.25) 0%, rgba(249, 115, 22, 0.15) 100%);
+  color: #fdba74;
+  border: 1px solid rgba(234, 88, 12, 0.45);
+}
 .badge-n4n3 {
   background: linear-gradient(135deg, rgba(249, 115, 22, 0.25) 0%, rgba(251, 146, 60, 0.15) 100%);
   color: #fb923c;

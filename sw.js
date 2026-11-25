@@ -1,6 +1,6 @@
 // Service Worker — JLPT Study & Quiz App
-// Cache Version v27.1: Vibrant Navbar badges & Real-time review updates
-const CACHE_VERSION = 'jlpt-v27.1';
+// Cache Version v28: Split N4/N3 Dropdowns, Back to Top & Clean Vector UI
+const CACHE_VERSION = 'jlpt-v28';
 const PRECACHE = [
   './',
   './index.html?v=26',

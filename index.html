@@ -122,17 +122,17 @@
             </div>
           </div>
 
-          <!-- 3. N4 / N3 Dropdown -->
-          <div class="nav-dropdown-wrap" id="wrap-n4n3">
+          <!-- 3. N4 Dropdown -->
+          <div class="nav-dropdown-wrap" id="wrap-n4">
             <button
               type="button"
               class="nav-pill-btn"
-              id="group-n4n3"
-              onclick="toggleNavDropdown('wrap-n4n3', event)"
+              id="group-n4"
+              onclick="toggleNavDropdown('wrap-n4', event)"
               aria-haspopup="true"
             >
-              <span class="nav-pill-badge badge-n4n3">N4</span>
-              <span>N4/N3</span>
+              <span class="nav-pill-badge badge-n4">N4</span>
+              <span>N4</span>
               <span class="nav-chevron">▾</span>
             </button>
             <div class="nav-dropdown-panel" role="menu">
@@ -143,9 +143,26 @@
                 onclick="selectNavLevel('n4', event)"
                 role="menuitem"
               >
-                <span class="nav-pill-badge badge-n4n3">N4</span>
+                <span class="nav-pill-badge badge-n4">漢</span>
                 <span>N4 คันจิ</span>
               </button>
+            </div>
+          </div>
+
+          <!-- 4. N3 Dropdown -->
+          <div class="nav-dropdown-wrap" id="wrap-n3">
+            <button
+              type="button"
+              class="nav-pill-btn"
+              id="group-n3"
+              onclick="toggleNavDropdown('wrap-n3', event)"
+              aria-haspopup="true"
+            >
+              <span class="nav-pill-badge badge-n3">N3</span>
+              <span>N3</span>
+              <span class="nav-chevron">▾</span>
+            </button>
+            <div class="nav-dropdown-panel" role="menu">
               <button
                 type="button"
                 class="nav-drop-item"
@@ -153,7 +170,7 @@
                 onclick="selectNavLevel('n3', event)"
                 role="menuitem"
               >
-                <span class="nav-pill-badge badge-n4n3">N3</span>
+                <span class="nav-pill-badge badge-n3">漢</span>
                 <span>N3 คันจิ</span>
               </button>
             </div>
@@ -221,7 +238,8 @@
             "
             title="บันทึกการอัปเดตระบบ"
           >
-            <span>✨ v2.7.1</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>v2.8.0</span>
             <span class="changelog-unread-dot" id="changelog-badge-dot"></span>
           </button>
         </div>
@@ -295,7 +313,10 @@
         aria-label="สำรองและกู้คืนข้อมูล"
       >
         <div class="modal-head">
-          <span>💾 สำรอง / กู้คืนข้อมูล</span>
+          <span style="display:flex;align-items:center;gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <span>สำรอง / กู้คืนข้อมูล</span>
+          </span>
           <button class="modal-x" onclick="closeBackup()">✕</button>
         </div>
         <div class="backup-info" id="backup-info"></div>
@@ -305,14 +326,16 @@
             style="justify-content: center; padding: 12px 16px"
             onclick="exportBackup()"
           >
-            ⬆️ ส่งออกไฟล์สำรอง
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            ส่งออกไฟล์สำรอง
           </button>
           <button
             class="done-btn secondary btn-export"
             style="justify-content: center; padding: 12px 16px"
             onclick="document.getElementById('import-file').click()"
           >
-            ⬇️ นำเข้าจากไฟล์
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            นำเข้าจากไฟล์
           </button>
           <input
             type="file"
@@ -374,23 +397,43 @@
         "
       >
         <div class="modal-head" style="flex-shrink: 0">
-          <span>🔁 รายการทบทวนซ้ำ</span>
+          <span style="display: flex; align-items: center; gap: 8px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <span>รายการทบทวนซ้ำ</span>
+          </span>
           <button class="modal-x" onclick="closeReviewModal()">✕</button>
         </div>
         <div
           id="review-modal-body"
           style="overflow-y: auto; padding-right: 4px; margin-top: 8px; flex: 1"
         ></div>
-        <div style="flex-shrink: 0; margin-top: 12px">
+        <div style="flex-shrink: 0; margin-top: 14px">
           <button
             class="done-btn primary"
-            style="width: 100%; justify-content: center; padding: 11px"
+            style="
+              width: 100%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              gap: 8px;
+              padding: 12px 16px;
+              background: #2563eb;
+              border: 1px solid #3b82f6;
+              border-radius: 12px;
+              color: #ffffff;
+              font-size: 14.5px;
+              font-weight: 600;
+              box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+              cursor: pointer;
+              transition: all 0.15s ease;
+            "
             onclick="
               closeReviewModal();
               startReviewQuiz();
             "
           >
-            🎯 เริ่มทดสอบคำในรายการ
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>เริ่มทดสอบคำในรายการ</span>
           </button>
         </div>
       </div>
@@ -416,7 +459,8 @@
       >
         <div class="modal-head" style="flex-shrink: 0">
           <span style="display: flex; align-items: center; gap: 8px">
-            <span>✨ บันทึกการอัปเดตระบบ</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            <span>บันทึกการอัปเดตระบบ</span>
             <span
               style="
                 font-size: 11px;
@@ -427,7 +471,7 @@
                 border-radius: 10px;
                 font-weight: 600;
               "
-              >v2.7.1</span
+              >v2.8.0</span
             >
           </span>
           <button class="modal-x" onclick="closeChangelog()">✕</button>
@@ -448,8 +492,40 @@
             <div class="changelog-card latest">
               <div class="changelog-version-header">
                 <div class="changelog-version">
-                  v2.7.1 <span class="changelog-badge-new">LATEST</span>
+                  v2.8.0 <span class="changelog-badge-new">LATEST</span>
                 </div>
+                <div class="changelog-date">25 พ.ย. 2026</div>
+              </div>
+              <ul class="changelog-list">
+                <li>
+                  <span class="emoji">🗂️</span>
+                  <div>
+                    <b>แยกเมนูอิสระ JLPT N4 และ N3:</b> ปรับโครงสร้าง Navbar ใหม่ แยก N4 และ N3 ออกเป็น Dropdown ของตัวเอง เพื่อความสมดุลระดับเดียวกับ N5 และรองรับคำศัพท์/ไวยากรณ์ในอนาคต
+                  </div>
+                </li>
+                <li>
+                  <span class="emoji">⬆️</span>
+                  <div>
+                    <b>เพิ่มปุ่ม Back to Top:</b> ปุ่มลอยกระจก Dark Glassmorphism เลื่อนจอกลับขึ้นด้านบนอัตโนมัติแบบนุ่มนวล พร้อม Smart Fade-in ซ่อน/แสดงตามระยะเลื่อน
+                  </div>
+                </li>
+                <li>
+                  <span class="emoji">🎨</span>
+                  <div>
+                    <b>ยกเครื่อง Clean Vector UI 100%:</b> เปลี่ยนผ่านจาก Emoji เดิม สู่ Minimalist SVG Icons ในทุกจุด (ปุ่มเวอร์ชัน, Modal สำรองข้อมูล, วางหลายคำ และ Toast แจ้งเตือน)
+                  </div>
+                </li>
+                <li>
+                  <span class="emoji">📑</span>
+                  <div>
+                    <b>แผนงานบูรณาการแฟลชการ์ดสู่ระบบหลัก:</b> จัดทำพิมพ์เขียวสถาปัตยกรรมรวมระบบ SRS / SM-2 และ Streak เข้าสู่ Core App โดยตรง
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="changelog-card">
+              <div class="changelog-version-header">
+                <div class="changelog-version">v2.7.1</div>
                 <div class="changelog-date">25 พ.ย. 2026</div>
               </div>
               <ul class="changelog-list">
@@ -830,7 +906,10 @@
         aria-label="นำเข้าหลายคำ"
       >
         <div class="modal-head">
-          <span>📋 วางหลายคำ (Bulk Import)</span>
+          <span style="display:flex;align-items:center;gap:8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+            <span>วางหลายคำ (Bulk Import)</span>
+          </span>
           <button class="modal-x" onclick="closeBulkModal()">✕</button>
         </div>
         <p

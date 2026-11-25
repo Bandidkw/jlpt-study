@@ -29,7 +29,9 @@
 
 <div class="floating-nav-wrapper">
   <nav class="nav-capsule" aria-label="แถบเมนูหลัก">
-    <a href="index.html" class="nav-brand-badge" title="กลับหน้าหลัก JLPT ควิซ">⛩️</a>
+    <a href="index.html" class="nav-brand-badge" title="กลับหน้าหลัก JLPT ควิซ">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    </a>
 
     <div class="nav-menu-group">
       <!-- 1. คานะ Dropdown -->
@@ -77,9 +79,13 @@
 
     <!-- Right Actions -->
     <div class="nav-right-actions">
-      <button class="nav-action-pill backup-pill" id="btn-backup" onclick="event.preventDefault();openBackup()" title="สำรองและกู้คืนข้อมูล">💾 สำรอง</button>
+      <button class="nav-action-pill backup-pill" id="btn-backup" onclick="event.preventDefault();openBackup()" title="สำรองและกู้คืนข้อมูล">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        สำรอง
+      </button>
       <button class="nav-action-pill changelog-pill btn-changelog-tab" id="btn-changelog" onclick="event.preventDefault();openChangelog()" title="บันทึกการอัปเดตระบบ">
-        <span>✨ v2.7.1</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>v2.8.0</span>
         <span class="changelog-unread-dot" id="changelog-badge-dot"></span>
       </button>
     </div>
@@ -88,19 +94,19 @@
 
 <div class="content">
   <div id="backup-banner"></div>
-  <div class="filter-wrap"><input class="filter-search" id="filter-search" placeholder="🔍 ค้นหาหมวดหมู่..." oninput="filterChips(this.value)"><div class="filter-bar" id="filters"></div></div>
+  <div class="filter-wrap"><input class="filter-search" id="filter-search" placeholder="ค้นหาหมวดหมู่..." oninput="filterChips(this.value)"><div class="filter-bar" id="filters"></div></div>
   <div class="section-info" id="section-info"></div>
   <div id="scene-bar"></div>
   <div class="mode-tabs">
-    <div class="mode-tab active" id="mt-flash" onclick="event.preventDefault();setMode('flash')">📇 Flashcard</div>
-    <div class="mode-tab" id="mt-quiz" onclick="event.preventDefault();setMode('quiz')">🎯 Quiz</div>
-    <div class="mode-tab" id="mt-srs" onclick="event.preventDefault();setMode('srs')">🔁 ทบทวน SRS</div>
+    <div class="mode-tab active" id="mt-flash" onclick="event.preventDefault();setMode('flash')">Flashcard</div>
+    <div class="mode-tab" id="mt-quiz" onclick="event.preventDefault();setMode('quiz')">Quiz</div>
+    <div class="mode-tab" id="mt-srs" onclick="event.preventDefault();setMode('srs')">ทบทวน SRS</div>
   </div>
   <div class="streak-row" id="streak-row"></div>
   <div class="stats">
     <div class="stat"><div class="stat-n" id="s-total">0</div><div class="stat-l">ทำแล้ว</div></div>
-    <div class="stat"><div class="stat-n" id="s-right" style="color:#2ecc71">0</div><div class="stat-l">✅ จำได้</div></div>
-    <div class="stat"><div class="stat-n" id="s-wrong" style="color:#e74c3c">0</div><div class="stat-l">❌ ยังไม่แม่น</div></div>
+    <div class="stat"><div class="stat-n" id="s-right" style="color:#2ecc71">0</div><div class="stat-l">จำได้</div></div>
+    <div class="stat"><div class="stat-n" id="s-wrong" style="color:#e74c3c">0</div><div class="stat-l">ยังไม่แม่น</div></div>
     <div class="stat"><div class="stat-n stat-pct" id="s-pct">0%</div><div class="stat-l">แม่น</div></div>
   </div>
   <div class="progress-bar"><div class="progress-fill pf-n5" id="prog" style="width:0%"></div></div>
@@ -156,8 +162,9 @@
   <div class="modal-box" role="dialog" aria-modal="true" aria-label="บันทึกการอัปเดตระบบ" style="max-width:560px;max-height:85vh;display:flex;flex-direction:column;">
     <div class="modal-head" style="flex-shrink:0;">
       <span style="display:flex;align-items:center;gap:8px;">
-        <span>✨ บันทึกการอัปเดตระบบ</span>
-        <span style="font-size:11px;background:#6366f122;color:#a5b4fc;border:1px solid #6366f155;padding:2px 8px;border-radius:10px;font-weight:600;">v2.7.1</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>บันทึกการอัปเดตระบบ</span>
+        <span style="font-size:11px;background:#6366f122;color:#a5b4fc;border:1px solid #6366f155;padding:2px 8px;border-radius:10px;font-weight:600;">v2.8.0</span>
       </span>
       <button class="modal-x" onclick="closeChangelog()">✕</button>
     </div>
@@ -168,7 +175,18 @@
       <div class="changelog-timeline">
         <div class="changelog-card latest">
           <div class="changelog-version-header">
-            <div class="changelog-version">v2.7.1 <span class="changelog-badge-new">LATEST</span></div>
+            <div class="changelog-version">v2.8.0 <span class="changelog-badge-new">LATEST</span></div>
+            <div class="changelog-date">25 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">🗂️</span><div><b>แยกเมนูอิสระ JLPT N4 และ N3:</b> ปรับโครงสร้าง Navbar ใหม่ แยก N4 และ N3 ออกเป็น Dropdown ของตัวเอง เพื่อความสมดุลระดับเดียวกับ N5</div></li>
+            <li><span class="emoji">⬆️</span><div><b>เพิ่มปุ่ม Back to Top:</b> ปุ่มลอยกระจก Dark Glassmorphism เลื่อนจอกลับขึ้นด้านบนอัตโนมัติแบบนุ่มนวล</div></li>
+            <li><span class="emoji">🎨</span><div><b>ยกเครื่อง Clean Vector UI:</b> เปลี่ยนผ่านสู่ Minimalist SVG Icons ในทุกจุด สวยงาม สบายตา</div></li>
+          </ul>
+        </div>
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.7.1</div>
             <div class="changelog-date">25 พ.ย. 2026</div>
           </div>
           <ul class="changelog-list">

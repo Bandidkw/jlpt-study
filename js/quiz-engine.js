@@ -987,7 +987,7 @@ function renderQuizSummary() {
 
   const topicBadgeHtml = `
     <div style="display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:4px 14px;border-radius:20px;background:#162035;border:1px solid #23314f;color:#94a3b8;font-size:12.5px;margin-bottom:12px;">
-      <span>📖 <b>${levelName}</b></span>
+      <span><b>${levelName}</b></span>
       <span style="color:#475569;">·</span>
       <span style="color:#60a5fa;">หัวข้อ: <b>${chDisplayLabel}</b></span>
     </div>
@@ -1137,7 +1137,7 @@ function renderQuizSummary() {
             quizMistakes.length > 0
               ? `
             <button class="btn-primary-cta" style="background:#dc2626;" onclick="retryMistakes()">
-              🔧 ซ่อมเฉพาะ${unitWord}ที่ผิด (${quizMistakes.length} ${unitName})
+              ซ่อมเฉพาะ${unitWord}ที่ผิด (${quizMistakes.length} ${unitName})
             </button>
           `
               : ""
@@ -1158,10 +1158,10 @@ function renderQuizSummary() {
   const isTyping = quizInteraction === "typing";
   const isListening = quizInteraction === "listening";
   const modeTitle = isTyping
-    ? "⌨️ สรุปผลโหมดพิมพ์คำอ่าน"
+    ? "สรุปผลโหมดพิมพ์คำอ่าน"
     : isListening
-      ? "🎧 สรุปผลโหมดควิซการฟัง"
-      : "🎯 สรุปผลการทดสอบ";
+      ? "สรุปผลโหมดควิซการฟัง"
+      : "สรุปผลการทดสอบ";
   const speedLabel = isTyping ? "แม่นและเร็ว (≤ 6วิ)" : "แม่นและเร็ว (≤ 4วิ)";
 
   container.innerHTML = `

@@ -4,7 +4,7 @@
 
 //  CHANGELOG / VERSION NOTIFICATION
 // ══════════════════════════════════════════════════════════
-const CURRENT_APP_VERSION = "2.7.1";
+const CURRENT_APP_VERSION = "2.8.0";
 
 function checkChangelogBadge() {
   const seen = localStorage.getItem("jlpt_seen_version");
