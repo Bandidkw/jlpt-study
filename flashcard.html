@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>คันจิ JLPT N5–N3 Flashcard</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111111">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="JLPT Flashcard">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="stylesheet" href="css/shared.css?v=26">
+<link rel="stylesheet" href="css/flashcard.css?v=26">
+<!-- ตรวจ embedded ก่อน render เพื่อป้องกัน navbar กระพริบ (FOUC) -->
+<script>
+  if(new URLSearchParams(location.search).has('embedded') || window.self !== window.top){
+    document.documentElement.classList.add('is-embedded-early');
+  }
+</script>
+<style>
+  /* ซ่อน navbar ทันทีก่อน body class พร้อม */
+  html.is-embedded-early .floating-nav-wrapper { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="floating-nav-wrapper">
+  <nav class="nav-capsule" aria-label="แถบเมนูหลัก">
+    <a href="index.html" class="nav-brand-badge" title="กลับหน้าหลัก JLPT ควิซ">⛩️</a>
+
+    <div class="nav-menu-group">
+      <!-- 1. คานะ Dropdown -->
+      <div class="nav-dropdown-wrap" id="wrap-kana">
+        <button class="nav-pill-btn" id="group-kana" onclick="toggleNavDropdown('wrap-kana', event)" aria-haspopup="true">
+          <span>🔤 อักษรคานะ</span>
+          <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-panel" role="menu">
+          <button class="nav-drop-item level-tab" id="tab-hiragana" onclick="selectNavLevel('hiragana', event)" role="menuitem">🌸 ฮิรางานะ</button>
+          <button class="nav-drop-item level-tab" id="tab-katakana" onclick="selectNavLevel('katakana', event)" role="menuitem">⚡ คาตาคานะ</button>
+        </div>
+      </div>
+
+      <!-- 2. N5 Dropdown -->
+      <div class="nav-dropdown-wrap" id="wrap-n5">
+        <button class="nav-pill-btn" id="group-n5" onclick="toggleNavDropdown('wrap-n5', event)" aria-haspopup="true">
+          <span>📘 JLPT N5</span>
+          <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-panel" role="menu">
+          <button class="nav-drop-item level-tab" id="tab-n5" onclick="selectNavLevel('n5', event)" role="menuitem">📘 N5 คันจิ</button>
+          <button class="nav-drop-item level-tab" id="tab-vocab5" onclick="selectNavLevel('vocab5', event)" role="menuitem">📗 N5 คำศัพท์</button>
+          <button class="nav-drop-item level-tab" id="tab-grammar5" onclick="selectNavLevel('grammar5', event)" role="menuitem">📙 N5 ไวยากรณ์</button>
+        </div>
+      </div>
+
+      <!-- 3. N4 / N3 Dropdown -->
+      <div class="nav-dropdown-wrap" id="wrap-n4n3">
+        <button class="nav-pill-btn" id="group-n4n3" onclick="toggleNavDropdown('wrap-n4n3', event)" aria-haspopup="true">
+          <span>📙 N4 / N3</span>
+          <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-panel" role="menu">
+          <button class="nav-drop-item level-tab" id="tab-n4" onclick="selectNavLevel('n4', event)" role="menuitem">📗 N4 คันจิ</button>
+          <button class="nav-drop-item level-tab" id="tab-n3" onclick="selectNavLevel('n3', event)" role="menuitem">📙 N3 คันจิ</button>
+          <button class="nav-drop-item level-tab" id="tab-all" onclick="selectNavLevel('all', event)" role="menuitem">🗂️ รวมทั้งหมด (N5-N3)</button>
+        </div>
+      </div>
+
+      <!-- 4. Direct Buttons -->
+      <button class="nav-pill-btn level-tab" id="tab-scene" onclick="selectNavLevel('scene', event)">🗣️ สถานการณ์</button>
+      <a href="index.html" class="nav-pill-btn" id="tab-quiz" style="text-decoration:none;">🎯 ควิซคำศัพท์</a>
+    </div>
+
+    <!-- Right Actions -->
+    <div class="nav-right-actions">
+      <button class="nav-action-pill backup-pill" id="btn-backup" onclick="event.preventDefault();openBackup()" title="สำรองและกู้คืนข้อมูล">💾 สำรอง</button>
+      <button class="nav-action-pill changelog-pill btn-changelog-tab" id="btn-changelog" onclick="event.preventDefault();openChangelog()" title="บันทึกการอัปเดตระบบ">
+        <span>✨ v2.6.1</span>
+        <span class="changelog-unread-dot" id="changelog-badge-dot"></span>
+      </button>
+    </div>
+  </nav>
+</div>
+
+<div class="content">
+  <div id="backup-banner"></div>
+  <div class="filter-wrap"><input class="filter-search" id="filter-search" placeholder="🔍 ค้นหาหมวดหมู่..." oninput="filterChips(this.value)"><div class="filter-bar" id="filters"></div></div>
+  <div class="section-info" id="section-info"></div>
+  <div id="scene-bar"></div>
+  <div class="mode-tabs">
+    <div class="mode-tab active" id="mt-flash" onclick="event.preventDefault();setMode('flash')">📇 Flashcard</div>
+    <div class="mode-tab" id="mt-quiz" onclick="event.preventDefault();setMode('quiz')">🎯 Quiz</div>
+    <div class="mode-tab" id="mt-srs" onclick="event.preventDefault();setMode('srs')">🔁 ทบทวน SRS</div>
+  </div>
+  <div class="streak-row" id="streak-row"></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="s-total">0</div><div class="stat-l">ทำแล้ว</div></div>
+    <div class="stat"><div class="stat-n" id="s-right" style="color:#2ecc71">0</div><div class="stat-l">✅ จำได้</div></div>
+    <div class="stat"><div class="stat-n" id="s-wrong" style="color:#e74c3c">0</div><div class="stat-l">❌ ยังไม่แม่น</div></div>
+    <div class="stat"><div class="stat-n stat-pct" id="s-pct">0%</div><div class="stat-l">แม่น</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill pf-n5" id="prog" style="width:0%"></div></div>
+  <div class="mode-badge" id="mode-label"></div>
+  <div id="main"></div>
+</div>
+
+<div class="modal-overlay" id="scene-modal" onclick="if(event.target===this)closeScene()">
+  <div class="modal-box scene-box" role="dialog" aria-modal="true" aria-label="บทสนทนา">
+    <div class="modal-head"><span id="scene-title"></span><button class="modal-x" onclick="closeScene()" aria-label="ปิด">✕</button></div>
+    <div class="scene-tip" id="scene-tip"></div>
+    <button class="scene-play" id="scene-play-btn" data-playing="0" onclick="playScene()">▶ เล่นทั้งบท</button>
+    <div id="scene-list"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="backup-modal" onclick="if(event.target===this)closeBackup()">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="สำรองและกู้คืนข้อมูล">
+    <div class="modal-head"><span>💾 สำรอง / กู้คืนข้อมูล</span><button class="modal-x" onclick="closeBackup()" aria-label="ปิด">✕</button></div>
+    <div class="backup-info" id="backup-info"></div>
+    <div class="modal-actions">
+      <button class="done-btn primary" onclick="exportBackup()">⬆️ ส่งออกไฟล์สำรอง</button>
+      <button class="done-btn secondary" onclick="document.getElementById('import-file').click()">⬇️ นำเข้าจากไฟล์</button>
+      <input type="file" id="import-file" accept=".json,application/json" hidden onchange="importFile(this)">
+    </div>
+    <details class="backup-adv">
+      <summary>ใช้ข้อความแทนไฟล์ (คัดลอก / วาง)</summary>
+      <textarea id="backup-text" rows="5" placeholder="วางข้อมูลสำรองที่นี่ แล้วกด นำเข้าจากข้อความ"></textarea>
+      <div class="modal-actions row">
+        <button class="done-btn secondary" onclick="copyBackup()">คัดลอกข้อมูล</button>
+        <button class="done-btn secondary" onclick="importFromTextarea()">นำเข้าจากข้อความ</button>
+      </div>
+    </details>
+    <div class="backup-msg" id="backup-msg"></div>
+    <div class="backup-tip">เคล็ดลับ: ข้อมูลสำรองนี้รวมความคืบหน้าของทั้งควิซคำศัพท์ และ Flashcard/SRS เข้าด้วยกัน สามารถนำไปกู้คืนบนเครื่องอื่นได้สมบูรณ์</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="changelog-modal" onclick="if(event.target===this)closeChangelog()">
+  <div class="modal-box" role="dialog" aria-modal="true" aria-label="บันทึกการอัปเดตระบบ" style="max-width:560px;max-height:85vh;display:flex;flex-direction:column;">
+    <div class="modal-head" style="flex-shrink:0;">
+      <span style="display:flex;align-items:center;gap:8px;">
+        <span>✨ บันทึกการอัปเดตระบบ</span>
+        <span style="font-size:11px;background:#6366f122;color:#a5b4fc;border:1px solid #6366f155;padding:2px 8px;border-radius:10px;font-weight:600;">v2.6.1</span>
+      </span>
+      <button class="modal-x" onclick="closeChangelog()">✕</button>
+    </div>
+    <div style="overflow-y:auto;padding-right:4px;margin-top:8px;">
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:14px;line-height:1.5;">
+        รายละเอียดการพัฒนาและฟังก์ชันใหม่ในแต่ละเวอร์ชัน เพื่อให้คุณเรียนและฝึกจำภาษาญี่ปุ่นได้อย่างมีประสิทธิภาพสูงสุด
+      </p>
+      <div class="changelog-timeline">
+        <div class="changelog-card latest">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.6.1 <span class="changelog-badge-new">LATEST</span></div>
+            <div class="changelog-date">25 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">🐛</span><div><b>แก้ Dropdown ไม่ปิดหลัง click:</b> CSS <code>:hover</code> override JS ทำให้ dropdown เปิดกลับทันที แก้โดยให้ JS จัดการ state ผ่าน <code>.open</code> class อย่างเดียว</div></li>
+            <li><span class="emoji">🪟</span><div><b>แก้ Navbar ซ้อนใน Flashcard:</b> navbar โผล่ซ้อนกับ navbar หลักเมื่อเปิดผ่าน iframe แก้ด้วย inline script ใน &lt;head&gt; ซ่อนก่อน render (ป้องกัน FOUC)</div></li>
+            <li><span class="emoji">💾</span><div><b>แก้ Backup ไม่ครบ:</b> เพิ่ม custom words และ mastery progress เข้า backup schema พร้อมแก้ restore ให้คืนค่าข้อมูลเหล่านี้ด้วย</div></li>
+            <li><span class="emoji">🔧</span><div><b>แก้เพิ่มคำศัพท์ไม่ได้:</b> modal ใช้ element ID ผิด ทำให้บันทึกไม่ได้ แก้ให้ตรงกับ HTML</div></li>
+            <li><span class="emoji">🧹</span><div><b>แก้ Active state ค้างใน Navbar:</b> ลบ class ที่ hardcode ให้ JS จัดการ active state ทั้งหมดผ่าน <code>updateNavCapsuleState()</code></div></li>
+          </ul>
+        </div>
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.5.0</div>
+            <div class="changelog-date">20–24 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">🚀</span><div><b>ปรับสถาปัตยกรรมโมดูลใหม่:</b> แยกไฟล์ CSS และ JS เป็นระเบียบ โหลดเร็วขึ้น รองรับ PWA Cache สมบูรณ์</div></li>
+            <li><span class="emoji">🔤</span><div><b>Modern Floating Pill Navbar:</b> เมนูแคปซูลมนลอย จัดกลุ่มหมวดหมู่เป็นสัดส่วน พร้อมสลับระหว่าง ควิซหลัก และ Flashcard รอง</div></li>
+            <li><span class="emoji">⏳</span><div><b>ระบบวิเคราะห์คำที่ตอบช้า:</b> หน้าสรุปผลควิซแสดงรายการคำที่ตอบช้าเกินเกณฑ์ ระบุเวลาที่ใช้ พร้อมปุ่มฟังเสียง 🔊 และปุ่มฝึกเฉพาะคำที่ตอบช้า</div></li>
+            <li><span class="emoji">🔧</span><div><b>ระบบซ่อมเฉพาะตัวที่ผิด:</b> กดซ่อมเฉพาะข้อที่ตอบผิดล่าสุดได้ทันทีทั้งฮิรางานะ คาตาคานะ และคำศัพท์</div></li>
+            <li><span class="emoji">💾</span><div><b>ระบบสำรองข้อมูลรวมเป็นหนึ่งเดียว:</b> Export ครั้งเดียวเก็บทั้งควิซ คำศัพท์ที่เพิ่มเอง และความจำ SRS ทั้งหมด</div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="data/kanji.js?v=26"></script>
+<script src="data/vocab5.js?v=26"></script>
+<script src="data/kana.js?v=26"></script>
+<script src="data/grammar5.js?v=26"></script>
+<script src="data/scenes.js?v=26"></script>
+
+<script src="js/utils.js?v=26"></script>
+<script src="js/nav.js?v=26"></script>
+<script src="js/backup.js?v=26"></script>
+<script src="js/changelog.js?v=26"></script>
+<script src="js/tts.js?v=26"></script>
+<script src="js/flashcard.js?v=26"></script>
+
+<script>
+if (new URLSearchParams(location.search).has('embedded') || window.self !== window.top) {
+  document.documentElement.classList.add('is-embedded-early');
+  document.body.classList.add('is-embedded');
+}
+
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
+}
+
+initPersist();
+renderBackupBanner();
+checkChangelogBadge();
+updateNavCapsuleState(currentLevel);
+
+renderFilters();
+startAll();
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeBackup();
+    closeScene();
+    closeChangelog();
+  }
+});
+</script>
+</body>
+</html>

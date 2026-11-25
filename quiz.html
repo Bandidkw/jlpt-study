@@ -33,127 +33,254 @@ a{color:inherit;text-decoration:none;}
   padding:20px 18px 60px;
 }
 
-/* ── TOP HEADER BAR ── */
-.top-header{
+/* ── MODERN FLOATING PILL NAVBAR ── */
+.floating-nav-wrapper{
+  position:sticky;
+  top:10px;
+  z-index:1000;
+  padding:0 8px;
+  margin-bottom:16px;
+  display:flex;
+  justify-content:center;
+  width:100%;
+  pointer-events:none;
+}
+.nav-capsule{
+  pointer-events:auto;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
-  margin-bottom:20px;
+  background:rgba(22, 22, 26, 0.94);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255, 255, 255, 0.12);
+  border-radius:9999px;
+  padding:5px 10px;
+  box-shadow:0 12px 36px rgba(0,0,0,0.55), 0 2px 6px rgba(0,0,0,0.3);
+  max-width:980px;
+  width:100%;
+  gap:8px;
+  position:relative;
+  box-sizing:border-box;
 }
-.header-left-actions{
+.nav-brand-badge{
   display:flex;
   align-items:center;
-  gap:8px;
+  justify-content:center;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  background:#ffffff;
+  color:#111;
+  font-size:17px;
+  flex-shrink:0;
+  box-shadow:0 2px 8px rgba(0,0,0,0.25);
+  cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease;
+  user-select:none;
+  border:none;
+  outline:none;
+  text-decoration:none;
 }
-.btn-back-home{
+.nav-brand-badge:hover{
+  transform:scale(1.06);
+  box-shadow:0 4px 12px rgba(255,255,255,0.25);
+}
+.nav-menu-group{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  flex:1;
+  justify-content:center;
+  min-width:0;
+}
+.nav-dropdown-wrap{
+  position:relative;
+}
+.nav-pill-btn{
   display:inline-flex;
   align-items:center;
-  gap:6px;
-  background:#162035;
-  color:#94a3b8;
-  border:1px solid #243250;
-  border-radius:10px;
-  padding:7px 12px;
+  gap:5px;
+  background:transparent;
+  border:1px solid transparent;
+  border-radius:9999px;
+  color:#a1a1aa;
+  padding:6px 11px;
   font-size:12.5px;
   font-weight:500;
-  text-decoration:none;
-  transition:all .15s;
-}
-.btn-back-home:hover{background:#1e2a44;color:#fff;border-color:#3b82f6;}
-
-/* ── CUSTOM DROPDOWN ── */
-.custom-dropdown{
-  position:relative;
-  display:inline-block;
-}
-.custom-dropdown-btn{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  background:#162035;
-  color:#e2e8f0;
-  border:1px solid #243250;
-  border-radius:10px;
-  padding:7px 14px;
-  font-size:13px;
-  font-weight:500;
   cursor:pointer;
-  transition:all .15s;
+  transition:all .16s ease;
+  white-space:nowrap;
   user-select:none;
-}
-.custom-dropdown-btn:hover{
-  background:#1e2a44;
-  border-color:#3b82f6;
-  color:#fff;
-}
-.custom-dropdown-btn.open{
-  border-color:#3b82f6;
-  box-shadow:0 0 0 2px rgba(59,130,246,0.25);
-  background:#1e2a44;
-}
-.custom-dropdown-arrow{
-  width:14px;
-  height:14px;
-  transition:transform .2s ease;
-  color:#94a3b8;
   flex-shrink:0;
 }
-.custom-dropdown-btn.open .custom-dropdown-arrow{
-  transform:rotate(180deg);
-  color:#60a5fa;
+.nav-pill-btn:hover{
+  color:#f4f4f5;
+  background:rgba(255,255,255,0.08);
 }
-.custom-dropdown-menu{
-  position:absolute;
-  top:calc(100% + 6px);
-  left:0;
-  min-width:240px;
-  background:#131b2e;
-  border:1px solid #283754;
-  border-radius:12px;
-  padding:6px;
-  box-shadow:0 14px 36px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.06);
-  z-index:900;
-  opacity:0;
-  visibility:hidden;
-  transform:translateY(-6px);
-  transition:opacity .15s ease, transform .15s ease, visibility .15s;
-}
-.custom-dropdown-menu.show{
-  opacity:1;
-  visibility:visible;
-  transform:translateY(0);
-}
-.custom-dropdown-item{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:9px 12px;
-  border-radius:8px;
-  font-size:13px;
-  color:#cbd5e1;
-  cursor:pointer;
-  transition:all .12s;
-  user-select:none;
-}
-.custom-dropdown-item:hover{
-  background:#1e293b;
+.nav-pill-btn.group-active,
+.nav-pill-btn.active{
+  background:rgba(255,255,255,0.12);
   color:#ffffff;
-}
-.custom-dropdown-item.selected{
-  background:rgba(37,99,235,0.18);
-  color:#60a5fa;
+  border-color:rgba(255,255,255,0.16);
   font-weight:600;
 }
-.custom-dropdown-item .check-icon{
-  width:14px;
-  height:14px;
+.nav-pill-btn.group-active .nav-chevron{
+  color:#ffffff;
+}
+.nav-chevron{
+  font-size:9px;
+  color:#71717a;
+  transition:transform .18s ease;
+  margin-left:1px;
+}
+.nav-dropdown-wrap.open .nav-chevron{
+  transform:rotate(180deg);
+  color:#ffffff;
+}
+.nav-dropdown-panel{
+  position:absolute;
+  top:calc(100% + 9px);
+  left:50%;
+  transform:translateX(-50%) translateY(-6px);
+  background:#18181c;
+  border:1px solid rgba(255, 255, 255, 0.14);
+  border-radius:14px;
+  padding:6px;
+  min-width:170px;
+  box-shadow:0 14px 34px rgba(0,0,0,0.65), 0 2px 8px rgba(0,0,0,0.4);
+  display:none;
+  flex-direction:column;
+  gap:3px;
+  z-index:1050;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
   opacity:0;
-  color:#60a5fa;
+  pointer-events:none;
+  transition:opacity .15s ease, transform .15s ease;
+}
+.nav-dropdown-wrap.open .nav-dropdown-panel{
+  display:flex;
+  opacity:1;
+  pointer-events:auto;
+  transform:translateX(-50%) translateY(0);
+}
+.nav-drop-item{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:8px;
+  padding:9px 12px;
+  border-radius:9px;
+  font-size:13px;
+  font-weight:500;
+  color:#d4d4d8;
+  background:transparent;
+  border:none;
+  text-align:left;
+  cursor:pointer;
+  transition:all .14s ease;
+  white-space:nowrap;
+  width:100%;
+}
+.nav-drop-item:hover{
+  background:rgba(255,255,255,0.08);
+  color:#ffffff;
+}
+.nav-drop-item.active{
+  background:rgba(99,102,241,0.22);
+  color:#c7d2fe;
+  font-weight:600;
+}
+.nav-right-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-shrink:0;
+  margin-left:auto;
+}
+.nav-action-pill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  border-radius:9999px;
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .15s ease;
+  border:1px solid rgba(255, 255, 255, 0.12);
+  background:rgba(255, 255, 255, 0.06);
+  color:#e4e4e7;
+  white-space:nowrap;
+  user-select:none;
+  position:relative;
   flex-shrink:0;
 }
-.custom-dropdown-item.selected .check-icon{
-  opacity:1;
+.nav-action-pill:hover{
+  background:rgba(255,255,255,0.14);
+  color:#fff;
+  border-color:rgba(255,255,255,0.22);
+  transform:translateY(-1px);
+}
+.nav-action-pill.backup-pill{
+  background:rgba(34,197,94,0.14);
+  border-color:rgba(34,197,94,0.35);
+  color:#4ade80;
+}
+.nav-action-pill.backup-pill:hover{
+  background:rgba(34,197,94,0.24);
+  border-color:rgba(34,197,94,0.5);
+  color:#86efac;
+}
+.nav-action-pill.changelog-pill{
+  background:#ffffff;
+  border-color:#ffffff;
+  color:#111111;
+  font-weight:700;
+  box-shadow:0 2px 10px rgba(255,255,255,0.2);
+}
+.nav-action-pill.changelog-pill:hover{
+  background:#f4f4f5;
+  transform:translateY(-1px);
+}
+
+body.is-embedded .nav-brand-badge{
+  display:none!important;
+}
+body.is-embedded #btn-changelog{
+  display:none!important;
+}
+
+@media (max-width:860px){
+  .floating-nav-wrapper{
+    padding:0 4px;
+    top:6px;
+  }
+  .nav-capsule{
+    padding:4px 6px;
+    gap:4px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+  }
+  .nav-capsule::-webkit-scrollbar{
+    display:none;
+  }
+  .nav-pill-btn{
+    padding:6px 10px;
+    font-size:12px;
+  }
+  .nav-action-pill{
+    padding:6px 10px;
+    font-size:11.5px;
+  }
+  .nav-brand-badge{
+    width:32px;
+    height:32px;
+    font-size:15px;
+  }
 }
 .btn-export{
   display:inline-flex;
@@ -966,73 +1093,66 @@ body.is-embedded #btn-changelog{
 </head>
 <body>
 
-<div class="app-container">
-  <!-- TOP BAR -->
-  <div class="top-header">
-    <div class="header-left-actions">
-      <a href="index.html" class="btn-back-home" onclick="if(window.parent&&window.parent!==window&&window.parent.switchLevel){event.preventDefault();window.parent.switchLevel('n5');}" title="กลับไปหน้าหลัก JLPT Flashcard">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        กลับ JLPT เดิม
-      </a>
-      <!-- CUSTOM DROPDOWN -->
-      <div class="custom-dropdown" id="level-dropdown">
-        <button type="button" class="custom-dropdown-btn" id="dropdown-btn" onclick="toggleDropdown(event)">
-          <span id="dropdown-label">📝 คำศัพท์ของฉัน</span>
-          <svg class="custom-dropdown-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
+<!-- TOP FLOATING PILL NAVBAR -->
+<div class="floating-nav-wrapper">
+  <nav class="nav-capsule" aria-label="แถบเมนูควิซ">
+    <a href="index.html" class="nav-brand-badge btn-back-home" onclick="if(window.parent&&window.parent!==window&&window.parent.switchLevel){event.preventDefault();window.parent.switchLevel('n5');}" title="กลับไปหน้าหลัก JLPT Flashcard">⛩️</a>
+
+    <div class="nav-menu-group">
+      <!-- 1. คานะ Dropdown -->
+      <div class="nav-dropdown-wrap" id="wrap-kana">
+        <button type="button" class="nav-pill-btn" id="group-kana" onclick="toggleNavDropdown('wrap-kana', event)" aria-haspopup="true">
+          <span>🔤 อักษรคานะ</span>
+          <span class="nav-chevron">▾</span>
         </button>
-        <div class="custom-dropdown-menu" id="dropdown-menu">
-          <div class="custom-dropdown-item selected" data-value="custom" onclick="selectDropdownItem('custom')">
-            <span>📝 คำศัพท์ของฉัน</span>
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="custom-dropdown-item" data-value="vocab5" onclick="selectDropdownItem('vocab5')">
-            <span>📗 N5 คำศัพท์</span>
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="custom-dropdown-item" data-value="n5" onclick="selectDropdownItem('n5')">
-            <span>📘 N5 คันจิ</span>
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="custom-dropdown-item" data-value="grammar5" onclick="selectDropdownItem('grammar5')">
-            <span>📙 N5 ไวยากรณ์</span>
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="custom-dropdown-item" data-value="scene" onclick="selectDropdownItem('scene')">
-            <span>🗣️ บทสนทนาจริง</span>
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="custom-dropdown-item" data-value="hiragana" onclick="selectDropdownItem('hiragana')">
-            <span>🌸 ฮิรางานะ 46 ตัว</span>
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="custom-dropdown-item" data-value="katakana" onclick="selectDropdownItem('katakana')">
-            <span>⚡ คาตาคานะ</span>
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="custom-dropdown-item" data-value="n4" onclick="selectDropdownItem('n4')">
-            <span>📗 N4</span>
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="custom-dropdown-item" data-value="n3" onclick="selectDropdownItem('n3')">
-            <span>📙 N3</span>
-            <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
+        <div class="nav-dropdown-panel" role="menu">
+          <button type="button" class="nav-drop-item" id="tab-hiragana" onclick="selectNavLevel('hiragana', event)" role="menuitem">🌸 ฮิรางานะ</button>
+          <button type="button" class="nav-drop-item" id="tab-katakana" onclick="selectNavLevel('katakana', event)" role="menuitem">⚡ คาตาคานะ</button>
         </div>
       </div>
+
+      <!-- 2. N5 Dropdown -->
+      <div class="nav-dropdown-wrap" id="wrap-n5">
+        <button type="button" class="nav-pill-btn" id="group-n5" onclick="toggleNavDropdown('wrap-n5', event)" aria-haspopup="true">
+          <span>📘 JLPT N5</span>
+          <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-panel" role="menu">
+          <button type="button" class="nav-drop-item" id="tab-n5" onclick="selectNavLevel('n5', event)" role="menuitem">📘 N5 คันจิ</button>
+          <button type="button" class="nav-drop-item" id="tab-vocab5" onclick="selectNavLevel('vocab5', event)" role="menuitem">📗 N5 คำศัพท์</button>
+          <button type="button" class="nav-drop-item" id="tab-grammar5" onclick="selectNavLevel('grammar5', event)" role="menuitem">📙 N5 ไวยากรณ์</button>
+        </div>
+      </div>
+
+      <!-- 3. N4 / N3 Dropdown -->
+      <div class="nav-dropdown-wrap" id="wrap-n4n3">
+        <button type="button" class="nav-pill-btn" id="group-n4n3" onclick="toggleNavDropdown('wrap-n4n3', event)" aria-haspopup="true">
+          <span>📙 N4 / N3</span>
+          <span class="nav-chevron">▾</span>
+        </button>
+        <div class="nav-dropdown-panel" role="menu">
+          <button type="button" class="nav-drop-item" id="tab-n4" onclick="selectNavLevel('n4', event)" role="menuitem">📗 N4</button>
+          <button type="button" class="nav-drop-item" id="tab-n3" onclick="selectNavLevel('n3', event)" role="menuitem">📙 N3</button>
+        </div>
+      </div>
+
+      <!-- 4. Direct Buttons -->
+      <button type="button" class="nav-pill-btn" id="tab-scene" onclick="selectNavLevel('scene', event)">🗣️ บทสนทนา</button>
+      <button type="button" class="nav-pill-btn active" id="tab-custom" onclick="selectNavLevel('custom', event)">📝 คำศัพท์ฉัน</button>
     </div>
-    <div class="header-right-actions" style="display:flex;align-items:center;gap:8px;margin-left:auto;">
-      <button class="btn-export" onclick="openBackup()" title="สำรองและกู้คืนข้อมูล">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        สำรอง
-      </button>
-      <button class="btn-changelog" id="btn-changelog" onclick="openChangelog()" title="บันทึกการอัปเดตระบบ">
-        <span>✨ v2.5</span>
+
+    <!-- Right Actions -->
+    <div class="nav-right-actions">
+      <button type="button" class="nav-action-pill backup-pill" id="btn-backup" onclick="event.preventDefault();openBackup()" title="สำรองและกู้คืนข้อมูล">💾 สำรอง</button>
+      <button type="button" class="nav-action-pill changelog-pill btn-changelog" id="btn-changelog" onclick="event.preventDefault();openChangelog()" title="บันทึกการอัปเดตระบบ">
+        <span>✨ v2.6.1</span>
         <span class="changelog-unread-dot" id="changelog-badge-dot"></span>
       </button>
     </div>
-  </div>
+  </nav>
+</div>
+
+<div class="app-container">
 
   <!-- TITLE & SUBTITLE -->
   <div class="header-intro">
@@ -1059,6 +1179,7 @@ body.is-embedded #btn-changelog{
       <span>💾 ส่งออก / สำรองข้อมูล</span>
       <button class="modal-x" onclick="closeBackup()">✕</button>
     </div>
+    <div class="backup-info" id="backup-info"></div>
     <p style="font-size:13px;color:#94a3b8;margin-bottom:16px;">
       สำรองคำศัพท์และสถิติความจำทั้งหมดเก็บไว้เป็นไฟล์ JSON สามารถกู้คืนได้ทุกเมื่อ
     </p>
@@ -1077,7 +1198,7 @@ body.is-embedded #btn-changelog{
     <div class="modal-head" style="flex-shrink:0;">
       <span style="display:flex;align-items:center;gap:8px;">
         <span>✨ บันทึกการอัปเดตระบบ</span>
-        <span style="font-size:11px;background:#6366f122;color:#a5b4fc;border:1px solid #6366f155;padding:2px 8px;border-radius:10px;font-weight:600;">v2.5</span>
+        <span style="font-size:11px;background:#6366f122;color:#a5b4fc;border:1px solid #6366f155;padding:2px 8px;border-radius:10px;font-weight:600;">v2.6.1</span>
       </span>
       <button class="modal-x" onclick="closeChangelog()">✕</button>
     </div>
@@ -1086,13 +1207,26 @@ body.is-embedded #btn-changelog{
         รายละเอียดการพัฒนาและฟังก์ชันใหม่ในแต่ละเวอร์ชัน เพื่อให้คุณเรียนและฝึกจำภาษาญี่ปุ่นได้อย่างมีประสิทธิภาพสูงสุด
       </p>
       <div class="changelog-timeline">
-        <!-- v2.5 -->
+        <!-- v2.6 -->
         <div class="changelog-card latest">
           <div class="changelog-version-header">
-            <div class="changelog-version">
-              v2.5.0 <span class="changelog-badge-new">LATEST</span>
-            </div>
-            <div class="changelog-date">20 พ.ย. 2026</div>
+            <div class="changelog-version">v2.6.1 <span class="changelog-badge-new">LATEST</span></div>
+            <div class="changelog-date">25 พ.ย. 2026</div>
+          </div>
+          <ul class="changelog-list">
+            <li><span class="emoji">🐛</span><div><b>แก้ Dropdown ไม่ปิดหลัง click:</b> CSS <code>:hover</code> override JS ทำให้ dropdown เปิดกลับทันที แก้โดยให้ JS จัดการ state ผ่าน <code>.open</code> class อย่างเดียว</div></li>
+            <li><span class="emoji">🪟</span><div><b>แก้ Navbar ซ้อนใน Flashcard:</b> navbar ของ flashcard.html โผล่ซ้อนกับ navbar หลัก แก้ด้วย inline script ใน &lt;head&gt; ซ่อนก่อน render (ป้องกัน FOUC)</div></li>
+            <li><span class="emoji">💾</span><div><b>แก้ Backup ไม่ครบ:</b> เพิ่ม custom words และ mastery progress เข้า backup schema พร้อมแก้ restore ให้คืนค่าข้อมูลเหล่านี้ด้วย</div></li>
+            <li><span class="emoji">🔧</span><div><b>แก้เพิ่มคำศัพท์ไม่ได้:</b> modal ใช้ element ID ผิด ทำให้บันทึกไม่ได้ แก้ให้ตรงกับ HTML</div></li>
+            <li><span class="emoji">🧹</span><div><b>แก้ Active state ค้างใน Navbar:</b> ลบ class ที่ hardcode ใน flashcard.html ให้ JS จัดการ active state ทั้งหมดผ่าน <code>updateNavCapsuleState()</code></div></li>
+          </ul>
+        </div>
+
+        <!-- v2.5 -->
+        <div class="changelog-card">
+          <div class="changelog-version-header">
+            <div class="changelog-version">v2.5.0</div>
+            <div class="changelog-date">20–24 พ.ย. 2026</div>
           </div>
           <ul class="changelog-list">
             <li><span class="emoji">⏳</span><div><b>ระบบวิเคราะห์คำที่ตอบช้า:</b> หน้าสรุปผลควิซแสดงรายการคำที่ตอบช้าเกินเกณฑ์ ระบุเวลาที่ใช้ พร้อมปุ่มฟังเสียง 🔊 และปุ่ม <code>[ ฝึกเฉพาะคำที่ตอบช้า ]</code> ให้ทบทวนเฉพาะคำที่ยังไม่คล่องได้ทันที</div></li>
@@ -1621,39 +1755,71 @@ function getPoolForLevel(level){
 }
 
 // ══════════════════════════════════════════════════════════
-//  CUSTOM DROPDOWN LOGIC
+//  FLOATING CAPSULE NAVBAR & LEVEL LOGIC
 // ══════════════════════════════════════════════════════════
-function toggleDropdown(e){
-  if(e) e.stopPropagation();
-  const btn = document.getElementById('dropdown-btn');
-  const menu = document.getElementById('dropdown-menu');
-  const isOpen = menu.classList.contains('show');
-  if(isOpen){
-    closeDropdown();
-  } else {
-    btn.classList.add('open');
-    menu.classList.add('show');
+function toggleNavDropdown(wrapId, ev){
+  if(ev){ ev.preventDefault(); ev.stopPropagation(); }
+  const wrap = document.getElementById(wrapId);
+  const isOpen = wrap && wrap.classList.contains('open');
+  closeAllNavDropdowns();
+  if(wrap && !isOpen){
+    wrap.classList.add('open');
   }
 }
 
-function closeDropdown(){
-  const btn = document.getElementById('dropdown-btn');
-  const menu = document.getElementById('dropdown-menu');
-  if(btn) btn.classList.remove('open');
-  if(menu) menu.classList.remove('show');
+function closeAllNavDropdowns(){
+  document.querySelectorAll('.nav-dropdown-wrap.open').forEach(w=>{
+    w.classList.remove('open');
+  });
 }
 
-function selectDropdownItem(val){
-  closeDropdown();
-  switchLevel(val);
+function selectNavLevel(lv, ev){
+  if(ev){ ev.preventDefault(); ev.stopPropagation(); }
+  closeAllNavDropdowns();
+  switchLevel(lv);
 }
 
-document.addEventListener('click', (e) => {
-  const dd = document.getElementById('level-dropdown');
-  if(dd && !dd.contains(e.target)){
-    closeDropdown();
+function updateNavCapsuleState(lv){
+  ['group-kana','group-n5','group-n4n3','tab-scene','tab-custom'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.remove('group-active', 'active');
+  });
+  ['tab-hiragana','tab-katakana','tab-n5','tab-vocab5','tab-grammar5','tab-n4','tab-n3','tab-scene','tab-custom'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.remove('active');
+  });
+
+  const actEl = document.getElementById('tab-' + lv);
+  if(actEl) actEl.classList.add('active');
+
+  if(lv==='hiragana'||lv==='katakana'){
+    const g=document.getElementById('group-kana');
+    if(g) g.classList.add('group-active');
+  } else if(lv==='n5'||lv==='vocab5'||lv==='grammar5'){
+    const g=document.getElementById('group-n5');
+    if(g) g.classList.add('group-active');
+  } else if(lv==='n4'||lv==='n3'){
+    const g=document.getElementById('group-n4n3');
+    if(g) g.classList.add('group-active');
+  } else if(lv==='scene'){
+    const g=document.getElementById('tab-scene');
+    if(g) g.classList.add('active');
+  } else if(lv==='custom'){
+    const g=document.getElementById('tab-custom');
+    if(g) g.classList.add('active');
+  }
+}
+
+document.addEventListener('click', e=>{
+  if(!e.target.closest('.nav-dropdown-wrap')){
+    closeAllNavDropdowns();
   }
 });
+
+function selectDropdownItem(val){
+  closeAllNavDropdowns();
+  switchLevel(val);
+}
 
 // ══════════════════════════════════════════════════════════
 //  UI NAVIGATION
@@ -1664,19 +1830,7 @@ function switchLevel(lv){
   statusFilter = 'all';
   currentSubCat = 'ทุกบท';
   
-  // Sync custom dropdown items & trigger button label
-  const items = document.querySelectorAll('.custom-dropdown-item');
-  items.forEach(it => {
-    if(it.dataset.value === lv){
-      it.classList.add('selected');
-      const labelSpan = it.querySelector('span');
-      if(labelSpan){
-        document.getElementById('dropdown-label').textContent = labelSpan.textContent;
-      }
-    } else {
-      it.classList.remove('selected');
-    }
-  });
+  updateNavCapsuleState(lv);
   
   const titleEl = document.getElementById('page-title');
   const subEl = document.getElementById('page-sub');
@@ -1692,7 +1846,7 @@ function switchLevel(lv){
       n5: 'ควิซคันจิ JLPT N5',
       grammar5: 'ควิซไวยากรณ์ JLPT N5',
       scene: 'ควิซบทสนทนาสถานการณ์จริง',
-      hiragana: 'ควิซฮิรางานะ 46 ตัว',
+      hiragana: 'ควิซฮิรางานะ',
       katakana: 'ควิซคาตาคานะ',
       n4: 'ควิซ JLPT N4',
       n3: 'ควิซ JLPT N3'
@@ -2592,7 +2746,7 @@ function renderQuizSummary(){
     n5: 'คันจิ JLPT N5',
     grammar5: 'ไวยากรณ์ JLPT N5',
     scene: 'บทสนทนาสถานการณ์จริง',
-    hiragana: 'ฮิรางานะ 46 ตัว',
+    hiragana: 'ฮิรางานะ',
     katakana: 'คาตาคานะ',
     n4: 'JLPT N4',
     n3: 'JLPT N3'
@@ -3091,6 +3245,7 @@ function speakJp(text){
 // ══════════════════════════════════════════════════════════
 function openBackup(){
   document.getElementById('backup-modal').classList.add('open');
+  if(typeof renderBackupInfo === 'function') renderBackupInfo();
 }
 function closeBackup(){
   document.getElementById('backup-modal').classList.remove('open');

@@ -1,26 +1,37 @@
-// Service Worker — JLPT Study App
-// เปลี่ยนเลขเวอร์ชันนี้ทุกครั้งที่แก้ไฟล์ เพื่อให้เครื่องผู้ใช้ดึงของใหม่
-const CACHE_VERSION = 'jlpt-v19';
+// Service Worker — JLPT Study & Quiz App
+// Cache Version v26: Hover / Hold Dropdown support & latest styles
+const CACHE_VERSION = 'jlpt-v26';
 const PRECACHE = [
   './',
-  './index.html',
-  './quiz.html',
+  './index.html?v=26',
+  './flashcard.html?v=26',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
   './icon-maskable-512.png',
   './apple-touch-icon.png',
-  './data/kanji.js',
-  './data/vocab5.js',
-  './data/kana.js',
-  './data/grammar5.js',
-  './data/scenes.js'
+  './css/shared.css?v=26',
+  './css/quiz.css?v=26',
+  './css/flashcard.css?v=26',
+  './js/utils.js?v=26',
+  './js/nav.js?v=26',
+  './js/backup.js?v=26',
+  './js/changelog.js?v=26',
+  './js/tts.js?v=26',
+  './js/quiz-engine.js?v=26',
+  './js/quiz-words.js?v=26',
+  './js/flashcard.js?v=26',
+  './data/kanji.js?v=26',
+  './data/vocab5.js?v=26',
+  './data/kana.js?v=26',
+  './data/grammar5.js?v=26',
+  './data/scenes.js?v=26'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_VERSION)
-      .then((cache) => cache.addAll(PRECACHE))
+      .then((cache) => cache.addAll(PRECACHE).catch(err => console.warn('Precache partial fail:', err)))
       .then(() => self.skipWaiting())
   );
 });
@@ -33,37 +44,30 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Network-First strategy: always fetch fresh file when online, fallback to cache when offline
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  // หน้าเว็บ: ลองเน็ตก่อน (ได้เวอร์ชันล่าสุด) ถ้าออฟไลน์ใช้ของใน cache
-  if (req.mode === 'navigate') {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const copy = res.clone();
-          caches.open(CACHE_VERSION).then((c) => c.put('./index.html', copy));
-          return res;
-        })
-        .catch(() => caches.match('./index.html').then((r) => r || caches.match('./')))
-    );
-    return;
-  }
-
-  // ไฟล์ static อื่น ๆ: cache-first
   event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req).then((res) => {
-        if (res && res.ok) {
-          const copy = res.clone();
-          caches.open(CACHE_VERSION).then((c) => c.put(req, copy));
+    fetch(req)
+      .then((networkRes) => {
+        if (networkRes && networkRes.status === 200) {
+          const resClone = networkRes.clone();
+          caches.open(CACHE_VERSION).then((c) => c.put(req, resClone));
         }
-        return res;
-      });
-    })
+        return networkRes;
+      })
+      .catch(() => {
+        return caches.match(req).then((cached) => {
+          if (cached) return cached;
+          if (req.mode === 'navigate') {
+            return caches.match('./index.html?v=26') || caches.match('./index.html');
+          }
+          return null;
+        });
+      })
   );
 });
