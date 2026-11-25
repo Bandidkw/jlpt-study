@@ -21,7 +21,7 @@ function getEl(id) {
 }
 
 const context = {
-  window: {},
+  window: { addEventListener: () => {} },
   document: {
     addEventListener: () => {},
     getElementById: (id) => getEl(id),
@@ -34,7 +34,7 @@ const context = {
     getItem: (k) => null,
     setItem: (k, v) => {}
   },
-  speechSynthesis: { speak: () => {}, cancel: () => {} },
+  speechSynthesis: { speak: () => {}, cancel: () => {}, addEventListener: () => {}, getVoices: () => [] },
   navigator: {},
   location: { search: '', protocol: 'http:' },
   console: console

@@ -15,7 +15,7 @@ function _getJaVoice() {
   return _jaVoice;
 }
 
-if (typeof speechSynthesis !== "undefined") {
+if (typeof speechSynthesis !== "undefined" && typeof speechSynthesis.addEventListener === "function") {
   speechSynthesis.addEventListener("voiceschanged", () => {
     _jaVoice = null;
   });

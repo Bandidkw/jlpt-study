@@ -344,7 +344,7 @@ function renderTestHome(container) {
           ${(() => {
             const reviewCount = getReviewList().length;
             if (reviewCount > 0) {
-              return `<button class="chip review-chip-btn" style="background:rgba(251,191,36,0.15);border-color:rgba(251,191,36,0.4);color:#fbbf24;" onclick="startReviewQuiz()">🔁 ทบทวนซ้ำ (${reviewCount})</button>`;
+              return `<button class="chip review-chip-btn" style="background:rgba(251,191,36,0.15);border-color:rgba(251,191,36,0.4);color:#fbbf24;" onclick="startReviewQuiz()"><span style="display:inline-flex;align-items:center;gap:5px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fbbf24" stroke="none"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>ทบทวนซ้ำ (${reviewCount})</span></button>`;
             }
             return "";
           })()}
@@ -601,7 +601,11 @@ function renderWordItems(words) {
       const subLabel = isKana ? item.row || "" : item.ch ? `[${item.ch}]` : "";
 
 
-      return `<div class="word-row" id="wr-${CSS.escape(wordId)}">
+      const safeId = (typeof CSS !== "undefined" && typeof CSS.escape === "function")
+        ? CSS.escape(wordId)
+        : String(wordId).replace(/[^a-zA-Z0-9_\-]/g, "_");
+
+      return `<div class="word-row" id="wr-${safeId}">
         <div style="flex:1;min-width:0;">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
             <span class="word-status-badge ${badgeClass}">${badgeTxt}</span>

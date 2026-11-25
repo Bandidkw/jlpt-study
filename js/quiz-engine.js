@@ -537,16 +537,18 @@ function renderQuizQuestion() {
   let dirBadge = "คำ → ความหมาย";
 
   if (isListening) {
-    dirBadge = "🎧 ควิซการฟัง";
+    dirBadge = "ควิซการฟัง";
     questionPrompt = `
       <div class="listening-pulse-box">
-        <div class="listening-icon-pulse" onclick="speakJp('${item.jp}')" title="แตะเพื่อฟังเสียงซ้ำ">🎧</div>
-        <div style="font-size:13px;color:#94a3b8;margin-top:4px;">กำลังเล่นเสียงอ่าน... แตะหูฟังเพื่อฟังซ้ำ</div>
+        <div class="listening-icon-pulse" onclick="speakJp('${item.jp}')" title="แตะเพื่อฟังเสียงซ้ำ">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+        </div>
+        <div style="font-size:13px;color:#94a3b8;margin-top:4px;">กำลังเล่นเสียงอ่าน... แตะไอคอนเพื่อฟังซ้ำ</div>
       </div>
     `;
     correctAnswer = item.th;
   } else if (isTyping) {
-    dirBadge = "⌨️ พิมพ์คำอ่าน (โรมาจิ)";
+    dirBadge = "พิมพ์คำอ่าน (โรมาจิ)";
     const isBig = item.jp.length <= 4;
     questionPrompt = `<div class="${isBig ? "q-text-large" : "q-text-medium"}">${formatJpText(item.jp)}</div>`;
 
@@ -572,7 +574,7 @@ function renderQuizQuestion() {
     questionPrompt = `<div class="q-text-large">${formatJpText(item.jp)}</div>`;
     correctAnswer = item.rd;
   } else {
-    dirBadge = isSpeedRun ? "⚡ สปีดรัน" : "คำ → ความหมาย";
+    dirBadge = isSpeedRun ? "สปีดรัน" : "คำ → ความหมาย";
     const isBig = item.jp.length <= 4;
     questionPrompt = `<div class="${isBig ? "q-text-large" : "q-text-medium"}">${formatJpText(item.jp)}</div>`;
     if (
@@ -640,13 +642,13 @@ function renderQuizQuestion() {
       </div>
       <div class="quiz-header" style="margin-bottom:8px;">
         <span class="timer-badge" style="color:#f59e0b;font-size:14px;">
-          ⏳ <span id="speedrun-timer-txt">${speedRunTimeLeft}s</span>
+          <span id="speedrun-timer-txt">${speedRunTimeLeft}s</span>
         </span>
         <span class="combo-badge" id="speedrun-combo-txt">
-          🔥 x${currentCombo || 1} Combo
+          x${currentCombo || 1} Combo
         </span>
         <span class="speedrun-score-txt" id="speedrun-score-txt">
-          🏆 ${speedRunPoints} pt
+          ${speedRunPoints} pt
         </span>
       </div>
     `;
@@ -745,7 +747,7 @@ function submitTypingAnswer() {
       quizFastCount++;
       fbWrap.innerHTML = `
         <div class="feedback-box fb-fast">
-          ⚡ <b>แม่นยำและรวดเร็ว!</b> [${item.rd ? `${item.rd} · ` : ""}${targetRom}] (${(elapsedMs / 1000).toFixed(1)} วิ)
+          <b>แม่นยำและรวดเร็ว!</b> [${item.rd ? `${item.rd} · ` : ""}${targetRom}] (${(elapsedMs / 1000).toFixed(1)} วิ)
         </div>
       `;
       setTimeout(() => {
@@ -843,7 +845,7 @@ function submitQuizAnswer(chosenIdx, chosenVal, correctVal) {
       speedRunPoints += Math.round(100 * mult);
       fbWrap.innerHTML = `
         <div class="feedback-box fb-fast" style="padding:8px 12px;margin-top:10px;">
-          ⚡ <b>ถูกต้อง!</b> +${Math.round(100 * mult)} pt ${currentCombo >= 3 ? `(Combo x${mult})` : ""}
+          <b>ถูกต้อง!</b> +${Math.round(100 * mult)} pt ${currentCombo >= 3 ? `(Combo x${mult})` : ""}
         </div>
       `;
       setTimeout(() => {
@@ -873,7 +875,7 @@ function submitQuizAnswer(chosenIdx, chosenVal, correctVal) {
       quizFastCount++;
       fbWrap.innerHTML = `
         <div class="feedback-box fb-fast">
-          ⚡ <b>แม่นยำและรวดเร็ว!</b> (${(elapsedMs / 1000).toFixed(1)} วิ)
+          <b>แม่นยำและรวดเร็ว!</b> (${(elapsedMs / 1000).toFixed(1)} วิ)
         </div>
       `;
       setTimeout(() => {
@@ -1013,7 +1015,9 @@ function renderQuizSummary() {
               ${showMeaning ? `<div style="font-size:12px;color:#38bdf8">${m.item.th}</div>` : ""}
               <div style="font-size:11.5px;color:#fca5a5;margin-top:2px;">คำตอบที่ถูก: ${m.correctVal}</div>
             </div>
-            <button class="q-audio-btn" onclick="speakJp('${m.item.jp}')">🔊</button>
+            <button class="q-audio-btn" onclick="speakJp('${m.item.jp}')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            </button>
           </div>
         `;
           })
@@ -1042,7 +1046,9 @@ function renderQuizSummary() {
               ${showMeaning ? `<div style="font-size:12px;color:#38bdf8">${s.item.th}</div>` : ""}
               <div style="font-size:11.5px;color:#fcd34d;margin-top:2px;">ใช้เวลา ${(s.elapsedMs / 1000).toFixed(1)} วินาที</div>
             </div>
-            <button class="q-audio-btn" onclick="speakJp('${s.item.jp}')">🔊</button>
+            <button class="q-audio-btn" onclick="speakJp('${s.item.jp}')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            </button>
           </div>
         `;
           })
@@ -1143,7 +1149,7 @@ function renderQuizSummary() {
               : ""
           }
           <button class="btn-primary-cta" style="background:#f59e0b;" onclick="startQuiz()">
-            ⚡ เริ่มสปีดรันอีกรอบ
+            เริ่มสปีดรันอีกรอบ
           </button>
           <button class="btn-export" style="justify-content:center;padding:12px;" onclick="renderMain()">
             กลับหน้าหลัก

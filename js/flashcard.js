@@ -777,11 +777,15 @@ function lockScroll() {
   el.style.scrollBehavior = "auto";
   requestAnimationFrame(() => {
     el.scrollTop = y;
+  if (typeof window !== "undefined" && typeof window.scrollTo === "function") {
     window.scrollTo(0, y);
+  }
     // lock ซ้ำหลัง reflow
     setTimeout(() => {
       el.scrollTop = y;
-      window.scrollTo(0, y);
+    if (typeof window !== "undefined" && typeof window.scrollTo === "function") {
+    window.scrollTo(0, y);
+  }
     }, 80);
   });
 }

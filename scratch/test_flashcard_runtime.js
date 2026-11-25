@@ -22,7 +22,7 @@ function getEl(id) {
 }
 
 const context = {
-  window: {},
+  window: { addEventListener: () => {}, scrollTo: () => {} },
   document: {
     addEventListener: () => {},
     getElementById: (id) => getEl(id),
